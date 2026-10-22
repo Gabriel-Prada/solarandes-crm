@@ -131,6 +131,45 @@ def test_busqueda_ignora_tildes_y_mayusculas(con, equipo):
     assert sin_tilde == con_tilde
 
 
+def test_panel_solo_para_la_gerente(con, equipo):
+    for codigo in ("U02", "U05", "U06"):  # asesor, técnico y contadora
+        with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+            como(con, equipo[codigo])
+            con.execute("select panel_gerente()")
+
+
+def test_panel_cuadra_con_los_datos(con, equipo):
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U01"])
+        panel = con.execute("select panel_gerente()").fetchone()[0]
+        ganadas = con.execute("select count(*) from oportunidades where etapa = 'ganado'").fetchone()[0]
+        total = con.execute("select count(*) from oportunidades").fetchone()[0]
+
+    embudo = {e["etapa"]: e["ventas"] for e in panel["embudo"]}
+    assert embudo["nuevo"] == total  # todas las ventas entran por "nuevo"
+    assert embudo["ganado"] == ganadas
+    # El embudo nunca crece de una etapa a la siguiente
+    orden = ["nuevo", "contactado", "visita_agendada", "cotizado", "negociacion", "ganado"]
+    assert all(embudo[a] >= embudo[b] for a, b in zip(orden, orden[1:], strict=False))
+    assert len(panel["por_mes"]) == 12
+    assert sum(a["ganadas"] for a in panel["asesores"]) == ganadas
+    assert panel["kpis"]["pipeline_ponderado"] <= panel["kpis"]["pipeline"]
+
+
+def test_embudo_cuenta_las_ventas_que_se_saltan_etapas(con, equipo):
+    # Una venta nueva que pasa directo a "ganado" debe contar en todas las etapas del embudo
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U01"])
+        antes = {e["etapa"]: e["ventas"] for e in con.execute("select panel_gerente()").fetchone()[0]["embudo"]}
+        opp_id = con.execute("select id from oportunidades where etapa = 'nuevo' limit 1").fetchone()[0]
+        con.execute("update oportunidades set etapa = 'ganado' where id = %s", (opp_id,))
+        despues = {e["etapa"]: e["ventas"] for e in con.execute("select panel_gerente()").fetchone()[0]["embudo"]}
+
+    assert despues["nuevo"] == antes["nuevo"]  # ya estaba contada en "nuevo"
+    for etapa in ("contactado", "visita_agendada", "cotizado", "negociacion", "ganado"):
+        assert despues[etapa] == antes[etapa] + 1, etapa
+
+
 def test_no_se_puede_perder_una_venta_sin_motivo(con, equipo):
     with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.CheckViolation):
         como(con, equipo["U01"])
