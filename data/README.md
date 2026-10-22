@@ -14,6 +14,7 @@ Un año de operación (21/10/2025 a 21/10/2026). Es lo que se cargará al CRM en
 | `oportunidades.csv` | 1.000 | Una venta posible por contacto, más algunas ampliaciones. Cerca del 12 % se gana |
 | `actividades.csv` | 4.500 | Llamadas, WhatsApp, correos, visitas, notas y tareas |
 | `cotizaciones.csv` | 480 | Calculadas con la fórmula de `docs/requisitos.md`; algunas con versión ajustada |
+| `historial_etapas.csv` | 3.800 | Cada cambio de etapa de cada oportunidad. El primero (llegada del lead) no tiene etapa anterior ni responsable: lo hace el sistema |
 
 Detalles útiles para las demos:
 - Hay oportunidades abiertas en todas las etapas, y algunas **sin seguimiento** desde hace más de 7 días (para las alertas de la fase 3).

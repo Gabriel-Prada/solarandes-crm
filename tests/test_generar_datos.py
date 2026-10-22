@@ -89,6 +89,32 @@ def test_actividades_en_el_tiempo_correcto(datos):
             assert a["fecha"].date() > g.HOY or a["tipo"] in ("visita", "tarea"), a
 
 
+def test_historial_de_etapas_cuenta_el_recorrido_completo(datos):
+    recorridos = {}
+    for h in datos.historial_etapas:  # vienen en orden cronológico
+        recorridos.setdefault(h["oportunidad_id"], []).append(h)
+    orden = ["nuevo", "contactado", "visita_agendada", "cotizado", "negociacion", "ganado"]
+
+    for o in datos.oportunidades:
+        pasos = recorridos[o["id"]]
+        # Empieza cuando llega el lead y termina en la etapa en la que está hoy
+        assert pasos[0]["etapa_anterior"] is None and pasos[0]["etapa_nueva"] == "nuevo"
+        assert pasos[0]["fecha"] == o["creada_en"]
+        assert pasos[-1]["etapa_nueva"] == o["etapa"]
+        assert pasos[-1]["fecha"] == o["actualizada_en"]
+        if o["fecha_cierre"]:
+            assert pasos[-1]["fecha"] == o["fecha_cierre"]
+        # Solo la llegada del lead la hace el sistema; los demás pasos los hace el asesor
+        assert pasos[0]["cambiado_por"] is None
+        assert all(p["cambiado_por"] == o["asesor_id"] for p in pasos[1:])
+        for anterior, siguiente in zip(pasos, pasos[1:], strict=False):
+            # Cada paso sale de donde quedó el anterior, sin saltos ni retrocesos
+            assert siguiente["etapa_anterior"] == anterior["etapa_nueva"]
+            assert siguiente["fecha"] >= anterior["fecha"]
+            if siguiente["etapa_nueva"] != "perdido":
+                assert orden.index(siguiente["etapa_nueva"]) == orden.index(anterior["etapa_nueva"]) + 1
+
+
 def test_hay_leads_sin_seguimiento(datos):
     # La fase 3 necesita casos de leads abiertos sin actividad reciente
     ultima = {}

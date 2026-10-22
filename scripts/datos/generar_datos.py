@@ -168,6 +168,7 @@ class Datos:
     oportunidades: list[dict] = field(default_factory=list)
     actividades: list[dict] = field(default_factory=list)
     cotizaciones: list[dict] = field(default_factory=list)
+    historial_etapas: list[dict] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -245,6 +246,19 @@ class _Simulador:
         self.oportunidades: list[dict] = []
         self.actividades: list[dict] = []
         self.cotizaciones: list[dict] = []
+        self.historial: list[dict] = []
+
+    def _cambio_etapa(self, opp, anterior, nueva, fecha, cambiado_por):
+        """Anota un paso del recorrido. cambiado_por=None significa que lo hizo el sistema."""
+        self.historial.append(
+            {
+                "_opp": opp,
+                "etapa_anterior": anterior,
+                "etapa_nueva": nueva,
+                "cambiado_por": cambiado_por,
+                "fecha": fecha,
+            }
+        )
 
     def _actividad(self, opp, tipo, fecha, descripcion, usuario_id=None, completada=True):
         self.actividades.append(
@@ -298,6 +312,7 @@ class _Simulador:
             "fecha_cierre": None,
         }
         self.oportunidades.append(opp)
+        self._cambio_etapa(opp, None, "nuevo", creada, None)  # el lead entra solo, por su canal
 
         origen = "una solicitud de ampliación" if tipo == "ampliacion" else canal
         self._actividad(opp, "nota", creada, f"Lead recibido por {origen}.")
@@ -316,6 +331,7 @@ class _Simulador:
                     break  # el siguiente paso todavía no ha ocurrido
                 t = fecha
                 momento = max(_en_horario(rnd, t), opp["actualizada_en"] + timedelta(minutes=rnd.randint(15, 180)))
+                self._cambio_etapa(opp, desde, hacia, momento, opp["asesor_id"])
                 opp["etapa"], opp["actualizada_en"] = hacia, momento
 
                 if hacia == "contactado":
@@ -384,6 +400,7 @@ class _Simulador:
                 )
                 motivo = _elegir(rnd, MOTIVOS_PERDIDA[grupo])
                 momento = _en_horario(rnd, fecha)
+                self._cambio_etapa(opp, desde, "perdido", momento, opp["asesor_id"])
                 opp.update(etapa="perdido", motivo_perdida=motivo, actualizada_en=momento, fecha_cierre=momento)
                 self._actividad(opp, "nota", momento, f"Oportunidad perdida: {TEXTO_MOTIVO[motivo]}.")
             if opp["etapa"] in ("ganado", "perdido"):
@@ -445,9 +462,15 @@ def _generar_ventas(rnd: random.Random, contactos: list[dict], datos: Datos) -> 
         a["id"] = f"A{i:05d}"
         a["oportunidad_id"] = a.pop("_opp")["id"]
 
+    sim.historial.sort(key=lambda h: (h["fecha"], h["_opp"]["id"]))
+    for i, h in enumerate(sim.historial, start=1):
+        h["id"] = f"H{i:05d}"
+        h["oportunidad_id"] = h.pop("_opp")["id"]
+
     datos.oportunidades = sim.oportunidades
     datos.cotizaciones = sim.cotizaciones
     datos.actividades = sim.actividades
+    datos.historial_etapas = sim.historial
 
 
 def generar(semilla: int = SEMILLA) -> Datos:
@@ -759,6 +782,7 @@ COLUMNAS_CSV = {
         "valor_total",
         "estado",
     ],
+    "historial_etapas": ["id", "oportunidad_id", "etapa_anterior", "etapa_nueva", "cambiado_por", "fecha"],
 }
 
 
