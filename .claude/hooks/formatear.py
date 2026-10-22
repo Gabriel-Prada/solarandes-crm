@@ -20,9 +20,7 @@ def main() -> int:
         return 0
 
     subprocess.run([RUFF, "format", "--quiet", ruta], cwd=RAIZ)
-    revision = subprocess.run(
-        [RUFF, "check", "--fix", "--quiet", ruta], cwd=RAIZ, capture_output=True, text=True
-    )
+    revision = subprocess.run([RUFF, "check", "--fix", "--quiet", ruta], cwd=RAIZ, capture_output=True, text=True)
     if revision.returncode != 0:
         print(f"ruff encontró problemas en {ruta}:\n{revision.stdout}", file=sys.stderr)
         return 2

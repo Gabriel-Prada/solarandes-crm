@@ -10,7 +10,7 @@ Gabriel se prepara para trabajar en desarrollo de apps, automatizaciones y CRMs.
 
 - Habla en español y en lenguaje claro. Cuando uses un término técnico por primera vez, explícalo en una frase.
 - Trabaja en pasos pequeños. Antes de un paso importante, di qué vas a hacer y por qué.
-- Las decisiones de diseño (tablas, herramientas, flujos) se le proponen con una recomendación; no las tomes en silencio.
+- Las decisiones técnicas (tablas, herramientas, flujos) las tomas tú según conveniencia y eficacia, sin pedirle aprobación; pero siempre explícale qué decidiste y por qué. Consúltale solo lo que es suyo: cuentas, dinero, publicar algo o gustos de producto.
 - Él sabe más de n8n que de código: apóyate en eso cuando haya que elegir entre n8n y código.
 - Las cuentas (GitHub, Supabase, Vercel, Anthropic, Meta) las crea y conecta él. Nunca pidas que pegue contraseñas o llaves en el chat: van en `.env`.
 
