@@ -1,0 +1,22 @@
+# Entorno de Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Secretos: nunca se suben
+.env
+.env.*
+!.env.example
+
+# Node / Next.js (fase 1)
+node_modules/
+.next/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Configuración personal de Claude Code (la del proyecto sí se sube)
+.claude/settings.local.json

@@ -1,0 +1,1001 @@
+id,tipo,nombre,empresa,telefono,email,ciudad,direccion,estrato,consumo_kwh_mes,canal_origen,asesor_id,creado_en
+C0001,hogar,Miguel Ortega Rodríguez,,+573180353349,miguel.ortega@example.net,Medellín,Calle 7ª # 37O-73 Sur,6,458,whatsapp,U03,2025-10-21 09:33
+C0002,negocio,Milena Correa Ordóñez,Hotel López,+573107183160,hotel.lopez@example.org,Bogotá,"Av. Archipiélago de San Andrés, Providencia y Santa Catalina # 12-81 Sur",,2001,anuncios,U02,2025-10-21 16:33
+C0003,negocio,Enrique Pulido Osorio,Taller Martínez,+573006837711,taller.martinez@example.org,Bogotá,Cl. 132 # 7-4,,4483,anuncios,U02,2025-10-22 14:18
+C0004,hogar,Deisy Reyes Salazar,,+573041981549,deisy.reyes@example.org,Cali,Cr. 154G Sur # 21-4,3,202,anuncios,U04,2025-10-23 09:06
+C0005,negocio,Daniel Fernández,Lavandería Velásquez,+573148222756,lavanderia.velasquez@example.net,Cali,Cr. 31 # 33-5 Este,,1392,referido,U04,2025-10-23 12:07
+C0006,negocio,Fredy Salcedo Vargas,Taller Velásquez S.A.S.,+573026069119,taller.velasquez@example.org,Bogotá,Avenida carrera 153 # 42-4 Este,,1007,referido,U02,2025-10-25 11:54
+C0007,hogar,Hugo Benítez Gómez,,+573004968550,hugo.benitez@example.org,Bogotá,Dg. 79 Este # 7M-7,5,323,anuncios,U02,2025-10-25 14:08
+C0008,hogar,Tatiana Jaimes,,+573154763862,tatiana.jaimes@example.net,Bogotá,Calle 62 # 39-5 Este,4,322,anuncios,U02,2025-10-26 08:59
+C0009,hogar,Kelly Suárez,,+573505963924,kelly.suarez@example.net,Bogotá,Diagonal 53 # 6-9 Sur,4,325,anuncios,U02,2025-10-26 16:03
+C0010,hogar,María Osorio Bedoya,,+573174250676,maria.osorio@example.com,Bogotá,Cl. 94 # 26-8 Este,2,190,anuncios,U02,2025-10-26 16:18
+C0011,negocio,Mario Buitrago,Supermercado Paz,+573104468479,supermercado.paz@example.com,Bogotá,Calle 57 # 8B-41,,2700,anuncios,U02,2025-10-26 16:58
+C0012,hogar,Rodolfo Barrera,,+573509128946,rodolfo.barrera@example.com,Bogotá,Calle 5 Este # 5-7 Este,6,533,whatsapp,U02,2025-10-26 18:51
+C0013,negocio,Luz Mejía,Droguería Cano S.A.S.,+573236311051,drogueria.cano@example.net,Cali,Cl. 48 # 11-7 Sur,,2815,anuncios,U04,2025-10-27 15:45
+C0014,hogar,Ruth Barrera Bohórquez,,+573178771873,ruth.barrera@example.com,Bogotá,Cr. 2Q # 5-48,3,167,whatsapp,U02,2025-10-27 17:08
+C0015,hogar,Víctor Quintero Contreras,,+573177633753,victor.quintero@example.net,Cali,Tr. 168 Bis O # 2-3,4,276,whatsapp,U04,2025-10-27 17:18
+C0016,hogar,Rosa Perea Vásquez,,+573233203785,rosa.perea@example.org,Medellín,Tr. 18 # 6V-8 Este,5,444,referido,U03,2025-10-27 18:58
+C0017,hogar,Arturo Torres,,+573112140544,arturo.torres@example.net,Medellín,Avenida carrera 123 # 9P-3 Sur,3,214,referido,U03,2025-10-28 17:03
+C0018,negocio,Elsy Aguilar,Colegio Fajardo,+573148576689,colegio.fajardo@example.org,Cali,Cl. 36 # 5R-8 Sur,,2272,anuncios,U04,2025-10-29 08:26
+C0019,hogar,Matilde Páez,,+573022150410,matilde.paez@example.net,Bogotá,Cl. 51 # 3S-5 Sur,6,720,anuncios,U02,2025-10-29 13:53
+C0020,hogar,Germán Martínez,,+573144330650,german.martinez@example.net,Bogotá,Carrera 151 # 22N-56 Este,2,138,web,U02,2025-10-30 11:23
+C0021,negocio,Elena Reyes,Hotel Gutiérrez,+573029586587,hotel.gutierrez@example.org,Bogotá,Calle 15 # 2-5,,2510,web,U02,2025-10-30 12:30
+C0022,hogar,Luz Alarcón Gallego,,+573507492722,luz.alarcon@example.com,Bogotá,Carrera 6ª # 53-4,4,285,whatsapp,U02,2025-10-30 12:58
+C0023,hogar,Elcy Bermúdez Rojas,,+573187829396,elcy.bermudez@example.org,Bogotá,Avenida Carlos Leonardo Flórez Cárdenas # 47-8 Este,3,203,anuncios,U02,2025-10-30 13:36
+C0024,negocio,Lina Meneses Silva,Panadería Barreto S.A.S.,+573500596825,panaderia.barreto@example.net,Bogotá,Calle 1ª # 2-88 Este,,2951,referido,U02,2025-10-30 15:53
+C0025,hogar,Carlos Rodríguez,,+573158207969,carlos.rodriguez@example.org,Bogotá,Tr. 13 # 4-30 Este,4,277,referido,U02,2025-10-31 08:41
+C0026,hogar,Miguel Becerra,,+573234646951,miguel.becerra@example.net,Medellín,Transversal 63Y Sur # 4-74 Este,5,307,anuncios,U03,2025-10-31 09:17
+C0027,hogar,Yolima Valencia,,+573138117608,yolima.valencia@example.net,Bogotá,Av. calle 174 # 22M-8 Este,4,215,referido,U02,2025-10-31 10:31
+C0028,hogar,Fernanda Mosquera,,+573001767066,fernanda.mosquera@example.net,Medellín,Av. carrera 2ª # 44-3,3,183,whatsapp,U03,2025-10-31 16:47
+C0029,hogar,Esther Valencia Escobar,,+573026211807,esther.valencia@example.net,Bogotá,Cl. 59 # 5-3 Este,2,170,web,U02,2025-11-01 08:47
+C0030,hogar,Mauricio Hernández,,+573138586020,mauricio.hernandez@example.net,Medellín,Diagonal 97 # 99-74 Sur,5,486,web,U03,2025-11-03 10:17
+C0031,negocio,Amparo Castellanos,Carnicería Vélez S.A.S.,+573119105950,carniceria.velez@example.net,Medellín,Cl. 43 # 1-52,,3946,web,U03,2025-11-03 13:57
+C0032,hogar,Rosario Franco Niño,,+573507106560,rosario.franco@example.com,Bogotá,Cr. 67 # 21-6,4,225,anuncios,U02,2025-11-03 15:27
+C0033,hogar,Nidia Gómez Moreno,,+573128016005,nidia.gomez@example.net,Bogotá,Avenida calle 110 # 66-74,6,565,whatsapp,U02,2025-11-04 12:01
+C0034,hogar,Johanna Agudelo,,+573001800127,johanna.agudelo@example.net,Medellín,Dg. 85J # 12-3 Este,5,474,anuncios,U03,2025-11-04 13:02
+C0035,hogar,David Olaya,,+573162401414,david.olaya@example.com,Bogotá,Calle 77 # 54-6 Sur,3,203,anuncios,U02,2025-11-04 13:28
+C0036,hogar,Fabiola Ríos,,+573105332371,fabiola.rios@example.com,Bogotá,Avenida Leonel Arboleda Muñoz # 4-75 Este,4,216,anuncios,U02,2025-11-05 10:45
+C0037,hogar,Paola Benavides Castellanos,,+573015114738,paola.benavides@example.net,Cali,Avenida carrera 168 # 6V-4,3,242,whatsapp,U04,2025-11-05 11:05
+C0038,hogar,Jhoan Flórez,,+573128490239,jhoan.florez@example.org,Medellín,Calle 17 # 2-8,5,392,whatsapp,U03,2025-11-05 14:57
+C0039,hogar,Mónica Cárdenas Bustamante,,+573127836261,monica.cardenas@example.org,Bogotá,Cr. 164F # 7-36 Este,4,333,referido,U02,2025-11-05 17:40
+C0040,hogar,Jairo Vélez,,+573504553337,jairo.velez@example.com,Medellín,Tr. 43 # 3X-32 Este,2,131,referido,U03,2025-11-06 11:29
+C0041,hogar,Nubia Castillo Cáceres,,+573164068107,nubia.castillo@example.org,Bogotá,Cl. 113U # 9-92,3,218,web,U02,2025-11-06 12:43
+C0042,hogar,Martha Díaz,,+573043293469,martha.diaz@example.org,Medellín,Calle 93 # 20-30 Sur,5,482,whatsapp,U03,2025-11-06 12:48
+C0043,hogar,Nancy Sánchez Benavides,,+573135893173,nancy.sanchez@example.org,Bogotá,Calle 125 # 68-4 Sur,3,237,anuncios,U02,2025-11-07 12:31
+C0044,hogar,Luis Bernal Salamanca,,+573127894436,luis.bernal@example.com,Cali,Cl. 1 Bis # 80-13,4,202,referido,U04,2025-11-07 16:55
+C0045,negocio,Jairo González,Carnicería García,+573111943688,carniceria.garcia@example.com,Medellín,Cr. 112F # 4-76,,1472,anuncios,U03,2025-11-07 17:44
+C0046,hogar,Alexandra Moreno Córdoba,,+573012029881,alexandra.moreno@example.net,Bogotá,Cr. 31 # 25-4 Sur,4,248,anuncios,U02,2025-11-08 12:26
+C0047,hogar,Alba Rodríguez Luna,,+573102119527,alba.rodriguez@example.net,Medellín,Carrera 117 # 1-5 Este,4,286,anuncios,U03,2025-11-08 14:54
+C0048,hogar,Carolina Angulo Zuluaga,,+573149227731,carolina.angulo@example.org,Bogotá,Cl. 118P # 2-2,4,262,anuncios,U02,2025-11-08 18:00
+C0049,hogar,Sandra Sánchez Velandia,,+573180912524,sandra.sanchez@example.com,Medellín,Transversal 29 Bis H # 48-95,3,258,web,U03,2025-11-10 09:39
+C0050,hogar,Aida Carvajal,,+573200658372,aida.carvajal@example.net,Bogotá,Cl. 22 # 21S-5 Sur,4,300,whatsapp,U02,2025-11-10 14:04
+C0051,negocio,Alejandro Sánchez,Ferretería Orozco S.A.S.,+573110119112,ferreteria.orozco@example.com,Medellín,Calle 18 # 26G-41 Sur,,1770,referido,U03,2025-11-10 14:21
+C0052,negocio,Alonso Maldonado,Colegio Mejía S.A.S.,+573170667027,colegio.mejia@example.com,Cali,Cl. 37 # 32-66 Este,,1058,referido,U04,2025-11-10 17:05
+C0053,hogar,Andrea Morales,,+573119972285,andrea.morales@example.net,Cali,Cl. 35 Bis V # 6-8 Sur,5,475,whatsapp,U04,2025-11-12 11:36
+C0054,negocio,Luz Vargas,Hotel Guerrero,+573172686358,hotel.guerrero@example.com,Cali,Av. Caldas # 9-75 Sur,,2373,whatsapp,U04,2025-11-12 12:10
+C0055,hogar,Gisela Galvis,,+573006667480,gisela.galvis@example.com,Cali,Cr. 22 # 3-9 Sur,5,296,web,U04,2025-11-12 15:07
+C0056,hogar,David Sánchez Gómez,,+573108631648,david.sanchez@example.com,Medellín,Carrera 3ª # 21-72 Sur,3,212,whatsapp,U03,2025-11-13 10:53
+C0057,negocio,Carlos Romero Pérez,Colegio Valencia,+573144562056,colegio.valencia@example.net,Bogotá,Avenida carrera 34 # 61-80 Este,,1274,web,U02,2025-11-13 12:35
+C0058,negocio,Mery Caicedo Ospina,Taller Rodríguez,+573182757452,taller.rodriguez@example.org,Medellín,Calle 77 # 6-7,,1655,whatsapp,U03,2025-11-14 12:55
+C0059,negocio,Jaime Prieto Cardona,Colegio Rodríguez,+573044898915,colegio.rodriguez@example.net,Medellín,Carrera 32 # 2-48,,4217,referido,U03,2025-11-14 14:30
+C0060,hogar,Giovanny Salas,,+573212343902,giovanny.salas@example.com,Medellín,Cl. 14 # 45-81 Sur,6,501,web,U03,2025-11-15 10:07
+C0061,hogar,Cristian Tovar Morales,,+573138137789,cristian.tovar@example.com,Cali,Av. Tena # 1-48,5,404,whatsapp,U04,2025-11-15 14:35
+C0062,negocio,Yair Padilla,Gimnasio Giraldo,+573159566182,gimnasio.giraldo@example.org,Cali,Calle 64 # 8U-7,,1403,referido,U04,2025-11-15 14:52
+C0063,negocio,Mauricio Martínez Moreno,Gimnasio Barrera S.A.S.,+573040879932,gimnasio.barrera@example.org,Cali,Cr. 6M # 7-5 Este,,1797,anuncios,U04,2025-11-16 09:28
+C0064,hogar,Eliana Moreno Valencia,,+573049303515,eliana.moreno@example.com,Medellín,Cl. 147 Bis # 2-65 Este,3,246,web,U03,2025-11-16 15:25
+C0065,hogar,Aldair Mosquera,,+573002439576,aldair.mosquera@example.org,Medellín,Calle 124 # 66-39 Sur,6,733,anuncios,U03,2025-11-17 15:10
+C0066,hogar,Yolanda Valencia Ruiz,,+573167479448,yolanda.valencia@example.com,Cali,Tr. 5ª # 97S-3 Este,3,234,anuncios,U04,2025-11-17 15:24
+C0067,negocio,Valentina Castro Arango,Lavandería Díaz S.A.S.,+573119146640,lavanderia.diaz@example.net,Medellín,Cr. 83 # 48-64 Este,,3360,anuncios,U03,2025-11-17 16:12
+C0068,hogar,Patricia Vallejo,,+573146398878,patricia.vallejo@example.org,Medellín,Tr. 87 # 7-4,3,214,anuncios,U03,2025-11-18 08:25
+C0069,hogar,Mónica Durán Pérez,,+573505565214,monica.duran@example.net,Cali,Carrera 157 # 42-8,3,214,referido,U04,2025-11-18 15:25
+C0070,hogar,Ancizar Rodríguez Martínez,,+573025995285,ancizar.rodriguez@example.org,Bogotá,Avenida carrera 9ª # 2-9,4,249,anuncios,U02,2025-11-18 17:56
+C0071,negocio,Javier Serna,Lavandería López S.A.S.,+573156063323,lavanderia.lopez@example.com,Cali,Carrera 112 # 55N-22,,1526,referido,U04,2025-11-19 09:49
+C0072,hogar,Alfonso Uribe Vega,,+573504395582,alfonso.uribe@example.org,Bogotá,Avenida carrera 119 # 4K-1 Este,5,402,web,U02,2025-11-19 10:02
+C0073,hogar,Fabiola Barrera,,+573102293152,fabiola.barrera@example.com,Bogotá,Cr. 127 # 6X-1 Sur,6,386,whatsapp,U02,2025-11-19 12:55
+C0074,hogar,Héctor Reyes,,+573025073579,hector.reyes@example.net,Bogotá,Cl. 7P # 7-7 Este,4,293,anuncios,U02,2025-11-21 15:14
+C0075,hogar,Gonzalo Hoyos Beltrán,,+573217904613,gonzalo.hoyos@example.com,Bogotá,Carrera 67 # 26-3,3,152,anuncios,U02,2025-11-22 12:25
+C0076,hogar,Carolina Torres,,+573166441357,carolina.torres@example.org,Medellín,Carrera 187J # 6-6,4,299,whatsapp,U03,2025-11-22 16:36
+C0077,hogar,Diana Castañeda Zapata,,+573508668625,diana.castaneda@example.com,Bogotá,Cr. 98V # 6-15 Sur,5,406,whatsapp,U02,2025-11-23 13:03
+C0078,hogar,Fredy Muñoz Sánchez,,+573138085522,fredy.munoz@example.org,Cali,Cl. 8F # 5-4 Este,6,490,anuncios,U04,2025-11-24 08:30
+C0079,hogar,Johana Hernández,,+573133432972,johana.hernandez@example.com,Medellín,Calle 8B Este # 6-96,3,168,web,U03,2025-11-24 10:13
+C0080,negocio,Astrid Monroy,Panadería Torres S.A.S.,+573014447009,panaderia.torres@example.com,Bogotá,Cl. 25 # 2-5 Sur,,2038,anuncios,U02,2025-11-24 13:18
+C0081,hogar,Daniela Arévalo,,+573152519047,daniela.arevalo@example.com,Bogotá,Avenida Blanco # 47-85,3,163,anuncios,U02,2025-11-24 13:30
+C0082,hogar,Angie Carvajal,,+573152141410,angie.carvajal@example.com,Bogotá,Avenida Nariño # 6-32,4,267,anuncios,U02,2025-11-24 13:59
+C0083,hogar,Jair Rodríguez Martínez,,+573213863264,jair.rodriguez@example.com,Bogotá,Tr. 5K # 26J-6,3,178,whatsapp,U02,2025-11-24 17:48
+C0084,negocio,Magdalena Morales,Ferretería Perea,+573510909118,ferreteria.perea@example.net,Bogotá,Cl. 186 # 1-79,,1424,referido,U02,2025-11-24 18:32
+C0085,hogar,Guillermo Romero Torres,,+573047915839,guillermo.romero@example.org,Bogotá,Calle 65 # 39-30,2,179,whatsapp,U02,2025-11-25 14:07
+C0086,hogar,Didier Ortiz Mendoza,,+573518440258,didier.ortiz@example.net,Medellín,Av. carrera 8ª # 1-5 Este,6,590,anuncios,U03,2025-11-27 11:18
+C0087,hogar,Antonio Hurtado,,+573155827878,antonio.hurtado@example.org,Bogotá,Avenida carrera 177 # 28Y-72 Este,4,219,anuncios,U02,2025-11-27 14:04
+C0088,hogar,Alexander García Acosta,,+573158015701,alexander.garcia@example.org,Medellín,Calle 52A Bis # 80-6,3,256,whatsapp,U03,2025-11-27 18:55
+C0089,hogar,Elena Castellanos,,+573139961805,elena.castellanos@example.org,Medellín,Tr. 131 # 5-7 Este,4,237,anuncios,U03,2025-11-28 11:39
+C0090,negocio,Sandra Pérez Estrada,Taller Sánchez S.A.S.,+573176154460,taller.sanchez@example.net,Medellín,Cl. 30 Sur # 3-1,,4370,whatsapp,U03,2025-11-28 14:26
+C0091,hogar,Bibiana Pérez,,+573021797552,bibiana.perez@example.net,Medellín,Cl. 134 # 7-1 Sur,3,215,anuncios,U03,2025-11-28 18:12
+C0092,hogar,Guillermo Peña,,+573046422588,guillermo.pena@example.net,Cali,Cr. 76X # 8-5,3,217,anuncios,U04,2025-11-29 12:21
+C0093,hogar,Alonso Aguirre Sandoval,,+573204553049,alonso.aguirre@example.com,Cali,Carrera 43 # 56-43,4,280,anuncios,U04,2025-11-29 13:04
+C0094,negocio,Marcela Loaiza Martínez,Hotel Carrillo,+573144428766,hotel.carrillo@example.org,Bogotá,Cr. 184E # 3-2 Sur,,2402,whatsapp,U02,2025-11-29 15:12
+C0095,hogar,Daniela Trujillo,,+573189933597,daniela.trujillo@example.com,Cali,Carrera 14D # 88-22,4,306,anuncios,U04,2025-11-29 17:54
+C0096,negocio,Arturo León,Panadería Luna,+573005468231,panaderia.luna@example.net,Bogotá,Av. Vetas # 57L-9 Este,,1292,referido,U02,2025-11-30 11:45
+C0097,hogar,Luis Sánchez,,+573009175517,luis.sanchez@example.com,Bogotá,Avenida Norte de Santander # 7-15 Sur,3,204,whatsapp,U02,2025-11-30 12:18
+C0098,negocio,José López Peña,Taller Delgado,+573502094429,taller.delgado@example.org,Bogotá,Cr. 7E # 53G-6,,3402,anuncios,U02,2025-11-30 15:33
+C0099,hogar,Rosa Villamil,,+573138858251,rosa.villamil@example.org,Bogotá,Avenida carrera 124 # 28Q-46,5,474,referido,U02,2025-12-02 09:59
+C0100,negocio,Andrés Rodríguez,Ferretería Bedoya S.A.S.,+573206228551,ferreteria.bedoya@example.net,Bogotá,Cr. 4ª # 9-3 Sur,,4439,whatsapp,U02,2025-12-03 11:29
+C0101,hogar,Marina Zuluaga,,+573005297847,marina.zuluaga@example.com,Medellín,Cr. 33 # 16-4,3,249,anuncios,U03,2025-12-04 09:19
+C0102,hogar,Aida Guerra Henao,,+573178885551,aida.guerra@example.com,Cali,Avenida Eugenia Omaira Salazar López # 6-7 Este,3,202,anuncios,U04,2025-12-04 11:48
+C0103,hogar,Victoria Camacho Castro,,+573211083553,victoria.camacho@example.org,Medellín,Cl. 51 # 91-2 Este,5,372,whatsapp,U03,2025-12-05 12:51
+C0104,negocio,Paula Yepes,Supermercado Cruz,+573111340487,supermercado.cruz@example.net,Bogotá,Cl. 71X Sur # 9-28 Este,,3058,whatsapp,U02,2025-12-05 16:25
+C0105,negocio,Anderson Cifuentes,Panadería Gómez S.A.S.,+573144722614,panaderia.gomez@example.net,Bogotá,Calle 42 # 76-9 Este,,3222,web,U02,2025-12-06 09:05
+C0106,negocio,José Montoya Zapata,Lavandería Martínez,+573179326149,lavanderia.martinez@example.com,Medellín,Carrera 27 # 7-70 Este,,1864,whatsapp,U03,2025-12-06 10:10
+C0107,negocio,Edna Palacio,Panadería Galvis S.A.S.,+573114525479,panaderia.galvis@example.org,Bogotá,Dg. 9N Bis # 17-73 Sur,,1993,whatsapp,U02,2025-12-06 10:13
+C0108,hogar,Mary Montoya,,+573122946536,mary.montoya@example.org,Cali,Carrera 98 # 84W-45,3,207,anuncios,U04,2025-12-06 11:19
+C0109,negocio,Lilia Jiménez Sánchez,Carnicería Estrada S.A.S.,+573025563620,carniceria.estrada@example.org,Bogotá,Carrera 5ª # 2-51 Sur,,3950,web,U02,2025-12-06 14:04
+C0110,hogar,Paola Torres,,+573204989513,paola.torres@example.net,Cali,Diagonal 56 # 57-5 Sur,6,604,whatsapp,U04,2025-12-06 14:30
+C0111,negocio,Andrea Arias,Droguería Pedraza,+573002131420,drogueria.pedraza@example.org,Bogotá,Avenida carrera 54 # 79-8,,3760,web,U02,2025-12-07 13:09
+C0112,hogar,Carlos Torres Triana,,+573502336004,carlos.torres@example.com,Cali,Calle 6ª # 99-9 Sur,5,370,anuncios,U04,2025-12-08 14:39
+C0113,negocio,Antonio Alzate,Hotel Córdoba,+573150374634,hotel.cordoba@example.net,Medellín,Av. calle 189 # 8G-14 Este,,3696,anuncios,U03,2025-12-08 18:47
+C0114,negocio,Fernando Bejarano Arenas,Droguería Meza,+573112496174,drogueria.meza@example.com,Cali,Avenida calle 54 # 54-40,,1444,anuncios,U04,2025-12-09 10:05
+C0115,hogar,Alexandra Salcedo,,+573189624270,alexandra.salcedo@example.net,Bogotá,Diagonal 83 # 6-7 Este,4,313,anuncios,U02,2025-12-09 15:05
+C0116,hogar,Dayana Gómez Barreto,,+573175357290,dayana.gomez@example.com,Medellín,Cr. 7ª # 7-5,4,215,web,U03,2025-12-09 18:28
+C0117,negocio,Martha Acosta,Panadería Suárez S.A.S.,+573164114305,panaderia.suarez@example.net,Cali,Tr. 64 # 6X-61 Este,,1432,referido,U04,2025-12-10 09:16
+C0118,hogar,Viviana Gómez Hurtado,,+573508571003,viviana.gomez@example.net,Bogotá,Cl. 46 # 58U-98 Sur,6,702,web,U02,2025-12-10 16:22
+C0119,hogar,José Álvarez,,+573159079267,jose.alvarez@example.com,Cali,Av. calle 131 # 23G-95,3,254,anuncios,U04,2025-12-11 08:11
+C0120,hogar,Alejandra Vargas López,,+573154610322,alejandra.vargas@example.com,Bogotá,Carrera 45 # 72-4 Sur,4,280,whatsapp,U02,2025-12-11 13:59
+C0121,hogar,Iván Henao Gutiérrez,,+573046399121,ivan.henao@example.org,Bogotá,Calle 37 # 44-1,4,229,anuncios,U02,2025-12-11 15:28
+C0122,hogar,Andrés Cardozo,,+573211898077,andres.cardozo@example.com,Medellín,Cr. 27 # 3-97 Este,3,214,anuncios,U03,2025-12-11 16:19
+C0123,hogar,Jessica Meneses Valencia,,+573100990241,jessica.meneses@example.net,Cali,Tr. 131V # 35Q-6 Sur,5,392,whatsapp,U04,2025-12-11 16:53
+C0124,hogar,Víctor Saavedra,,+573129609545,victor.saavedra@example.com,Bogotá,Carrera 19 # 26B-63 Sur,3,244,anuncios,U02,2025-12-12 10:10
+C0125,hogar,Esther Angarita Rincón,,+573051316477,esther.angarita@example.org,Medellín,Cl. 180 # 45C-78,4,296,whatsapp,U03,2025-12-13 11:37
+C0126,hogar,Luisa Gaviria,,+573056335138,luisa.gaviria@example.com,Cali,Cl. 17 # 6-75 Este,4,225,referido,U04,2025-12-13 12:26
+C0127,hogar,Julia Villamil Nieto,,+573102836155,julia.villamil@example.net,Bogotá,Cl. 9ª # 3E-4,5,441,anuncios,U02,2025-12-13 12:52
+C0128,negocio,Carlos León,Lavandería Flórez,+573024466804,lavanderia.florez@example.net,Cali,Cr. 143 # 8-4 Este,,1575,anuncios,U04,2025-12-13 15:38
+C0129,hogar,Hernando Ramírez Villamil,,+573040576693,hernando.ramirez@example.com,Medellín,Cr. 1X # 5-24 Sur,5,316,referido,U03,2025-12-13 16:54
+C0130,hogar,Yolima Salamanca,,+573231954142,yolima.salamanca@example.net,Medellín,Calle 74 # 90-3 Este,3,194,web,U03,2025-12-14 12:09
+C0131,hogar,David Sánchez,,+573114302048,david.sanchez@example.net,Cali,Cl. 26W # 1Q-3 Este,6,657,anuncios,U04,2025-12-14 12:16
+C0132,hogar,Sandra Mercado Jaimes,,+573058906905,sandra.mercado@example.net,Bogotá,Carrera 15 # 7-62,5,484,referido,U02,2025-12-15 13:37
+C0133,negocio,Luis Vargas,Restaurante González,+573515213942,restaurante.gonzalez@example.com,Bogotá,Av. carrera 30 # 74-24 Este,,2341,web,U02,2025-12-15 16:11
+C0134,hogar,Gilma Loaiza,,+573155606854,gilma.loaiza@example.org,Cali,Cl. 36 # 7-48,4,347,whatsapp,U04,2025-12-16 10:14
+C0135,hogar,Javier Hernández Gómez,,+573168228959,javier.hernandez@example.net,Medellín,Tr. 5Y # 50-27,4,294,anuncios,U03,2025-12-16 14:16
+C0136,hogar,Adriana Murillo Giraldo,,+573110640696,adriana.murillo@example.com,Medellín,Carrera 122W Bis # 74-75 Sur,4,274,whatsapp,U03,2025-12-17 08:40
+C0137,negocio,Lady Morales,Gimnasio Sánchez,+573022858488,gimnasio.sanchez@example.org,Bogotá,Calle 118E # 1-75 Sur,,3670,whatsapp,U02,2025-12-17 15:03
+C0138,hogar,Ignacio Morales,,+573026053815,ignacio.morales@example.com,Medellín,Carrera 140 # 32-3,5,436,anuncios,U03,2025-12-17 16:25
+C0139,hogar,Eduard Velasco Carrillo,,+573187813479,eduard.velasco@example.org,Cali,Cr. 159 Sur # 17-66 Sur,4,205,anuncios,U04,2025-12-18 08:30
+C0140,hogar,Guillermo Cárdenas Uribe,,+573510576547,guillermo.cardenas@example.org,Bogotá,Cr. 4O # 72-41 Sur,5,495,anuncios,U02,2025-12-18 08:41
+C0141,hogar,Marina Patiño,,+573184655528,marina.patino@example.com,Medellín,Cr. 86K # 96Y-28 Sur,3,162,referido,U03,2025-12-18 11:44
+C0142,hogar,Miguel Marín,,+573144271817,miguel.marin@example.net,Bogotá,Cl. 171 # 7-13 Este,6,585,anuncios,U02,2025-12-18 12:51
+C0143,hogar,Carlos Sierra,,+573022736830,carlos.sierra@example.org,Bogotá,Avenida Tangua # 7F-6 Este,3,199,whatsapp,U02,2025-12-19 18:31
+C0144,hogar,Blanca Valencia,,+573040626104,blanca.valencia@example.com,Bogotá,Cr. 146D # 9-60,3,165,whatsapp,U02,2025-12-19 18:41
+C0145,hogar,Paola Jiménez Durán,,+573200371475,paola.jimenez@example.org,Bogotá,Cl. 6ª # 5-47,4,224,anuncios,U02,2025-12-20 18:51
+C0146,hogar,Andrea Córdoba,,+573217854655,andrea.cordoba@example.net,Medellín,Cr. 3ª # 14-9,6,401,anuncios,U03,2025-12-21 12:17
+C0147,hogar,Milena Ramírez Gómez,,+573131199315,milena.ramirez@example.com,Cali,Avenida Chocó # 9-81,4,253,referido,U04,2025-12-22 10:03
+C0148,negocio,Erika Navarro Polo,Restaurante Ceballos,+573151252008,restaurante.ceballos@example.net,Medellín,Dg. 29 # 75-28,,2188,web,U03,2025-12-22 10:19
+C0149,negocio,David Gómez Barrios,Oficinas Martínez,+573055233002,oficinas.martinez@example.com,Bogotá,Cr. 169J # 23-2 Este,,1673,referido,U02,2025-12-22 14:32
+C0150,negocio,Andrea Rojas Calderón,Droguería Delgado,+573017074243,drogueria.delgado@example.com,Medellín,Av. Bojacá # 87-6,,1751,anuncios,U03,2025-12-22 16:39
+C0151,negocio,Milena Garzón Muñoz,Carnicería Díaz,+573162890197,carniceria.diaz@example.com,Cali,Calle 162 # 4-24 Sur,,1573,whatsapp,U04,2025-12-22 17:02
+C0152,hogar,Yesid Barrios Castillo,,+573107357193,yesid.barrios@example.com,Cali,Diagonal 8 Bis B # 8-42,2,151,web,U04,2025-12-23 15:37
+C0153,hogar,Alirio Mesa,,+573169579905,alirio.mesa@example.org,Medellín,Calle 78 # 6-71,4,307,whatsapp,U03,2025-12-25 08:06
+C0154,hogar,Luz Navarro,,+573516337969,luz.navarro@example.com,Bogotá,Calle 70Q Bis Z # 5-82,3,238,whatsapp,U02,2025-12-25 12:26
+C0155,hogar,Omaira Molina,,+573518399585,omaira.molina@example.net,Bogotá,Av. calle 119 # 3-3 Sur,3,184,anuncios,U02,2025-12-26 14:49
+C0156,hogar,Miguel Ibarra Cardona,,+573113138266,miguel.ibarra@example.org,Bogotá,Carrera 8U # 30C-91 Sur,4,225,anuncios,U02,2025-12-27 11:03
+C0157,hogar,Laura Durán,,+573231506309,laura.duran@example.net,Medellín,Diagonal 67 # 35-33 Sur,4,328,web,U03,2025-12-27 12:42
+C0158,hogar,Alberto Cruz,,+573018822591,alberto.cruz@example.org,Bogotá,Cr. 143K # 6-57,3,225,whatsapp,U02,2025-12-28 08:35
+C0159,hogar,Humberto González,,+573045029977,humberto.gonzalez@example.com,Bogotá,Carrera 8Q # 7-8 Este,5,332,anuncios,U02,2025-12-29 09:56
+C0160,hogar,Sergio Díaz,,+573162527977,sergio.diaz@example.org,Medellín,Cl. 2U # 79-53 Sur,3,225,referido,U03,2025-12-29 16:00
+C0161,hogar,Sandra Londoño,,+573101190235,sandra.londono@example.org,Medellín,Diagonal 90 # 45U-59 Sur,2,172,anuncios,U03,2025-12-29 16:39
+C0162,hogar,Augusto Calderón,,+573208082860,augusto.calderon@example.net,Cali,Av. Guainía # 6-23 Sur,6,656,whatsapp,U04,2025-12-30 15:01
+C0163,negocio,Sandra Suárez Muñoz,Colegio Buitrago,+573120716930,colegio.buitrago@example.net,Bogotá,Carrera 144 # 1-2 Sur,,4107,web,U02,2025-12-30 15:59
+C0164,hogar,Johan Cardona,,+573124025739,johan.cardona@example.org,Bogotá,Carrera 47 # 14I-6,5,293,whatsapp,U02,2025-12-30 18:38
+C0165,hogar,Stella Ramírez Pulido,,+573104452036,stella.ramirez@example.net,Bogotá,Calle 28N Este # 99V-81 Este,3,165,referido,U02,2025-12-31 13:10
+C0166,hogar,Cristian Alzate,,+573175892147,cristian.alzate@example.net,Bogotá,Calle 138I # 2-6,6,606,referido,U02,2025-12-31 14:28
+C0167,hogar,Paola Córdoba,,+573214647776,paola.cordoba@example.org,Cali,Cr. 77 # 22-98 Sur,6,393,whatsapp,U04,2025-12-31 14:57
+C0168,hogar,Camila Ramos,,+573162629981,camila.ramos@example.net,Cali,Cr. 24 # 1H-2 Sur,4,206,whatsapp,U04,2025-12-31 16:13
+C0169,hogar,Jhon Uribe Mercado,,+573235016190,jhon.uribe@example.org,Bogotá,Cr. 9ª # 42-2,4,264,anuncios,U02,2026-01-01 08:35
+C0170,hogar,Felipe Contreras Hernández,,+573004962247,felipe.contreras@example.com,Bogotá,Carrera 5ª # 5-41 Sur,3,260,web,U02,2026-01-01 14:17
+C0171,hogar,Luz Palacios,,+573002633724,luz.palacios@example.net,Medellín,Calle 5J # 57-63,6,600,anuncios,U03,2026-01-01 17:29
+C0172,hogar,Lorenzo Castro,,+573184421492,lorenzo.castro@example.com,Medellín,Avenida calle 152 # 17-8,5,347,whatsapp,U03,2026-01-02 13:39
+C0173,hogar,Alirio González Manrique,,+573027801196,alirio.gonzalez@example.com,Cali,Cr. 169 # 82-19 Sur,4,311,web,U04,2026-01-02 18:50
+C0174,negocio,David Alzate,Colegio Rincón,+573149615134,colegio.rincon@example.org,Bogotá,Cl. 93 # 78-2 Este,,3848,web,U02,2026-01-03 10:39
+C0175,hogar,Andrés Bedoya,,+573051103737,andres.bedoya@example.com,Bogotá,Cl. 157J # 67-83 Este,3,252,anuncios,U02,2026-01-03 17:11
+C0176,hogar,María García Bravo,,+573161338128,maria.garcia@example.org,Bogotá,Cl. 85 # 52-93 Este,4,278,referido,U02,2026-01-04 13:57
+C0177,hogar,Mayra González Bernal,,+573111896073,mayra.gonzalez@example.net,Medellín,Cr. 140 # 37-29 Este,3,160,anuncios,U03,2026-01-04 14:41
+C0178,negocio,Carlos Flórez Gutiérrez,Lavandería Tovar S.A.S.,+573109738504,lavanderia.tovar@example.org,Bogotá,Av. carrera 7ª # 2-3 Sur,,3581,anuncios,U02,2026-01-04 15:29
+C0179,hogar,Ximena Sánchez,,+573234650660,ximena.sanchez@example.net,Bogotá,Carrera 133U Bis Z # 6-31 Sur,3,177,anuncios,U02,2026-01-05 12:34
+C0180,hogar,Wilman Jaimes,,+573513146590,wilman.jaimes@example.com,Bogotá,Av. carrera 68 # 1-75 Sur,6,614,web,U02,2026-01-05 14:01
+C0181,hogar,Luis Gaviria,,+573178802211,luis.gaviria@example.net,Medellín,Diagonal 197 # 5-78 Este,4,325,web,U03,2026-01-05 15:32
+C0182,negocio,Cristina Quintero Cabrera,Gimnasio Gallego,+573113356340,gimnasio.gallego@example.org,Bogotá,Cl. 71 # 8Q-7,,3443,anuncios,U02,2026-01-06 17:04
+C0183,hogar,Angie Ortiz,,+573005120389,angie.ortiz@example.net,Bogotá,Carrera 183 # 28-8 Este,4,248,anuncios,U02,2026-01-07 09:07
+C0184,hogar,Jorge Parra,,+573514944247,jorge.parra@example.org,Medellín,Diagonal 105V Este # 9L-9,4,254,anuncios,U03,2026-01-09 10:06
+C0185,hogar,Milena Velásquez Herrera,,+573155010239,milena.velasquez@example.net,Cali,Calle 27 # 18-23 Sur,3,213,referido,U04,2026-01-09 14:15
+C0186,hogar,Nelson Flórez,,+573236581968,nelson.florez@example.org,Bogotá,Cl. 15 # 23-75 Este,4,284,anuncios,U02,2026-01-09 17:49
+C0187,hogar,Johana Guevara Castillo,,+573045758952,johana.guevara@example.net,Bogotá,Carrera 193 Sur # 9-26,2,135,web,U02,2026-01-10 12:49
+C0188,hogar,Jesús Quintero Gómez,,+573180675210,jesus.quintero@example.com,Cali,Carrera 102W # 81-4,4,233,referido,U04,2026-01-10 14:13
+C0189,negocio,Dora Suárez Suárez,Panadería Palacios,+573012699329,panaderia.palacios@example.com,Bogotá,Diagonal 5ª # 3-2 Este,,2084,web,U02,2026-01-10 15:54
+C0190,hogar,Margarita Cruz,,+573181521428,margarita.cruz@example.net,Bogotá,Avenida José Blanco # 2-76 Este,4,318,referido,U02,2026-01-10 15:55
+C0191,hogar,Mauricio Muñoz Navarro,,+573110681931,mauricio.munoz@example.org,Cali,Cl. 18 # 83-29 Sur,4,343,web,U04,2026-01-10 18:21
+C0192,hogar,Patricia Gómez,,+573009599470,patricia.gomez@example.org,Bogotá,Avenida Cauca # 4H-7 Sur,6,635,whatsapp,U02,2026-01-11 09:22
+C0193,hogar,David Montoya Sánchez,,+573509044492,david.montoya@example.com,Cali,Tr. 129 Este # 1-5 Sur,6,580,anuncios,U04,2026-01-11 10:46
+C0194,hogar,Luz Orozco,,+573050138068,luz.orozco@example.org,Cali,Transversal 174 Bis H # 7-2 Sur,5,302,anuncios,U04,2026-01-11 11:13
+C0195,negocio,Teresa Cano Arévalo,Oficinas Estrada,+573171995243,oficinas.estrada@example.org,Cali,Carrera 13 # 64-28 Sur,,1424,referido,U04,2026-01-11 12:24
+C0196,negocio,Francisco Rivas Núñez,Lavandería Duque,+573000754534,lavanderia.duque@example.net,Cali,Cr. 66 # 5-8,,3733,whatsapp,U04,2026-01-11 12:41
+C0197,hogar,Ana Pedraza,,+573181455645,ana.pedraza@example.com,Medellín,Cr. 9ª # 69-4,3,205,web,U03,2026-01-11 18:52
+C0198,hogar,Nilson Barragán,,+573159000954,nilson.barragan@example.net,Bogotá,Cr. 35 # 7H-3 Este,3,166,anuncios,U02,2026-01-12 12:58
+C0199,hogar,Ismael Vera Vélez,,+573136213185,ismael.vera@example.com,Cali,Carrera 20 # 39M-49 Este,3,171,referido,U04,2026-01-12 15:30
+C0200,hogar,José Fernández,,+573004544522,jose.fernandez@example.net,Medellín,Calle 16 # 9-4 Sur,4,227,anuncios,U03,2026-01-12 16:14
+C0201,negocio,Jorge Naranjo,Taller Medina S.A.S.,+573169786644,taller.medina@example.com,Medellín,Transversal 4ª # 75-8 Este,,3368,whatsapp,U03,2026-01-12 17:03
+C0202,hogar,Manuela Díaz Córdoba,,+573042400548,manuela.diaz@example.net,Cali,Diagonal 56 # 8-8 Sur,3,211,anuncios,U04,2026-01-13 08:25
+C0203,hogar,Paola Sierra,,+573129337510,paola.sierra@example.net,Medellín,Dg. 4 Sur # 7T-98 Este,5,306,web,U03,2026-01-13 15:48
+C0204,hogar,Wilson Leal,,+573188607533,wilson.leal@example.com,Bogotá,Cl. 3ª # 86-3 Sur,4,240,anuncios,U02,2026-01-14 09:06
+C0205,negocio,Viviana Jaramillo Silva,Hotel Arenas,+573011170622,hotel.arenas@example.org,Cali,Carrera 3ª # 67-10 Este,,3608,whatsapp,U04,2026-01-14 10:46
+C0206,hogar,Fernando Castañeda,,+573056046905,fernando.castaneda@example.com,Cali,Cl. 164F # 56-2 Este,6,722,whatsapp,U04,2026-01-14 11:38
+C0207,hogar,Héctor Acosta,,+573114158025,hector.acosta@example.com,Bogotá,Cl. 8ª # 7-33 Sur,6,422,whatsapp,U02,2026-01-14 12:42
+C0208,hogar,Catalina Ayala Palacios,,+573159302690,catalina.ayala@example.net,Bogotá,Carrera 64 # 5-61,4,305,referido,U02,2026-01-14 12:59
+C0209,hogar,Sofía González Ortiz,,+573154470387,sofia.gonzalez@example.net,Medellín,Avenida carrera 142 # 44-6,3,165,anuncios,U03,2026-01-14 18:17
+C0210,negocio,Edna Acevedo,Droguería Páez,+573149043904,drogueria.paez@example.org,Bogotá,Cr. 72 # 8-9 Este,,1099,anuncios,U02,2026-01-15 09:44
+C0211,hogar,Stella Rojas,,+573117963742,stella.rojas@example.net,Bogotá,Carrera 24 # 5-1 Sur,3,167,whatsapp,U02,2026-01-15 11:18
+C0212,hogar,Iván Sierra Sanabria,,+573106998619,ivan.sierra@example.com,Medellín,Av. García # 1F-37 Este,4,290,web,U03,2026-01-15 12:08
+C0213,hogar,Carlos Ávila Ortiz,,+573021007497,carlos.avila@example.com,Medellín,Calle 121 # 4-12,4,311,anuncios,U03,2026-01-16 12:44
+C0214,hogar,Tulia Perea Manrique,,+573181633105,tulia.perea@example.org,Cali,Carrera 30 # 9O-6,4,226,anuncios,U04,2026-01-16 13:09
+C0215,hogar,Alberto Vásquez,,+573110166592,alberto.vasquez@example.org,Medellín,Calle 6B # 4-1 Este,3,246,referido,U03,2026-01-16 15:21
+C0216,hogar,Carmen Guerrero,,+573053829496,carmen.guerrero@example.com,Medellín,Cr. 33 # 1-9 Este,4,265,anuncios,U03,2026-01-16 15:26
+C0217,hogar,Eva Pinzón,,+573237994077,eva.pinzon@example.com,Medellín,Av. Coyaima # 30-7,6,632,web,U03,2026-01-16 18:31
+C0218,negocio,Daniel Parra,Carnicería Gonzáles,+573185859154,carniceria.gonzales@example.com,Medellín,Cr. 51B # 3-64 Sur,,1482,web,U03,2026-01-17 11:22
+C0219,hogar,Jesús Castro Rodríguez,,+573109184749,jesus.castro@example.org,Cali,Calle 2I # 3X-98 Este,5,419,whatsapp,U04,2026-01-17 11:31
+C0220,hogar,Alex Díaz,,+573135022133,alex.diaz@example.com,Cali,Carrera 35 # 12-3 Este,4,208,anuncios,U04,2026-01-17 13:08
+C0221,negocio,Marisol Correa Arias,Supermercado Alzate,+573134411226,supermercado.alzate@example.com,Cali,Carrera 117N # 24-61 Sur,,2777,referido,U04,2026-01-17 15:34
+C0222,hogar,Lucía Mosquera,,+573027567211,lucia.mosquera@example.net,Bogotá,Transversal 179H # 1Z-8,3,232,anuncios,U02,2026-01-17 18:07
+C0223,hogar,Ana Guzmán Obando,,+573236780953,ana.guzman@example.org,Bogotá,Cl. 156U # 6-8 Sur,5,422,whatsapp,U02,2026-01-18 08:19
+C0224,negocio,Alexandra Hernández Giraldo,Colegio Obando S.A.S.,+573008053266,colegio.obando@example.net,Bogotá,Diagonal 77U # 3-98,,3386,anuncios,U02,2026-01-18 10:46
+C0225,hogar,Rafael Giraldo Romero,,+573507652631,rafael.giraldo@example.com,Bogotá,Carrera 75 # 19-5 Este,2,166,web,U02,2026-01-19 16:40
+C0226,negocio,Luis Ocampo,Droguería Espinosa,+573515205234,drogueria.espinosa@example.com,Medellín,Cl. 184 # 2-6 Este,,4488,whatsapp,U03,2026-01-19 18:49
+C0227,hogar,Danilo Herrera,,+573174582756,danilo.herrera@example.com,Bogotá,Dg. 79 # 32-73 Sur,3,171,anuncios,U02,2026-01-20 12:53
+C0228,hogar,José Soto Torres,,+573163972086,jose.soto@example.com,Bogotá,Carrera 61N # 9-7,4,287,anuncios,U02,2026-01-20 17:50
+C0229,negocio,Jesús Barrera Pérez,Ferretería Jaramillo,+573025210161,ferreteria.jaramillo@example.net,Medellín,Calle 138 # 8-8,,1124,anuncios,U03,2026-01-20 18:10
+C0230,hogar,Luis Muñoz Ortiz,,+573239851973,luis.munoz@example.org,Bogotá,Cl. 7A # 71-8 Sur,3,251,anuncios,U02,2026-01-21 13:07
+C0231,negocio,Juan Buitrago,Panadería García S.A.S.,+573103120649,panaderia.garcia@example.net,Bogotá,Calle 12 # 40-87 Este,,1442,anuncios,U02,2026-01-21 14:55
+C0232,negocio,Óscar Salas Bedoya,Panadería Camargo,+573183625349,panaderia.camargo@example.com,Medellín,Cl. 95 # 5-16,,3954,anuncios,U03,2026-01-21 16:56
+C0233,hogar,Paola Cardona Salazar,,+573211707972,paola.cardona@example.net,Bogotá,Avenida carrera 9ª # 8Y-26 Sur,4,316,anuncios,U02,2026-01-22 08:04
+C0234,hogar,Angie Cano,,+573131888845,angie.cano@example.org,Medellín,Diagonal 52 # 92-31 Este,4,342,anuncios,U03,2026-01-22 13:18
+C0235,negocio,Dora Guerrero Cortés,Taller Gómez,+573141946053,taller.gomez@example.org,Bogotá,Avenida carrera 168 # 2-6 Sur,,1156,anuncios,U02,2026-01-23 10:51
+C0236,hogar,Samir Castillo,,+573504660673,samir.castillo@example.com,Bogotá,Cr. 23 # 52G-7 Este,4,331,web,U02,2026-01-23 15:37
+C0237,hogar,Yolanda Medina Ramírez,,+573174315433,yolanda.medina@example.net,Bogotá,Tr. 42Q # 42-88 Sur,4,263,anuncios,U02,2026-01-23 16:36
+C0238,negocio,Fernando Martínez,Supermercado Benavides S.A.S.,+573027734098,supermercado.benavides@example.net,Medellín,Cr. 2V # 95-9 Este,,2947,anuncios,U03,2026-01-24 16:06
+C0239,hogar,Alfonso López Ramírez,,+573119087043,alfonso.lopez@example.net,Medellín,Carrera 60 # 2-55 Sur,4,292,whatsapp,U03,2026-01-25 13:51
+C0240,hogar,Andrés Gutiérrez,,+573176632743,andres.gutierrez@example.com,Medellín,Calle 150Q Este # 89-1,3,193,anuncios,U03,2026-01-25 14:53
+C0241,negocio,Gloria Corredor Beltrán,Supermercado Parra S.A.S.,+573200551627,supermercado.parra@example.com,Bogotá,Calle 110 Sur # 6W-30,,2248,anuncios,U02,2026-01-25 16:30
+C0242,hogar,Angie Cardozo Mosquera,,+573054609071,angie.cardozo@example.org,Cali,Calle 182O Bis # 23T-1,4,266,web,U04,2026-01-26 11:48
+C0243,hogar,Oswaldo Sánchez,,+573231773232,oswaldo.sanchez@example.com,Bogotá,Calle 22 # 17-64 Sur,4,264,anuncios,U02,2026-01-26 13:12
+C0244,hogar,Gabriel Sánchez,,+573110098500,gabriel.sanchez@example.net,Bogotá,Calle 172D # 33-2 Este,3,191,anuncios,U02,2026-01-26 18:43
+C0245,hogar,Lucía Navarro Pérez,,+573149646115,lucia.navarro@example.net,Bogotá,Carrera 29 # 93-5,6,703,web,U02,2026-01-27 10:44
+C0246,hogar,Andrés Córdoba,,+573047179073,andres.cordoba@example.net,Medellín,Av. carrera 113 # 7B-51,5,470,anuncios,U03,2026-01-27 14:00
+C0247,hogar,Alicia Díaz Mejía,,+573171478660,alicia.diaz@example.net,Medellín,Cr. 53 # 8G-80,5,434,anuncios,U03,2026-01-27 15:38
+C0248,hogar,Germán Salcedo,,+573232316577,german.salcedo@example.net,Cali,Cr. 1B # 34-49 Este,3,190,referido,U04,2026-01-28 09:48
+C0249,hogar,Libia Álvarez,,+573138070954,libia.alvarez@example.net,Bogotá,Cr. 5ª # 1-9,6,669,whatsapp,U02,2026-01-28 09:49
+C0250,negocio,Lisbeth Villa,Oficinas Cerón S.A.S.,+573178360788,oficinas.ceron@example.net,Bogotá,Calle 115N # 31-2 Sur,,1304,web,U02,2026-01-28 10:57
+C0251,hogar,Javier Rodríguez Jaimes,,+573184826306,javier.rodriguez@example.net,Bogotá,Dg. 32 # 52-76 Este,3,213,anuncios,U02,2026-01-28 15:28
+C0252,hogar,Angie Ospina Sepúlveda,,+573142319925,angie.ospina@example.com,Bogotá,Calle 152U Bis H # 2-3 Este,4,350,anuncios,U02,2026-01-29 10:07
+C0253,hogar,Eugenia Mercado Montenegro,,+573120822732,eugenia.mercado@example.net,Bogotá,Transversal 4ª # 5-7 Este,5,444,whatsapp,U02,2026-01-29 12:27
+C0254,hogar,Luis Campo,,+573500637682,luis.campo@example.org,Bogotá,Cl. 187A Bis # 35-2,4,245,referido,U02,2026-01-30 12:21
+C0255,hogar,Daniela Sánchez,,+573056695760,daniela.sanchez@example.org,Medellín,Carrera 25K # 43M-88,3,160,anuncios,U03,2026-01-30 13:13
+C0256,negocio,Socorro Vásquez Restrepo,Gimnasio Ocampo,+573040419142,gimnasio.ocampo@example.org,Medellín,Dg. 19 # 3-6 Sur,,3825,referido,U03,2026-01-30 17:20
+C0257,negocio,Alexandra Morales Osorio,Colegio Sánchez,+573104322010,colegio.sanchez@example.org,Bogotá,Tr. 157 # 4-1 Sur,,1956,anuncios,U02,2026-01-31 12:31
+C0258,negocio,Carlos Naranjo Andrade,Ferretería Cortés,+573101886284,ferreteria.cortes@example.net,Bogotá,Cr. 91 # 7R-34 Sur,,2276,web,U02,2026-01-31 15:54
+C0259,negocio,Gilma Guerra,Colegio Salazar S.A.S.,+573166350787,colegio.salazar@example.net,Medellín,Dg. 104V # 35-2,,2502,anuncios,U03,2026-01-31 15:56
+C0260,hogar,Antonio Vergara Molano,,+573040943036,antonio.vergara@example.org,Cali,Cr. 52 # 8P-15 Sur,6,699,anuncios,U04,2026-01-31 16:43
+C0261,hogar,María Barrera Rojas,,+573159777351,maria.barrera@example.org,Cali,Avenida calle 101 # 3G-6,4,260,anuncios,U04,2026-01-31 18:37
+C0262,negocio,Liliana Orozco Ordóñez,Oficinas Morales,+573216354979,oficinas.morales@example.org,Bogotá,Carrera 91 # 8-6 Sur,,1377,whatsapp,U02,2026-02-01 12:36
+C0263,negocio,Carolina Ramírez Arias,Colegio Pérez,+573236639999,colegio.perez@example.net,Bogotá,Tr. 13 # 4-7 Sur,,2722,anuncios,U02,2026-02-01 18:48
+C0264,hogar,Olga Ordóñez,,+573180375758,olga.ordonez@example.com,Bogotá,Carrera 80 # 7-68,4,327,anuncios,U02,2026-02-02 10:10
+C0265,negocio,Milena Benavides,Lavandería Oviedo S.A.S.,+573116353751,lavanderia.oviedo@example.org,Medellín,Cl. 4R # 9V-94 Este,,946,whatsapp,U03,2026-02-02 10:27
+C0266,negocio,Darwin Méndez,Ferretería Buitrago,+573179772144,ferreteria.buitrago@example.net,Bogotá,Cr. 1A Sur # 6-27 Sur,,3407,web,U02,2026-02-02 13:59
+C0267,hogar,David Hernández Espitia,,+573516115167,david.hernandez@example.net,Bogotá,Avenida carrera 4ª # 5E-42 Este,5,420,web,U02,2026-02-03 18:57
+C0268,negocio,Óscar Pineda Silva,Colegio Restrepo,+573232457377,colegio.restrepo@example.com,Medellín,Avenida calle 121 # 61-6 Sur,,1754,anuncios,U03,2026-02-04 12:37
+C0269,negocio,Julieth Rodríguez Córdoba,Panadería Morales,+573170069243,panaderia.morales@example.net,Cali,Carrera 105 # 43-4 Este,,2300,anuncios,U04,2026-02-05 17:24
+C0270,hogar,Rodrigo Lozano,,+573501417583,rodrigo.lozano@example.com,Medellín,Avenida carrera 173 # 7R-73,3,177,anuncios,U03,2026-02-06 09:12
+C0271,hogar,Andrea Ramos Sánchez,,+573162000671,andrea.ramos@example.net,Bogotá,Transversal 70 # 82-9 Este,5,362,anuncios,U02,2026-02-06 14:24
+C0272,negocio,Antonio Correa Ramos,Gimnasio Torres,+573175161129,gimnasio.torres@example.org,Cali,Avenida Colosó # 98-74 Este,,3514,web,U04,2026-02-06 15:51
+C0273,negocio,Enrique Torres,Hotel Díaz,+573185461291,hotel.diaz@example.com,Bogotá,Cr. 73 # 53M-50 Sur,,2516,whatsapp,U02,2026-02-07 10:46
+C0274,hogar,Beatriz Palacio Gallego,,+573024142602,beatriz.palacio@example.net,Cali,Cr. 171V # 56-8,5,466,anuncios,U04,2026-02-07 15:59
+C0275,negocio,Maribel Suárez Martínez,Restaurante Londoño,+573234381238,restaurante.londono@example.net,Cali,Cr. 73 # 3-1 Este,,1722,anuncios,U04,2026-02-07 16:09
+C0276,negocio,Michael Martínez,Lavandería Suárez,+573207961139,lavanderia.suarez@example.com,Bogotá,Calle 34A # 2-77 Sur,,3306,referido,U02,2026-02-07 17:46
+C0277,hogar,Yesenia Mosquera Castro,,+573114484185,yesenia.mosquera@example.net,Cali,Cr. 153 # 17-32,5,482,web,U04,2026-02-07 17:46
+C0278,hogar,Sandra Marín,,+573185149074,sandra.marin@example.net,Medellín,Carrera 62 # 8-6,3,196,whatsapp,U03,2026-02-07 17:53
+C0279,hogar,Luz Hurtado Zapata,,+573502690405,luz.hurtado@example.com,Medellín,Avenida calle 3ª # 89D-4 Sur,3,169,whatsapp,U03,2026-02-08 11:09
+C0280,hogar,Fernanda García,,+573140939538,fernanda.garcia@example.org,Bogotá,Carrera 41 # 1-47,6,529,referido,U02,2026-02-08 12:06
+C0281,hogar,Patricia Ortiz Vásquez,,+573001905522,patricia.ortiz@example.net,Cali,Carrera 1E # 50J-2 Este,6,733,web,U04,2026-02-08 17:55
+C0282,negocio,Gustavo García,Lavandería Cerón,+573120157187,lavanderia.ceron@example.com,Medellín,Cl. 108L # 5Q-7 Este,,3206,whatsapp,U03,2026-02-08 18:33
+C0283,negocio,Luz Cifuentes Ortega,Hotel Velásquez S.A.S.,+573510531080,hotel.velasquez@example.com,Cali,Carrera 141R # 78-15,,4451,anuncios,U04,2026-02-09 08:26
+C0284,negocio,Miguel Perea Martínez,Colegio García S.A.S.,+573143621514,colegio.garcia@example.org,Cali,Diagonal 7ª # 8-82,,1709,web,U04,2026-02-09 12:19
+C0285,hogar,Martha Rincón,,+573133482200,martha.rincon@example.net,Medellín,Av. carrera 4ª # 4-90,4,284,web,U03,2026-02-09 13:18
+C0286,hogar,Vanessa Acosta Delgado,,+573212863982,vanessa.acosta@example.org,Bogotá,Av. Socorro # 8A-5,3,189,anuncios,U02,2026-02-09 14:44
+C0287,hogar,Omar Estrada,,+573181253213,omar.estrada@example.org,Bogotá,Calle 143 # 6P-9 Este,4,334,web,U02,2026-02-10 13:22
+C0288,hogar,María Silva,,+573235338684,maria.silva@example.net,Bogotá,Cr. 42 # 5-32 Sur,2,136,referido,U02,2026-02-10 13:50
+C0289,hogar,Jhon Nieto Velasco,,+573041396496,jhon.nieto@example.org,Bogotá,Av. Javier López # 74-47 Este,4,217,referido,U02,2026-02-10 16:44
+C0290,negocio,Giovanny Cortés,Carnicería Rodríguez S.A.S.,+573155666976,carniceria.rodriguez97@example.org,Cali,Avenida calle 4ª # 3Y-82 Sur,,2804,anuncios,U04,2026-02-10 18:43
+C0291,hogar,Rocío Sierra,,+573020419516,rocio.sierra@example.net,Medellín,Tr. 23 # 9-78,3,169,web,U03,2026-02-11 09:29
+C0292,hogar,Edgar Fernández,,+573157587675,edgar.fernandez@example.com,Medellín,Avenida Camargo # 81K-77 Este,5,486,anuncios,U03,2026-02-11 11:15
+C0293,hogar,Betty González,,+573209076617,betty.gonzalez@example.org,Cali,Tr. 146 # 3-31,3,226,anuncios,U04,2026-02-11 13:26
+C0294,hogar,Aura Chacón,,+573519096111,aura.chacon@example.net,Cali,Avenida Sucre # 7-4 Sur,4,261,whatsapp,U04,2026-02-11 15:32
+C0295,negocio,Elías Meza,Restaurante Palacios,+573168572504,restaurante.palacios@example.com,Medellín,Cr. 55 # 38P-9 Sur,,1718,anuncios,U03,2026-02-13 11:01
+C0296,hogar,Yohana Silva Cortés,,+573055052645,yohana.silva@example.net,Medellín,Carrera 175 # 27-92,3,233,referido,U03,2026-02-13 11:24
+C0297,hogar,Cristobal Rodríguez,,+573166988011,cristobal.rodriguez@example.org,Bogotá,Avenida carrera 45 # 1-1 Este,5,441,web,U02,2026-02-13 17:37
+C0298,hogar,Ruby Molina,,+573100659384,ruby.molina@example.net,Bogotá,Diagonal 28 # 38-11 Sur,5,352,whatsapp,U02,2026-02-13 17:40
+C0299,negocio,Eduardo Fernández,Panadería Méndez S.A.S.,+573017312562,panaderia.mendez@example.com,Cali,Calle 75 # 1-1,,1789,referido,U04,2026-02-14 09:46
+C0300,hogar,César Rincón,,+573058335077,cesar.rincon@example.com,Medellín,Av. carrera 9ª # 99-11 Este,5,337,whatsapp,U03,2026-02-14 14:20
+C0301,hogar,Yolanda Rodríguez Sarmiento,,+573211217013,yolanda.rodriguez@example.net,Bogotá,Carrera 33L # 9-8,6,692,whatsapp,U02,2026-02-15 11:04
+C0302,hogar,Lucía López,,+573046623133,lucia.lopez@example.org,Medellín,Calle 115K # 2-7 Este,5,292,anuncios,U03,2026-02-15 14:19
+C0303,hogar,María Cortés,,+573167574775,maria.cortes@example.net,Bogotá,Carrera 5 Bis # 92-5 Este,4,316,whatsapp,U02,2026-02-15 16:05
+C0304,hogar,Elena Sánchez,,+573108579512,elena.sanchez@example.net,Medellín,Cr. 107 # 78-46 Sur,5,362,referido,U03,2026-02-16 09:31
+C0305,hogar,José Camacho,,+573122281420,jose.camacho@example.org,Medellín,Avenida Arévalo # 1-8 Sur,4,306,web,U03,2026-02-16 10:26
+C0306,hogar,Hernán Garzón Ramírez,,+573237600290,hernan.garzon@example.com,Bogotá,Cl. 95 # 8-8 Este,3,231,whatsapp,U02,2026-02-16 12:30
+C0307,hogar,Elena Sarmiento Gómez,,+573177325654,elena.sarmiento@example.net,Bogotá,Cr. 46 # 24-6 Sur,3,213,referido,U02,2026-02-16 13:43
+C0308,hogar,Angélica Ordóñez Chávez,,+573118912125,angelica.ordonez@example.com,Medellín,Diagonal 54 # 10-4 Este,4,244,whatsapp,U03,2026-02-16 17:33
+C0309,hogar,Inés Vargas Ruiz,,+573108166669,ines.vargas@example.org,Medellín,Calle 195 # 91-2 Sur,4,302,referido,U03,2026-02-16 18:11
+C0310,hogar,Erika Vera,,+573028873190,erika.vera@example.net,Bogotá,Tr. 3E # 6N-2 Este,5,292,anuncios,U02,2026-02-17 14:38
+C0311,hogar,Inés Díaz,,+573053322555,ines.diaz@example.com,Cali,Cr. 84 # 52R-6,5,389,whatsapp,U04,2026-02-18 12:09
+C0312,hogar,María Correa,,+573108371589,maria.correa@example.com,Bogotá,Cr. 6 Bis S # 1-6 Sur,4,260,whatsapp,U02,2026-02-19 10:58
+C0313,hogar,Ana Camacho Betancur,,+573165929115,ana.camacho@example.com,Bogotá,Transversal 128J Bis M # 1M-2 Sur,5,293,anuncios,U02,2026-02-19 13:43
+C0314,hogar,Cristian Rodríguez Ruiz,,+573050865184,cristian.rodriguez@example.org,Cali,Av. calle 7ª # 7-8,5,291,referido,U04,2026-02-20 11:50
+C0315,negocio,Pablo Aguilar,Colegio Bolaños,+573136178101,colegio.bolanos@example.org,Bogotá,Diagonal 138 # 2-98 Este,,1516,anuncios,U02,2026-02-20 12:26
+C0316,negocio,María Daza,Restaurante Portilla,+573514111826,restaurante.portilla@example.org,Bogotá,Cr. 155 # 8-50,,1205,referido,U02,2026-02-20 13:50
+C0317,negocio,Alberto Pérez Romero,Hotel Tamayo,+573154703364,hotel.tamayo@example.com,Medellín,Diagonal 39R # 9-4 Sur,,4362,anuncios,U03,2026-02-20 15:11
+C0318,hogar,Vanessa Acosta Arias,,+573112255374,vanessa.acosta@example.net,Cali,Av. calle 34 # 7-9,3,239,anuncios,U04,2026-02-20 16:43
+C0319,negocio,Elías Díaz,Lavandería Pedraza,+573186439169,lavanderia.pedraza@example.org,Medellín,Calle 179E # 68T-72 Este,,4089,web,U03,2026-02-20 17:22
+C0320,hogar,Milena Palacios Ortega,,+573152443532,milena.palacios@example.org,Medellín,Cl. 5ª # 3-90,5,319,whatsapp,U03,2026-02-21 08:03
+C0321,negocio,Francisco Bernal Ramírez,Droguería Pardo,+573164790646,drogueria.pardo@example.com,Bogotá,Avenida carrera 82 # 92-2 Sur,,1404,referido,U02,2026-02-21 10:28
+C0322,hogar,José Rodríguez,,+573018095020,jose.rodriguez@example.com,Bogotá,Cr. 191Z # 6-2,6,733,anuncios,U02,2026-02-21 12:57
+C0323,hogar,Leidy Uribe,,+573052110315,leidy.uribe@example.org,Bogotá,Carrera 21 # 12-15 Sur,4,288,web,U02,2026-02-21 15:30
+C0324,negocio,Leticia Garcés,Oficinas Morales,+573129314721,oficinas.morales@example.net,Medellín,Cl. 18 # 15R-54 Este,,1520,anuncios,U03,2026-02-21 16:52
+C0325,hogar,Yuli Toro,,+573003538023,yuli.toro@example.org,Medellín,Cr. 23 # 86-6,4,271,referido,U03,2026-02-21 17:44
+C0326,hogar,Alirio Acosta Delgado,,+573231720946,alirio.acosta@example.org,Bogotá,Cl. 3ª # 9W-2 Este,3,156,whatsapp,U02,2026-02-22 10:30
+C0327,hogar,Ana Martínez Martínez,,+573172511933,ana.martinez@example.net,Bogotá,Av. carrera 70 # 92-79 Sur,4,230,referido,U02,2026-02-22 13:40
+C0328,hogar,Martha Vargas,,+573202213583,martha.vargas@example.com,Medellín,Cl. 100 # 79-94 Sur,5,356,whatsapp,U03,2026-02-22 14:26
+C0329,negocio,Isabel Sierra Rueda,Gimnasio Ramírez,+573055784127,gimnasio.ramirez@example.com,Cali,Cr. 81 # 2S-61,,1217,anuncios,U04,2026-02-22 16:15
+C0330,hogar,Fabián Herrera,,+573151054767,fabian.herrera@example.net,Bogotá,Cl. 19 # 6-63 Sur,5,423,web,U02,2026-02-23 08:31
+C0331,hogar,Ciro González,,+573051861457,ciro.gonzalez@example.org,Bogotá,Carrera 101D # 27-8,4,262,anuncios,U02,2026-02-23 10:44
+C0332,hogar,José Ardila,,+573214060217,jose.ardila@example.net,Cali,Avenida carrera 35 # 4-67 Este,5,358,web,U04,2026-02-23 11:25
+C0333,hogar,Santiago Granados Aguirre,,+573116685449,santiago.granados@example.net,Bogotá,Cr. 56F # 15-62 Sur,3,193,anuncios,U02,2026-02-23 11:58
+C0334,hogar,Angélica Acosta Arias,,+573206601293,angelica.acosta@example.com,Cali,Calle 137A # 85-4 Este,4,290,anuncios,U04,2026-02-23 13:23
+C0335,hogar,Fernanda Naranjo,,+573048534751,fernanda.naranjo@example.com,Bogotá,Cl. 85 # 8-69 Este,3,173,anuncios,U02,2026-02-23 15:36
+C0336,hogar,Emilia León Aguirre,,+573129761763,emilia.leon@example.net,Bogotá,Av. calle 151 # 56E-3,4,244,whatsapp,U02,2026-02-23 15:36
+C0337,hogar,Alejandro Álvarez Sánchez,,+573154849471,alejandro.alvarez@example.net,Cali,Dg. 13 # 4-7,4,215,web,U04,2026-02-23 16:26
+C0338,hogar,Alfonso Osorio,,+573234946432,alfonso.osorio@example.net,Medellín,Cl. 157D Sur # 5R-9 Este,3,226,anuncios,U03,2026-02-23 17:40
+C0339,hogar,Mercedes Bohórquez,,+573138049785,mercedes.bohorquez@example.com,Bogotá,Transversal 69 # 71-75 Este,4,289,anuncios,U02,2026-02-24 08:38
+C0340,negocio,Abraham Vásquez Jaimes,Droguería Benavides S.A.S.,+573163352718,drogueria.benavides@example.net,Bogotá,Avenida Castillo # 1-14,,2738,web,U02,2026-02-24 16:49
+C0341,hogar,Ramiro Guevara Muñoz,,+573136700922,ramiro.guevara@example.net,Bogotá,Diagonal 32 # 9H-5 Este,2,127,whatsapp,U02,2026-02-25 09:02
+C0342,negocio,Magdalena Carrillo,Oficinas Rueda S.A.S.,+573012293456,oficinas.rueda@example.net,Bogotá,Calle 87 # 7T-4,,2954,anuncios,U02,2026-02-25 10:48
+C0343,negocio,Henry Trujillo,Ferretería Rojas,+573010850459,ferreteria.rojas@example.net,Bogotá,Cl. 2ª # 30-8 Sur,,4448,anuncios,U02,2026-02-25 11:41
+C0344,negocio,Yeison Calderón,Lavandería Parra,+573001155700,lavanderia.parra@example.net,Medellín,Cl. 35U Bis T # 1-8 Sur,,2391,anuncios,U03,2026-02-25 18:50
+C0345,hogar,Fernanda Uribe,,+573203942473,fernanda.uribe@example.com,Medellín,Cr. 33 # 8-35,4,203,anuncios,U03,2026-02-26 08:05
+C0346,hogar,Danna Sánchez,,+573046989091,danna.sanchez@example.org,Medellín,Cr. 24 # 9-44 Sur,4,266,referido,U03,2026-02-26 08:49
+C0347,hogar,Santiago Navarro Bustamante,,+573159610653,santiago.navarro@example.com,Cali,Transversal 9P Bis # 55-61,4,215,whatsapp,U04,2026-02-26 08:58
+C0348,hogar,Stella Ramírez,,+573188175909,stella.ramirez@example.org,Bogotá,Calle 86 # 64-89 Sur,4,223,anuncios,U02,2026-02-26 11:38
+C0349,hogar,María Ospino,,+573230520976,maria.ospino@example.net,Cali,Av. carrera 18 # 49-4,4,338,whatsapp,U04,2026-02-27 09:33
+C0350,hogar,Kevin Medina Gómez,,+573016161685,kevin.medina@example.com,Bogotá,Cl. 15Y # 17-37 Este,4,202,whatsapp,U02,2026-02-27 10:35
+C0351,hogar,Rocío López Díaz,,+573138042630,rocio.lopez@example.org,Bogotá,Cr. 91 Sur # 1T-4 Este,6,580,whatsapp,U02,2026-02-27 12:40
+C0352,hogar,Yulieth Gómez Herrera,,+573104354651,yulieth.gomez@example.org,Bogotá,Diagonal 68 # 83-88 Este,4,345,anuncios,U02,2026-02-27 16:22
+C0353,hogar,Yésica Sierra Ballesteros,,+573213148076,yesica.sierra@example.com,Medellín,Avenida San Pedro de Urabá # 7-8 Sur,6,632,whatsapp,U03,2026-02-28 12:48
+C0354,hogar,Juan López Herrera,,+573115193872,juan.lopez@example.org,Cali,Calle 1ª # 2-87 Este,2,126,web,U04,2026-02-28 14:48
+C0355,hogar,Martha Cáceres Medina,,+573055019118,martha.caceres@example.org,Bogotá,Cl. 58 # 89-15 Este,3,196,whatsapp,U02,2026-03-02 08:21
+C0356,hogar,Nayibe Gómez,,+573004775553,nayibe.gomez@example.org,Bogotá,Cl. 146F # 55-3 Sur,4,287,anuncios,U02,2026-03-02 08:36
+C0357,hogar,Omar Beltrán,,+573157937441,omar.beltran@example.net,Bogotá,Cr. 92 # 1-4 Este,4,247,web,U02,2026-03-02 08:46
+C0358,hogar,Gloria Sandoval Vargas,,+573133364682,gloria.sandoval@example.org,Medellín,Cl. 174 # 5-8 Sur,4,273,web,U03,2026-03-02 11:26
+C0359,hogar,David Gutiérrez González,,+573106663849,david.gutierrez@example.org,Bogotá,Calle 111 # 71-19,6,654,anuncios,U02,2026-03-02 17:26
+C0360,hogar,Fabiola García,,+573113881154,fabiola.garcia@example.com,Cali,Cl. 84 # 56-8,5,497,referido,U04,2026-03-02 18:21
+C0361,hogar,María Arenas Ceballos,,+573120546418,maria.arenas@example.net,Bogotá,Calle 82 # 52-8 Sur,3,209,web,U02,2026-03-03 10:02
+C0362,negocio,Nancy Daza,Lavandería Polo,+573046251674,lavanderia.polo@example.net,Medellín,Transversal 89 # 9-5 Sur,,2745,web,U03,2026-03-03 17:20
+C0363,hogar,Alfredo Jiménez Portilla,,+573156103133,alfredo.jimenez@example.com,Bogotá,Avenida David Jhon Muñoz # 12-7 Sur,3,253,whatsapp,U02,2026-03-03 17:23
+C0364,hogar,John Córdoba Chacón,,+573508739556,john.cordoba@example.org,Bogotá,Avenida carrera 12 # 52-3 Este,6,441,web,U02,2026-03-04 08:19
+C0365,hogar,Julio Villa,,+573217454167,julio.villa@example.com,Bogotá,Avenida calle 169 # 80X-1 Sur,5,317,anuncios,U02,2026-03-04 11:50
+C0366,hogar,William Perea,,+573146272197,william.perea@example.org,Cali,Diagonal 71 # 5B-8,4,208,web,U04,2026-03-04 13:14
+C0367,hogar,Alberto Álvarez,,+573010313673,alberto.alvarez@example.com,Cali,Cl. 87 # 28-9 Este,4,320,web,U04,2026-03-04 16:54
+C0368,hogar,Alejandra Salas Andrade,,+573022160866,alejandra.salas@example.org,Bogotá,Dg. 127I Bis # 94-96 Este,5,315,anuncios,U02,2026-03-05 11:25
+C0369,hogar,Mónica Ramírez León,,+573043740558,monica.ramirez@example.org,Bogotá,Av. María Trujillo # 6S-9,3,151,referido,U02,2026-03-05 17:26
+C0370,hogar,Erika Romero,,+573047408304,erika.romero@example.net,Bogotá,Cr. 5W # 82-8 Este,3,190,anuncios,U02,2026-03-06 12:23
+C0371,negocio,Alfonso Paz Suárez,Gimnasio Méndez,+573059587258,gimnasio.mendez@example.net,Bogotá,Transversal 8E Bis # 69U-99 Sur,,1239,whatsapp,U02,2026-03-07 17:28
+C0372,hogar,Liliana González Murillo,,+573204104829,liliana.gonzalez@example.net,Bogotá,Calle 140 # 49-43 Sur,4,238,referido,U02,2026-03-07 17:53
+C0373,hogar,Esperanza Ortiz,,+573215141426,esperanza.ortiz@example.com,Bogotá,Avenida El Tambo # 4-22 Sur,3,247,anuncios,U02,2026-03-08 12:23
+C0374,hogar,Diana Chaparro,,+573106524923,diana.chaparro@example.net,Bogotá,Carrera 43 # 9-3,3,234,referido,U02,2026-03-08 17:29
+C0375,hogar,Ángela Martínez,,+573146861105,angela.martinez@example.net,Cali,Dg. 99 # 99-9 Este,5,500,whatsapp,U04,2026-03-09 11:59
+C0376,negocio,Beatriz Flórez,Carnicería Domínguez,+573146900836,carniceria.dominguez@example.org,Cali,Diagonal 88 # 53-96 Sur,,1430,web,U04,2026-03-09 13:12
+C0377,hogar,David Ballesteros Gómez,,+573160830111,david.ballesteros@example.net,Medellín,Cr. 23T # 47-68,3,172,anuncios,U03,2026-03-09 13:34
+C0378,hogar,José Navarro Agudelo,,+573215544977,jose.navarro@example.com,Medellín,Cl. 193 Bis T # 45-7 Este,2,200,web,U03,2026-03-09 15:27
+C0379,hogar,Eduardo Osorio,,+573046054989,eduardo.osorio@example.org,Cali,Cr. 92 # 17-52 Sur,5,429,whatsapp,U04,2026-03-10 11:32
+C0380,hogar,Antonio Rivas,,+573133645676,antonio.rivas@example.com,Bogotá,Cl. 197 # 1-1 Este,3,259,web,U02,2026-03-10 12:27
+C0381,hogar,Esteban Gómez,,+573166130169,esteban.gomez@example.org,Bogotá,Diagonal 91F # 59-60,2,168,referido,U02,2026-03-11 10:48
+C0382,hogar,Alonso Espinosa López,,+573048159270,alonso.espinosa@example.com,Bogotá,Carrera 59Q Este # 6-7 Sur,5,319,web,U02,2026-03-11 13:24
+C0383,hogar,Antonio Rojas,,+573029820232,antonio.rojas@example.com,Bogotá,Cl. 69 # 2-9 Sur,4,217,anuncios,U02,2026-03-11 16:59
+C0384,hogar,Elvira Álvarez Álvarez,,+573112929454,elvira.alvarez@example.net,Bogotá,Cr. 163Y Este # 3-79 Sur,3,214,web,U02,2026-03-12 11:04
+C0385,hogar,Sergio Martínez Romero,,+573102581855,sergio.martinez@example.org,Bogotá,Cr. 10 # 55-8 Sur,6,672,whatsapp,U02,2026-03-12 17:21
+C0386,negocio,Gladys Castillo,Colegio Mena S.A.S.,+573047821867,colegio.mena@example.org,Cali,Tr. 72 # 9-2 Este,,4189,whatsapp,U04,2026-03-13 08:12
+C0387,negocio,María Villamizar Galvis,Gimnasio Fuentes,+573055854615,gimnasio.fuentes@example.net,Bogotá,Carrera 72A # 3-42,,2297,whatsapp,U02,2026-03-13 11:38
+C0388,hogar,Javier Martínez,,+573129505428,javier.martinez@example.org,Bogotá,Avenida Bedoya # 99-17 Sur,4,216,anuncios,U02,2026-03-13 13:23
+C0389,negocio,Wilman Perea,Panadería López S.A.S.,+573212049317,panaderia.lopez@example.com,Medellín,Calle 9ª # 3-43,,1662,referido,U03,2026-03-13 14:16
+C0390,hogar,Ovidio Rojas Ortiz,,+573057000656,ovidio.rojas@example.org,Bogotá,Av. calle 6ª # 47Y-7,2,188,web,U02,2026-03-14 09:38
+C0391,negocio,Gabriel Perea Delgado,Panadería Ramírez,+573141589389,panaderia.ramirez@example.net,Cali,Dg. 50 # 7-2 Este,,1432,web,U04,2026-03-14 16:56
+C0392,hogar,Adriana Velásquez Molano,,+573132921977,adriana.velasquez@example.org,Medellín,Cl. 15 # 5M-30,4,277,anuncios,U03,2026-03-14 17:05
+C0393,negocio,Gregorio Moreno Niño,Colegio Montes,+573176995988,colegio.montes@example.net,Cali,Av. Istmina # 7-4 Este,,3775,anuncios,U04,2026-03-14 18:53
+C0394,hogar,Jair López,,+573175938184,jair.lopez@example.org,Bogotá,Cr. 85 # 2-64 Este,4,338,whatsapp,U02,2026-03-15 08:20
+C0395,hogar,Yeison Escobar,,+573022121072,yeison.escobar@example.com,Bogotá,Calle 134 # 8-31,5,407,whatsapp,U02,2026-03-15 10:56
+C0396,hogar,Rodolfo Guerrero Rodríguez,,+573216973034,rodolfo.guerrero@example.com,Medellín,Avenida carrera 6ª # 5-41 Sur,6,399,anuncios,U03,2026-03-15 15:09
+C0397,hogar,Mabel Correa,,+573135308437,mabel.correa@example.org,Medellín,Carrera 157 # 56-8 Sur,4,300,anuncios,U03,2026-03-16 12:28
+C0398,negocio,Fredy Soto,Supermercado Marín S.A.S.,+573012742549,supermercado.marin@example.net,Cali,Cl. 9ª # 5-96 Sur,,1034,anuncios,U04,2026-03-16 13:35
+C0399,hogar,Candelaria Amaya González,,+573148255567,candelaria.amaya@example.net,Bogotá,Tr. 8ª # 79-3 Sur,4,322,web,U02,2026-03-16 15:22
+C0400,hogar,María Orozco Gutiérrez,,+573124242299,maria.orozco@example.com,Cali,Cl. 198 # 44-23 Sur,4,217,referido,U04,2026-03-16 17:40
+C0401,negocio,Tatiana Fajardo,Restaurante Martínez,+573153084981,restaurante.martinez@example.org,Bogotá,Avenida calle 198 # 21D-23,,2077,whatsapp,U02,2026-03-18 11:14
+C0402,hogar,Alirio Benítez,,+573233118701,alirio.benitez@example.net,Cali,Avenida Risaralda # 98-8,4,271,whatsapp,U04,2026-03-18 11:32
+C0403,hogar,Alejandra Cuesta Cortés,,+573162041386,alejandra.cuesta@example.net,Medellín,Cr. 70 Sur # 10-8,5,445,anuncios,U03,2026-03-18 11:41
+C0404,hogar,Yuliana Hoyos Medina,,+573217318538,yuliana.hoyos@example.com,Bogotá,Carrera 169 # 73-51 Este,4,211,whatsapp,U02,2026-03-18 13:13
+C0405,hogar,Abelardo Salazar Salazar,,+573116246991,abelardo.salazar@example.com,Cali,Avenida carrera 53 # 87-28,3,213,whatsapp,U04,2026-03-18 14:29
+C0406,hogar,Edilberto Vega,,+573124755471,edilberto.vega@example.com,Bogotá,Carrera 50 # 16-6,5,374,anuncios,U02,2026-03-19 08:31
+C0407,hogar,Daniel Arboleda Sarmiento,,+573002925997,daniel.arboleda@example.com,Bogotá,Diagonal 8L # 76-7 Este,4,306,anuncios,U02,2026-03-19 11:39
+C0408,hogar,Fernanda Rivas,,+573130505992,fernanda.rivas@example.net,Bogotá,Carrera 56I # 52-38 Este,3,166,web,U02,2026-03-19 11:46
+C0409,hogar,Rocío Gutiérrez Vargas,,+573512748100,rocio.gutierrez@example.org,Cali,Transversal 15 # 72-7 Este,4,239,anuncios,U04,2026-03-19 14:33
+C0410,negocio,Sonia Ramírez Herrera,Taller Rodríguez S.A.S.,+573166601254,taller.rodriguez@example.com,Medellín,Diagonal 86Q # 81-56 Sur,,2733,whatsapp,U03,2026-03-20 10:37
+C0411,hogar,Aura Vega,,+573023235491,aura.vega@example.com,Medellín,Diagonal 129Q # 72-28,5,493,referido,U03,2026-03-20 17:50
+C0412,hogar,Yeny García,,+573024216368,yeny.garcia@example.net,Bogotá,Calle 102D # 40E-19 Sur,2,126,anuncios,U02,2026-03-21 09:08
+C0413,hogar,Beatriz Cárdenas Forero,,+573021307184,beatriz.cardenas@example.org,Cali,Cl. 16P # 13-3 Este,5,484,anuncios,U04,2026-03-21 11:05
+C0414,hogar,Ángela Mora,,+573509909572,angela.mora@example.net,Bogotá,Cr. 76 # 4-7,5,415,whatsapp,U02,2026-03-21 14:19
+C0415,hogar,Lina Galeano Carvajal,,+573177958535,lina.galeano@example.com,Bogotá,Carrera 5ª # 9-1 Sur,3,172,whatsapp,U02,2026-03-21 16:16
+C0416,hogar,José Ortiz Rodríguez,,+573206112344,jose.ortiz@example.com,Medellín,Av. Antioquia # 31-39 Sur,2,151,referido,U03,2026-03-23 16:00
+C0417,hogar,Clara Henao,,+573515237740,clara.henao@example.com,Medellín,Carrera 132 Bis # 12-67 Este,5,452,anuncios,U03,2026-03-24 10:31
+C0418,hogar,Dary Soto Ramírez,,+573102752614,dary.soto@example.net,Bogotá,Carrera 106I # 9-93 Sur,4,244,web,U02,2026-03-24 10:32
+C0419,negocio,Jaider Oviedo Alzate,Hotel Meneses,+573233453066,hotel.meneses@example.com,Cali,Avenida Enrique Juan Ruiz # 2-11 Sur,,3388,anuncios,U04,2026-03-24 10:47
+C0420,hogar,Óscar Burbano,,+573180245530,oscar.burbano@example.com,Medellín,Calle 67 Bis # 6-96 Sur,4,250,anuncios,U03,2026-03-24 15:15
+C0421,hogar,Javier García Castillo,,+573215404413,javier.garcia@example.net,Medellín,Carrera 5ª # 6-25,4,238,web,U03,2026-03-25 09:52
+C0422,hogar,Diego Restrepo,,+573206268228,diego.restrepo@example.com,Medellín,Av. calle 94 # 3-74,4,315,anuncios,U03,2026-03-25 13:10
+C0423,negocio,Denis Osorio,Ferretería León S.A.S.,+573145696625,ferreteria.leon83@example.net,Bogotá,Cr. 14K # 8-8,,2524,referido,U02,2026-03-25 16:40
+C0424,negocio,Jhon Guevara Pacheco,Lavandería Valderrama,+573511076314,lavanderia.valderrama@example.com,Cali,Carrera 177 # 16-3 Este,,3818,whatsapp,U04,2026-03-26 09:07
+C0425,negocio,Norberto Velandia Vergara,Colegio Ortega,+573106309236,colegio.ortega@example.net,Medellín,Cl. 15 # 63-2 Sur,,2345,anuncios,U03,2026-03-26 14:51
+C0426,hogar,Brayan Benítez,,+573054160013,brayan.benitez@example.com,Medellín,Cr. 6Q # 78B-9 Este,4,320,whatsapp,U03,2026-03-27 12:06
+C0427,hogar,Melissa González,,+573057313543,melissa.gonzalez@example.com,Bogotá,Cl. 59 Este # 4-6,6,630,web,U02,2026-03-27 13:51
+C0428,hogar,Carlos Benítez Ortiz,,+573008047459,carlos.benitez@example.com,Bogotá,Cl. 193S Bis # 1-7 Sur,4,343,web,U02,2026-03-28 11:11
+C0429,hogar,Marleny Ávila León,,+573155299230,marleny.avila@example.com,Bogotá,Dg. 69A # 57-79 Este,3,231,referido,U02,2026-03-28 11:32
+C0430,hogar,Jairo Peña Jiménez,,+573113579018,jairo.pena@example.org,Bogotá,Calle 99 # 4-5 Este,4,207,anuncios,U02,2026-03-28 11:55
+C0431,hogar,Esneider González,,+573046909161,esneider.gonzalez@example.net,Cali,Carrera 137 # 55-8 Este,4,270,anuncios,U04,2026-03-28 18:26
+C0432,hogar,Gina González Suárez,,+573150513887,gina.gonzalez@example.com,Bogotá,Cr. 15 # 52-4,4,216,referido,U02,2026-03-29 09:09
+C0433,hogar,Yulieth Mendoza Rojas,,+573125592779,yulieth.mendoza@example.com,Cali,Dg. 98U # 41-94,3,246,anuncios,U04,2026-03-29 17:48
+C0434,hogar,Lizeth Lozano,,+573103140104,lizeth.lozano@example.com,Cali,Calle 5H # 4-11 Este,3,246,whatsapp,U04,2026-03-30 10:50
+C0435,hogar,Ana Rojas,,+573514762855,ana.rojas@example.net,Medellín,Calle 35 # 5-5 Sur,3,166,web,U03,2026-03-30 15:53
+C0436,hogar,Johana Pacheco Rodríguez,,+573051183192,johana.pacheco@example.org,Bogotá,Cl. 149 # 2-5,4,232,anuncios,U02,2026-03-31 09:23
+C0437,negocio,Andrea García,Colegio Hernández,+573176554860,colegio.hernandez@example.net,Medellín,Dg. 133E # 56-2,,2174,web,U03,2026-03-31 18:02
+C0438,hogar,Luz Anaya González,,+573218824340,luz.anaya@example.com,Cali,Av. Simacota # 2-6,6,710,referido,U04,2026-04-01 08:41
+C0439,hogar,María Jiménez García,,+573164791061,maria.jimenez@example.net,Cali,Transversal 17 # 36-1 Este,6,498,anuncios,U04,2026-04-01 11:47
+C0440,negocio,Lorena Velásquez,Oficinas Mesa,+573015123788,oficinas.mesa@example.com,Medellín,Avenida carrera 122 # 5-2 Sur,,3970,anuncios,U03,2026-04-02 09:13
+C0441,hogar,Danna Cárdenas,,+573116611302,danna.cardenas@example.com,Bogotá,Cl. 75 # 1-1,4,284,referido,U02,2026-04-02 09:13
+C0442,negocio,Diego Ariza,Ferretería Betancur,+573512072854,ferreteria.betancur@example.net,Medellín,Cr. 37 # 2-20,,1388,anuncios,U03,2026-04-02 09:31
+C0443,hogar,Jorge Osorio Pérez,,+573179349469,jorge.osorio@example.net,Cali,Avenida Chimá # 2-5 Sur,5,329,referido,U04,2026-04-02 12:54
+C0444,hogar,Marina Miranda Murillo,,+573515145748,marina.miranda@example.org,Cali,Tr. 9M # 22Q-28,3,258,anuncios,U04,2026-04-02 14:34
+C0445,hogar,Yair Gallego,,+573101691540,yair.gallego@example.org,Cali,Calle 71 # 33X-93 Sur,3,258,anuncios,U04,2026-04-02 16:16
+C0446,hogar,Arturo Ortega González,,+573018850337,arturo.ortega@example.net,Cali,Av. calle 6ª # 71I-43 Este,4,231,anuncios,U04,2026-04-02 18:08
+C0447,hogar,Milena Bedoya,,+573117823429,milena.bedoya@example.net,Cali,Av. Risaralda # 80-71 Sur,2,133,anuncios,U04,2026-04-03 09:54
+C0448,hogar,Esther Vanegas Cortés,,+573126233033,esther.vanegas@example.com,Bogotá,Avenida Arauca # 9M-85 Este,5,393,referido,U02,2026-04-03 10:15
+C0449,hogar,Ricardo Marín Martínez,,+573218426001,ricardo.marin@example.net,Medellín,Carrera 178 # 7-29 Sur,3,219,anuncios,U03,2026-04-03 10:16
+C0450,hogar,Germán Arias,,+573214928262,german.arias@example.com,Cali,Avenida Alexis Ramírez Sarmiento # 4-36 Este,5,401,anuncios,U04,2026-04-03 10:51
+C0451,hogar,Lucía Beltrán,,+573133750273,lucia.beltran@example.com,Bogotá,Cl. 2S # 56-7 Este,4,299,anuncios,U02,2026-04-03 11:09
+C0452,hogar,Margarita Guerrero,,+573023924178,margarita.guerrero@example.org,Bogotá,Cr. 16 # 2-35,2,171,whatsapp,U02,2026-04-03 13:32
+C0453,hogar,Mary Rojas Sánchez,,+573131301862,mary.rojas@example.net,Bogotá,Cr. 25Z # 24-72 Sur,4,261,whatsapp,U02,2026-04-04 09:07
+C0454,hogar,Alejandra Cardona,,+573000577892,alejandra.cardona@example.net,Bogotá,Av. carrera 8ª # 44-1 Sur,5,397,whatsapp,U02,2026-04-04 10:17
+C0455,hogar,David Nieto,,+573172825740,david.nieto@example.org,Cali,Cl. 19 # 8-2 Este,4,227,anuncios,U04,2026-04-04 10:18
+C0456,hogar,Christian Jiménez,,+573162972102,christian.jimenez@example.org,Medellín,Carrera 64 # 8-6 Este,3,153,web,U03,2026-04-04 10:48
+C0457,hogar,David Hernández Morales,,+573506707020,david.hernandez@example.org,Cali,Carrera 1I # 7-20 Este,4,312,referido,U04,2026-04-04 14:07
+C0458,hogar,Patricia Reyes Díaz,,+573029311058,patricia.reyes@example.com,Bogotá,Calle 8ª # 8-33,3,181,referido,U02,2026-04-04 14:22
+C0459,hogar,Isabel Cardona Ortiz,,+573237811626,isabel.cardona@example.org,Bogotá,Av. Acevedo # 8-5 Sur,3,176,whatsapp,U02,2026-04-04 16:54
+C0460,hogar,Jeferson Alzate González,,+573021759873,jeferson.alzate@example.com,Bogotá,Cl. 54 # 4-1,4,229,referido,U02,2026-04-05 08:08
+C0461,negocio,Nelson Álvarez,Lavandería González S.A.S.,+573117646418,lavanderia.gonzalez@example.org,Bogotá,Calle 74 # 7P-63,,2677,referido,U02,2026-04-05 11:27
+C0462,hogar,Jorge Arango García,,+573212439472,jorge.arango@example.org,Cali,Cr. 5ª # 7-2,4,228,anuncios,U04,2026-04-05 14:18
+C0463,hogar,Ricardo Acosta Sánchez,,+573181428193,ricardo.acosta@example.com,Cali,Diagonal 18 # 2-4 Sur,5,389,anuncios,U04,2026-04-05 16:45
+C0464,hogar,Esperanza Contreras,,+573206814960,esperanza.contreras@example.org,Cali,Calle 12 # 8-18,6,518,whatsapp,U04,2026-04-06 08:17
+C0465,hogar,Alejandro López Páez,,+573127358983,alejandro.lopez@example.net,Cali,Carrera 93 # 75-23 Sur,6,712,anuncios,U04,2026-04-06 09:48
+C0466,hogar,Nidia Pérez,,+573017602025,nidia.perez@example.com,Cali,Calle 35E # 5-3 Sur,3,152,anuncios,U04,2026-04-06 13:55
+C0467,hogar,Teresa Monroy Hernández,,+573514808859,teresa.monroy@example.com,Bogotá,Cl. 180 # 9-14 Este,4,305,whatsapp,U02,2026-04-06 18:39
+C0468,hogar,Hernán Rodríguez Espitia,,+573041353391,hernan.rodriguez@example.org,Bogotá,Transversal 140 # 7-89 Este,4,282,whatsapp,U02,2026-04-07 09:18
+C0469,negocio,Edinson Valencia,Supermercado Naranjo,+573005512247,supermercado.naranjo@example.org,Medellín,Carrera 140L # 5S-93 Este,,4420,anuncios,U03,2026-04-07 10:25
+C0470,hogar,Francisco Henao Cruz,,+573143421418,francisco.henao@example.com,Bogotá,Cr. 4 Bis # 85-86 Sur,5,281,referido,U02,2026-04-07 14:04
+C0471,negocio,María Cruz,Taller Domínguez S.A.S.,+573104419475,taller.dominguez@example.org,Bogotá,Carrera 80 # 5-1 Este,,2671,whatsapp,U02,2026-04-07 15:26
+C0472,negocio,Omar Guzmán Burgos,Carnicería Vargas S.A.S.,+573126907651,carniceria.vargas@example.net,Medellín,Cl. 77 # 4-90,,1259,referido,U03,2026-04-08 08:14
+C0473,hogar,Lina Alzate,,+573150181391,lina.alzate@example.com,Bogotá,Calle 74 # 7-6 Sur,3,150,web,U02,2026-04-08 10:54
+C0474,negocio,Vladimir Ramos Suárez,Colegio Correa S.A.S.,+573141229229,colegio.correa@example.net,Cali,Calle 64 # 9-8 Sur,,2483,referido,U04,2026-04-08 14:10
+C0475,hogar,Alejandro Campo,,+573047178730,alejandro.campo@example.org,Medellín,Transversal 9H # 13-5 Este,3,212,anuncios,U03,2026-04-08 14:35
+C0476,negocio,Jesús Correa,Hotel Rodríguez,+573501935590,hotel.rodriguez@example.com,Cali,Cr. 9ª # 67-32 Sur,,2460,anuncios,U04,2026-04-09 09:44
+C0477,hogar,Jesús Vargas Marín,,+573027865518,jesus.vargas@example.com,Bogotá,Carrera 28R # 5-5,3,150,anuncios,U02,2026-04-10 15:52
+C0478,hogar,Lucía García Rojas,,+573044458491,lucia.garcia@example.net,Bogotá,Tr. 61N # 99-2,3,207,whatsapp,U02,2026-04-11 08:38
+C0479,hogar,Estiven Bedoya,,+573025472883,estiven.bedoya@example.net,Bogotá,Avenida María Damaris Acosta Sánchez # 32-7 Este,3,159,whatsapp,U02,2026-04-11 11:44
+C0480,hogar,María Trujillo Pedraza,,+573505985239,maria.trujillo@example.org,Cali,Diagonal 9ª # 90-31,4,231,whatsapp,U04,2026-04-11 13:40
+C0481,hogar,Santiago Vargas,,+573015287775,santiago.vargas@example.org,Cali,Diagonal 6J # 93-60,4,217,anuncios,U04,2026-04-12 08:31
+C0482,hogar,Nelson Pulido,,+573026346741,nelson.pulido@example.net,Cali,Avenida calle 9ª # 6-85,4,235,anuncios,U04,2026-04-12 13:11
+C0483,hogar,Amparo Martínez,,+573013986679,amparo.martinez@example.net,Cali,Calle 185 # 58-55,4,281,whatsapp,U04,2026-04-12 14:11
+C0484,hogar,Patricia Cruz Acosta,,+573101820125,patricia.cruz@example.org,Cali,Cr. 69 # 6-3 Este,5,358,referido,U04,2026-04-12 15:01
+C0485,negocio,José Serna Parra,Carnicería Rodríguez S.A.S.,+573101420715,carniceria.rodriguez@example.net,Bogotá,Carrera 32 # 2P-70 Este,,2771,anuncios,U02,2026-04-13 11:54
+C0486,hogar,Sergio González,,+573109356173,sergio.gonzalez@example.net,Cali,Cl. 3X # 5-3 Sur,4,208,anuncios,U04,2026-04-13 17:14
+C0487,negocio,Jennifer Ríos Cuesta,Carnicería Quintero S.A.S.,+573113941799,carniceria.quintero@example.org,Bogotá,Diagonal 3L # 9U-17,,965,anuncios,U02,2026-04-13 18:11
+C0488,hogar,Fernando Durán Valderrama,,+573208639285,fernando.duran@example.net,Cali,Cr. 97 # 2-95 Este,2,146,whatsapp,U04,2026-04-14 09:35
+C0489,negocio,Luis Portilla,Ferretería León,+573177610329,ferreteria.leon@example.net,Medellín,Transversal 176N # 7-10,,2404,anuncios,U03,2026-04-14 17:13
+C0490,negocio,Ximena González,Droguería Mesa,+573176108762,drogueria.mesa@example.com,Cali,Calle 83 Bis I # 3-96,,1417,whatsapp,U04,2026-04-15 09:50
+C0491,negocio,Adriana Rengifo Cruz,Droguería Duque,+573183371048,drogueria.duque@example.com,Medellín,Cr. 88 # 3-46 Este,,3893,anuncios,U03,2026-04-15 11:38
+C0492,hogar,Carmen Ríos Barragán,,+573104531075,carmen.rios@example.com,Cali,Cl. 134K # 5-77 Sur,6,443,anuncios,U04,2026-04-16 09:26
+C0493,hogar,Vilma Valencia,,+573142266443,vilma.valencia@example.com,Medellín,Cl. 52 # 7-86 Sur,4,299,anuncios,U03,2026-04-16 10:25
+C0494,hogar,Hernán López,,+573104772953,hernan.lopez@example.net,Bogotá,Cr. 36 # 2-82 Este,3,191,whatsapp,U02,2026-04-16 11:02
+C0495,negocio,César Villamil Díaz,Restaurante Torres,+573051521761,restaurante.torres@example.com,Medellín,Carrera 169T # 5-71,,1258,whatsapp,U03,2026-04-16 16:42
+C0496,negocio,Jhon González Rojas,Panadería Mosquera,+573044767368,panaderia.mosquera@example.org,Cali,Calle 66 # 54U-24 Sur,,1325,whatsapp,U04,2026-04-17 12:03
+C0497,negocio,Alberto Moreno,Lavandería Pinzón,+573165622861,lavanderia.pinzon@example.org,Medellín,Av. calle 119 # 5V-37 Sur,,1031,anuncios,U03,2026-04-18 16:47
+C0498,negocio,María Restrepo,Supermercado Anaya S.A.S.,+573237477345,supermercado.anaya@example.org,Medellín,Av. Henao # 6-3,,2516,anuncios,U03,2026-04-19 09:34
+C0499,hogar,Dayana Vanegas,,+573106172324,dayana.vanegas@example.com,Medellín,Av. carrera 54 # 1-49,5,358,anuncios,U03,2026-04-19 14:47
+C0500,hogar,Sonia Méndez,,+573006487249,sonia.mendez@example.com,Cali,Carrera 3Y Bis # 8Y-8 Sur,4,316,anuncios,U04,2026-04-20 15:39
+C0501,hogar,Agustín Gómez Restrepo,,+573041722439,agustin.gomez@example.org,Medellín,Cl. 25 Bis # 1-37 Sur,5,304,anuncios,U03,2026-04-20 16:59
+C0502,hogar,Andrés Aguilar,,+573151170243,andres.aguilar@example.org,Cali,Cr. 3ª # 62-56,4,237,anuncios,U04,2026-04-20 17:29
+C0503,negocio,Álvaro Romero Giraldo,Ferretería Torres S.A.S.,+573164093701,ferreteria.torres@example.org,Bogotá,Carrera 195 # 9Z-73 Sur,,3793,whatsapp,U02,2026-04-21 08:06
+C0504,hogar,Matilde Vargas,,+573214079037,matilde.vargas@example.net,Cali,Carrera 25 # 5-14,4,350,web,U04,2026-04-21 08:37
+C0505,hogar,María González Duque,,+573136527130,maria.gonzalez@example.net,Medellín,Transversal 6L # 19-79 Sur,4,328,referido,U03,2026-04-21 08:47
+C0506,hogar,Rafael Giraldo,,+573515076825,rafael.giraldo73@example.org,Medellín,Av. Atlántico # 67-44 Sur,6,655,web,U03,2026-04-21 10:41
+C0507,hogar,Carmen Morales Franco,,+573160700697,carmen.morales@example.com,Medellín,Av. carrera 6ª # 6-1 Este,6,453,whatsapp,U03,2026-04-21 11:43
+C0508,hogar,Ricardo Romero,,+573209772332,ricardo.romero@example.org,Cali,Carrera 42 # 72-85,4,345,whatsapp,U04,2026-04-21 15:15
+C0509,hogar,Liseth Morales Serrano,,+573130205765,liseth.morales@example.net,Bogotá,Cr. 10 # 6-4 Este,2,144,referido,U02,2026-04-21 15:25
+C0510,hogar,Luis Gómez,,+573046056769,luis.gomez@example.net,Medellín,Calle 87 # 4-67 Sur,4,256,anuncios,U03,2026-04-22 10:16
+C0511,hogar,Fredy Vera,,+573202879604,fredy.vera@example.com,Bogotá,Cr. 66Z # 5-62 Este,5,355,web,U02,2026-04-22 14:45
+C0512,hogar,Antonio Meza Jiménez,,+573201091382,antonio.meza@example.com,Bogotá,Diagonal 15 # 1-91,3,165,whatsapp,U02,2026-04-23 10:37
+C0513,hogar,William Bernal Mosquera,,+573042042857,william.bernal@example.com,Cali,Diagonal 3I # 75X-47 Este,3,242,referido,U04,2026-04-24 12:52
+C0514,hogar,Alejandra Correa Caicedo,,+573234405228,alejandra.correa@example.org,Medellín,Tr. 89 # 87-4 Sur,4,209,web,U03,2026-04-24 12:59
+C0515,hogar,Carlos Rincón,,+573016752049,carlos.rincon@example.net,Bogotá,Av. Casanare # 1-26 Sur,4,332,web,U02,2026-04-24 15:43
+C0516,negocio,David Ramírez Muñoz,Hotel Calderón,+573160731456,hotel.calderon@example.com,Medellín,Tr. 147T # 1N-16 Sur,,3381,referido,U03,2026-04-25 10:56
+C0517,negocio,Margarita Montoya,Oficinas Jiménez,+573505785971,oficinas.jimenez@example.org,Medellín,Cl. 5ª # 6W-41 Sur,,2904,whatsapp,U03,2026-04-25 12:22
+C0518,hogar,Inés Arenas,,+573165377515,ines.arenas@example.net,Cali,Dg. 33 # 58-5 Sur,3,198,anuncios,U04,2026-04-25 12:30
+C0519,negocio,Jaime Rincón Perdomo,Restaurante Mendoza S.A.S.,+573215271957,restaurante.mendoza@example.com,Bogotá,Calle 5ª # 1O-8 Este,,1736,anuncios,U02,2026-04-25 13:51
+C0520,hogar,Sonia Garzón Rodríguez,,+573150140458,sonia.garzon@example.net,Bogotá,Transversal 9E Bis # 6-59,3,169,web,U02,2026-04-27 09:40
+C0521,negocio,Luz Velásquez,Supermercado Ocampo,+573004443865,supermercado.ocampo@example.org,Bogotá,Dg. 3ª # 4-9 Sur,,1580,web,U02,2026-04-27 09:57
+C0522,hogar,Lucila Lozano,,+573101573916,lucila.lozano@example.com,Bogotá,Avenida calle 43 # 32-75 Este,4,227,whatsapp,U02,2026-04-27 14:03
+C0523,hogar,Lucía Cano,,+573123875975,lucia.cano@example.org,Bogotá,Calle 83 # 60-19 Sur,3,163,whatsapp,U02,2026-04-28 10:24
+C0524,hogar,Camilo Durán,,+573147633528,camilo.duran@example.org,Bogotá,Avenida calle 54 # 25-54 Este,4,278,web,U02,2026-04-28 11:11
+C0525,hogar,Rosa Gutiérrez García,,+573162884138,rosa.gutierrez@example.net,Cali,Cr. 90 # 91V-7,5,360,whatsapp,U04,2026-04-29 11:36
+C0526,hogar,Antonio Osorio Hernández,,+573132811059,antonio.osorio@example.org,Bogotá,Calle 18 Este # 5-4 Sur,5,357,anuncios,U02,2026-04-29 12:01
+C0527,hogar,Yolanda Solano Pérez,,+573212008863,yolanda.solano@example.org,Medellín,Calle 26 # 67E-80 Sur,3,215,web,U03,2026-04-29 13:11
+C0528,hogar,Edna Rodríguez Valencia,,+573156088295,edna.rodriguez@example.org,Bogotá,Calle 5ª # 90-3,3,241,web,U02,2026-04-29 14:53
+C0529,hogar,Camilo Hernández Hoyos,,+573118904394,camilo.hernandez@example.org,Medellín,Cl. 54 # 5-9 Sur,3,175,anuncios,U03,2026-04-29 16:40
+C0530,hogar,José Rangel López,,+573043199040,jose.rangel@example.org,Bogotá,Cl. 20 # 3Y-85 Este,4,225,referido,U02,2026-04-29 17:11
+C0531,hogar,Luz Bravo Caicedo,,+573046828989,luz.bravo@example.net,Bogotá,Cl. 6ª # 6-33 Este,3,251,anuncios,U02,2026-04-30 08:21
+C0532,hogar,Mercedes Miranda Montenegro,,+573508476743,mercedes.miranda@example.org,Bogotá,Diagonal 3ª # 69-6,4,315,whatsapp,U02,2026-04-30 12:36
+C0533,hogar,Arley Medina Suárez,,+573125309992,arley.medina@example.net,Medellín,Transversal 153O Sur # 3-8 Este,5,444,anuncios,U03,2026-04-30 16:18
+C0534,negocio,Esteban Gaviria Álvarez,Oficinas Villamizar,+573120032476,oficinas.villamizar@example.com,Medellín,Calle 5N # 5-9 Sur,,1216,whatsapp,U03,2026-05-01 13:46
+C0535,hogar,Camilo Díaz,,+573011317208,camilo.diaz@example.com,Bogotá,Cr. 5 Este # 32-1 Este,4,256,anuncios,U02,2026-05-01 15:21
+C0536,hogar,María Duque Ángel,,+573127733007,maria.duque@example.org,Medellín,Cr. 83 # 75-3 Sur,3,240,anuncios,U03,2026-05-01 17:17
+C0537,hogar,Paola Gil Rodríguez,,+573236585824,paola.gil@example.org,Medellín,Cr. 23H Este # 4-93,4,306,anuncios,U03,2026-05-01 18:10
+C0538,hogar,Olga Hernández,,+573056912643,olga.hernandez@example.org,Bogotá,Carrera 125O # 6K-1 Este,3,255,referido,U02,2026-05-01 18:45
+C0539,hogar,Wendy Romero,,+573184067526,wendy.romero@example.org,Medellín,Calle 68 # 95-85 Sur,5,444,anuncios,U03,2026-05-02 09:00
+C0540,negocio,Sofía Díaz,Taller Betancur,+573188299416,taller.betancur@example.net,Cali,Avenida carrera 104 # 96I-7 Sur,,1985,whatsapp,U04,2026-05-02 09:16
+C0541,negocio,María Guevara,Carnicería Quintero S.A.S.,+573200700651,carniceria.quintero@example.com,Medellín,Cr. 115 # 78-85 Este,,3054,referido,U03,2026-05-02 12:51
+C0542,negocio,Kevin González Velasco,Ferretería Jaimes,+573009217282,ferreteria.jaimes@example.com,Cali,Av. Magdalena # 68-12 Sur,,1383,referido,U04,2026-05-03 15:47
+C0543,hogar,Jorge García,,+573162431230,jorge.garcia@example.com,Medellín,Cr. 7 Este # 1Z-29 Sur,4,243,whatsapp,U03,2026-05-04 08:55
+C0544,hogar,Sergio Ibarra,,+573184368615,sergio.ibarra@example.net,Bogotá,Avenida Andrés Samir Gómez Vargas # 82-20,6,458,whatsapp,U02,2026-05-04 12:54
+C0545,hogar,Alexandra Cardona,,+573158805089,alexandra.cardona@example.net,Bogotá,Carrera 61 # 3-46 Sur,6,454,web,U02,2026-05-04 12:56
+C0546,hogar,Alberto Díaz,,+573154006015,alberto.diaz@example.org,Medellín,Cl. 2N Bis G # 4-95 Este,6,514,referido,U03,2026-05-04 16:05
+C0547,hogar,Yury Burbano Loaiza,,+573046920333,yury.burbano@example.org,Bogotá,Cr. 98 # 6-68 Este,5,379,web,U02,2026-05-04 16:36
+C0548,hogar,Carolina Ospina Villamizar,,+573186053425,carolina.ospina@example.org,Cali,Cl. 102 # 39-35,2,193,whatsapp,U04,2026-05-05 08:01
+C0549,hogar,Armando Gómez Rodríguez,,+573166870676,armando.gomez@example.org,Bogotá,Calle 37 # 82-8 Sur,4,270,referido,U02,2026-05-05 16:14
+C0550,negocio,David González Correa,Lavandería Hernández S.A.S.,+573104342118,lavanderia.hernandez@example.org,Cali,Cr. 92 # 46-43 Sur,,3483,whatsapp,U04,2026-05-06 15:15
+C0551,hogar,Carlos Martínez,,+573051513840,carlos.martinez75@example.com,Medellín,Av. carrera 108 # 4Q-7 Este,5,325,whatsapp,U03,2026-05-07 09:59
+C0552,hogar,Fabio Ariza,,+573165444145,fabio.ariza@example.net,Bogotá,Cl. 113V # 9-6 Este,3,154,whatsapp,U02,2026-05-08 16:26
+C0553,negocio,Juan Martínez Rosero,Colegio Rojas S.A.S.,+573046439500,colegio.rojas@example.com,Bogotá,Carrera 35 # 4-60 Este,,1407,web,U02,2026-05-08 17:07
+C0554,hogar,David León,,+573506319622,david.leon@example.net,Bogotá,Cr. 1 Sur # 59-7 Sur,3,172,whatsapp,U02,2026-05-08 18:25
+C0555,hogar,Yeferson Ortiz,,+573053523022,yeferson.ortiz@example.org,Bogotá,Calle 21Y # 3-5,4,305,referido,U02,2026-05-09 09:10
+C0556,hogar,Enrique Sánchez,,+573119151678,enrique.sanchez@example.net,Cali,Av. carrera 132 # 7-43,6,663,anuncios,U04,2026-05-09 11:16
+C0557,hogar,Enrique Cortés,,+573154420136,enrique.cortes@example.com,Bogotá,Cr. 36 # 3-6 Este,4,341,anuncios,U02,2026-05-09 14:29
+C0558,negocio,José Ruiz Suárez,Oficinas Peña,+573048457935,oficinas.pena@example.net,Medellín,Carrera 133L # 8W-16,,1192,anuncios,U03,2026-05-10 08:24
+C0559,hogar,Hugo Gutiérrez López,,+573054146391,hugo.gutierrez@example.net,Medellín,Diagonal 8ª # 7-91 Este,3,260,web,U03,2026-05-11 11:16
+C0560,hogar,Carlos Cárdenas,,+573026157285,carlos.cardenas@example.org,Medellín,Calle 12 # 9-92 Sur,4,338,anuncios,U03,2026-05-11 12:45
+C0561,negocio,Gerardo Bohórquez,Droguería Martínez,+573051277963,drogueria.martinez@example.org,Bogotá,Transversal 165 # 7K-52,,4321,referido,U02,2026-05-11 16:21
+C0562,hogar,Sara Solano Rojas,,+573519642675,sara.solano@example.org,Bogotá,Avenida carrera 79 # 3W-40 Sur,5,335,web,U02,2026-05-11 17:24
+C0563,hogar,Daniel Franco Palacios,,+573238765137,daniel.franco@example.org,Cali,Dg. 91 Bis T # 65T-67 Sur,4,223,anuncios,U04,2026-05-11 18:21
+C0564,hogar,Franco Pérez,,+573504019913,franco.perez@example.org,Bogotá,Cl. 1ª # 24-96 Sur,3,236,referido,U02,2026-05-13 12:36
+C0565,hogar,Ana Díaz,,+573026502623,ana.diaz@example.org,Bogotá,Cl. 196J # 17-5 Este,5,366,whatsapp,U02,2026-05-13 14:05
+C0566,hogar,Elena Mora Ramírez,,+573132342587,elena.mora@example.org,Bogotá,Cl. 139O # 9-67,6,547,anuncios,U02,2026-05-14 08:55
+C0567,negocio,Ferney Rodríguez Serna,Supermercado Pérez,+573107655408,supermercado.perez@example.net,Medellín,Av. carrera 61 # 5N-4,,4140,anuncios,U03,2026-05-14 15:23
+C0568,hogar,Miller Narváez,,+573047280590,miller.narvaez@example.net,Medellín,Calle 44S # 2-5 Sur,4,279,referido,U03,2026-05-15 09:45
+C0569,hogar,Camila Ortega Vergara,,+573162953197,camila.ortega@example.net,Medellín,Cl. 37 # 58-3,4,309,web,U03,2026-05-15 16:17
+C0570,hogar,Shirley Zapata Rivera,,+573116933686,shirley.zapata@example.org,Bogotá,Transversal 94 # 30-4 Este,5,474,anuncios,U02,2026-05-15 17:11
+C0571,hogar,Carlos Londoño Valencia,,+573133106489,carlos.londono@example.com,Medellín,Cl. 2ª # 5-1,5,412,web,U03,2026-05-16 13:27
+C0572,negocio,Johanna Ordóñez,Restaurante Suárez,+573211754968,restaurante.suarez@example.com,Bogotá,Tr. 3O Sur # 14-3 Este,,1551,anuncios,U02,2026-05-17 09:19
+C0573,hogar,Andrea Castro Barreto,,+573134871158,andrea.castro@example.org,Bogotá,Cl. 4P Bis # 81-93 Este,2,143,anuncios,U02,2026-05-17 10:03
+C0574,hogar,Guillermo Quintero Chávez,,+573502427528,guillermo.quintero@example.com,Cali,Cr. 63P # 88-6 Sur,5,479,anuncios,U04,2026-05-17 16:59
+C0575,negocio,Álvaro Martínez,Lavandería Pérez,+573204345100,lavanderia.perez@example.net,Bogotá,Cl. 152 # 35-30,,2394,whatsapp,U02,2026-05-17 17:46
+C0576,negocio,Adriana Osorio Cárdenas,Colegio Melo S.A.S.,+573011602665,colegio.melo@example.net,Bogotá,Cr. 81 # 2-62 Este,,2267,referido,U02,2026-05-18 10:08
+C0577,hogar,Luis Ardila Villa,,+573011556835,luis.ardila@example.net,Medellín,Diagonal 133 # 8L-95 Este,5,425,anuncios,U03,2026-05-18 10:21
+C0578,hogar,Adriana Sarmiento González,,+573507068419,adriana.sarmiento@example.com,Cali,Diagonal 62 # 8C-9,4,219,web,U04,2026-05-18 12:27
+C0579,hogar,Gloria Montoya,,+573230033431,gloria.montoya@example.net,Bogotá,Dg. 18 # 6C-5,3,164,anuncios,U02,2026-05-19 11:34
+C0580,hogar,Aida Benítez,,+573152280338,aida.benitez@example.net,Bogotá,Tr. 13 # 97-6 Sur,6,707,whatsapp,U02,2026-05-19 13:34
+C0581,hogar,Andrés Carvajal Vargas,,+573041226936,andres.carvajal@example.net,Medellín,Cl. 21 # 5-29 Sur,6,628,anuncios,U03,2026-05-19 18:07
+C0582,hogar,Lucía Bedoya Rincón,,+573188216512,lucia.bedoya@example.org,Bogotá,Calle 185 Este # 7C-37 Sur,3,169,referido,U02,2026-05-20 11:32
+C0583,hogar,Lucero Rivera,,+573045550883,lucero.rivera@example.net,Medellín,Cl. 86 # 79-6,4,213,anuncios,U03,2026-05-20 12:00
+C0584,hogar,César Fonseca,,+573112509262,cesar.fonseca@example.com,Bogotá,Avenida calle 126 # 7U-8 Este,3,155,anuncios,U02,2026-05-20 16:49
+C0585,hogar,Marlon Díaz,,+573101586167,marlon.diaz@example.org,Bogotá,Cl. 175T # 47-8 Este,4,319,referido,U02,2026-05-22 11:40
+C0586,hogar,Albeiro Campo González,,+573154109475,albeiro.campo@example.com,Bogotá,Cr. 91M Sur # 7-2,3,205,whatsapp,U02,2026-05-22 13:42
+C0587,hogar,Jimena Trujillo,,+573218798363,jimena.trujillo@example.net,Medellín,Cl. 56L # 63H-5 Sur,3,188,anuncios,U03,2026-05-23 10:05
+C0588,hogar,Juan Vega Ramos,,+573018884161,juan.vega@example.net,Medellín,Transversal 7ª # 38-57,3,243,web,U03,2026-05-23 11:55
+C0589,hogar,Milena Pérez Meza,,+573162833149,milena.perez@example.org,Bogotá,Diagonal 186F Bis U # 73-5,4,257,referido,U02,2026-05-23 14:13
+C0590,hogar,Héctor Jaimes González,,+573512499298,hector.jaimes@example.net,Medellín,Carrera 6ª # 6-3 Sur,5,347,whatsapp,U03,2026-05-23 15:16
+C0591,hogar,Dora García Parada,,+573212040605,dora.garcia@example.net,Medellín,Cl. 183 # 6-10,3,177,web,U03,2026-05-25 09:40
+C0592,hogar,Milena Angulo Gómez,,+573173540593,milena.angulo@example.net,Medellín,Avenida calle 51 # 8-2,5,296,anuncios,U03,2026-05-25 11:15
+C0593,hogar,Alba Guzmán González,,+573020833418,alba.guzman@example.org,Medellín,Calle 20 # 2-63 Sur,4,234,anuncios,U03,2026-05-25 17:54
+C0594,hogar,Marco Acosta,,+573011914305,marco.acosta@example.org,Cali,Calle 97 # 7-3 Sur,4,213,anuncios,U04,2026-05-26 12:35
+C0595,hogar,Juan Barbosa Orozco,,+573208080258,juan.barbosa@example.com,Medellín,Av. calle 174 # 2-7 Este,4,292,whatsapp,U03,2026-05-26 15:28
+C0596,hogar,Carlos Gómez Mejía,,+573207091365,carlos.gomez@example.com,Bogotá,Transversal 45 # 1-59 Sur,3,223,anuncios,U02,2026-05-27 11:35
+C0597,negocio,Enrique Mosquera Nieto,Ferretería Salamanca,+573101099053,ferreteria.salamanca@example.net,Medellín,Transversal 103 # 57-20,,1393,anuncios,U03,2026-05-27 17:41
+C0598,hogar,Edgardo Fuentes Guerrero,,+573120477203,edgardo.fuentes@example.org,Bogotá,Av. calle 60 # 9-64 Este,5,319,whatsapp,U02,2026-05-28 09:00
+C0599,hogar,Jaime Álvarez Ramírez,,+573514935774,jaime.alvarez@example.org,Medellín,Diagonal 100 # 11F-72 Sur,6,466,whatsapp,U03,2026-05-28 12:10
+C0600,hogar,Karen Paz Rivera,,+573014458692,karen.paz@example.com,Cali,Avenida calle 122 # 32-9 Sur,5,347,whatsapp,U04,2026-05-28 14:03
+C0601,negocio,María Gil Moreno,Taller Rivas,+573145347980,taller.rivas@example.org,Bogotá,Carrera 7ª # 1-40 Este,,1026,web,U02,2026-05-28 17:55
+C0602,hogar,Karina Castillo Mena,,+573101425021,karina.castillo@example.com,Cali,Carrera 106B # 4-67 Este,3,160,whatsapp,U04,2026-05-29 08:23
+C0603,hogar,Francy Obando Ospina,,+573029489450,francy.obando@example.com,Bogotá,Cl. 4X Bis S # 31-64 Este,4,322,anuncios,U02,2026-05-29 08:57
+C0604,hogar,Paula Zambrano Ruiz,,+573112580511,paula.zambrano@example.org,Medellín,Avenida calle 6ª # 6-60 Sur,4,264,anuncios,U03,2026-05-30 16:37
+C0605,hogar,Adriana Mejía Velásquez,,+573239133780,adriana.mejia@example.org,Medellín,Diagonal 62H # 2-30 Sur,4,305,anuncios,U03,2026-05-31 12:14
+C0606,hogar,Rosa Becerra Benavides,,+573175619618,rosa.becerra@example.com,Bogotá,Cl. 82J Bis W # 12T-4,4,332,anuncios,U02,2026-05-31 12:32
+C0607,hogar,María Lozano,,+573500481123,maria.lozano@example.net,Bogotá,Av. Fredy Gómez Osorio # 20-4 Sur,4,272,anuncios,U02,2026-05-31 18:06
+C0608,hogar,Andrea Gutiérrez,,+573024330495,andrea.gutierrez@example.net,Bogotá,Carrera 30 # 92-24 Este,4,289,anuncios,U02,2026-06-01 10:17
+C0609,negocio,Shirley Ariza,Panadería Rico,+573160809327,panaderia.rico@example.org,Cali,Avenida González # 12H-8 Sur,,2843,referido,U04,2026-06-01 13:49
+C0610,hogar,Carolina Rojas,,+573137458930,carolina.rojas@example.net,Cali,Avenida Guzmán # 86-93 Sur,5,359,whatsapp,U04,2026-06-01 15:05
+C0611,negocio,Mauricio Barbosa Arias,Lavandería Núñez S.A.S.,+573013497488,lavanderia.nunez@example.net,Bogotá,Avenida Cárdenas # 7-78,,4287,anuncios,U02,2026-06-01 17:02
+C0612,hogar,Rodrigo Guzmán Hernández,,+573008199236,rodrigo.guzman@example.org,Bogotá,Avenida carrera 25 # 33-78,3,200,web,U02,2026-06-02 09:32
+C0613,negocio,Juan Castañeda Yepes,Hotel Muñoz S.A.S.,+573187826732,hotel.munoz@example.net,Medellín,Cr. 95 # 4-5,,3632,anuncios,U03,2026-06-02 12:44
+C0614,negocio,Sofía Ortega,Oficinas Soto,+573016710905,oficinas.soto@example.org,Cali,Calle 120 # 9-22 Sur,,3218,referido,U04,2026-06-03 08:30
+C0615,negocio,Marcela Galvis Salcedo,Oficinas Arrieta,+573120623902,oficinas.arrieta@example.com,Cali,Dg. 50 # 4-29,,3065,anuncios,U04,2026-06-03 17:14
+C0616,hogar,Jimena Rojas Palacios,,+573232122075,jimena.rojas@example.org,Bogotá,Carrera 37 Bis # 65-7 Este,3,215,anuncios,U02,2026-06-04 15:08
+C0617,hogar,Milena Gómez Moreno,,+573504366435,milena.gomez@example.net,Medellín,Dg. 62 # 16-60 Sur,4,300,anuncios,U03,2026-06-04 16:09
+C0618,negocio,Eduardo Mena,Panadería Restrepo S.A.S.,+573023455715,panaderia.restrepo@example.com,Medellín,Av. carrera 101 # 91-55 Este,,3560,web,U03,2026-06-04 16:13
+C0619,hogar,Blanca Espitia Benavides,,+573005502210,blanca.espitia@example.org,Medellín,Cr. 199Y # 69-7 Sur,6,393,anuncios,U03,2026-06-04 17:01
+C0620,hogar,Mónica Mosquera Cardona,,+573157275503,monica.mosquera@example.org,Bogotá,Transversal 7ª # 8-87 Sur,3,177,anuncios,U02,2026-06-05 12:49
+C0621,negocio,David Bastidas Gil,Supermercado Leal,+573132565673,supermercado.leal@example.org,Cali,Cr. 84 # 2I-84 Este,,1625,whatsapp,U04,2026-06-05 14:45
+C0622,hogar,Alba Vergara Martínez,,+573169157720,alba.vergara@example.net,Bogotá,Diagonal 2ª # 22-24 Sur,4,312,anuncios,U02,2026-06-06 08:37
+C0623,negocio,Clara Granados,Droguería Ávila,+573103688949,drogueria.avila@example.com,Bogotá,Carrera 2ª # 6-3 Este,,4205,whatsapp,U02,2026-06-06 11:00
+C0624,hogar,Ruth López Castillo,,+573173675938,ruth.lopez@example.org,Medellín,Cr. 23U # 5P-28 Este,4,204,anuncios,U03,2026-06-06 15:00
+C0625,hogar,Hugo Rivera Salas,,+573054333397,hugo.rivera@example.net,Medellín,Cr. 3R # 66-66 Este,3,187,anuncios,U03,2026-06-07 10:25
+C0626,negocio,Diego Rosero,Colegio Henao,+573025016995,colegio.henao@example.net,Cali,Cl. 5ª # 2-1 Este,,1714,whatsapp,U04,2026-06-07 10:45
+C0627,hogar,María Arias,,+573150269274,maria.arias@example.net,Medellín,Cr. 37 # 51L-9,5,385,anuncios,U03,2026-06-07 11:07
+C0628,hogar,Faber Cuesta,,+573142368194,faber.cuesta@example.net,Bogotá,Cr. 39 # 60-52 Este,4,283,whatsapp,U02,2026-06-07 16:00
+C0629,hogar,Juan Córdoba Torres,,+573200656449,juan.cordoba@example.org,Bogotá,Av. Santander # 2J-87 Este,3,202,referido,U02,2026-06-07 17:44
+C0630,hogar,Miryam Romero Muñoz,,+573163891830,miryam.romero@example.net,Medellín,Carrera 130 # 9-54 Sur,4,209,anuncios,U03,2026-06-08 08:42
+C0631,hogar,Lorena Saavedra,,+573146935849,lorena.saavedra@example.org,Bogotá,Dg. 2ª # 59-6 Sur,3,208,referido,U02,2026-06-09 11:45
+C0632,hogar,Martín Muñoz,,+573102704786,martin.munoz@example.com,Bogotá,Transversal 32 # 9-9,3,229,whatsapp,U02,2026-06-09 14:15
+C0633,hogar,Jairo López,,+573138329455,jairo.lopez@example.com,Cali,Carrera 101X Sur # 3-42 Sur,3,152,whatsapp,U04,2026-06-10 09:00
+C0634,negocio,Omar García Gómez,Lavandería Morales S.A.S.,+573100139436,lavanderia.morales@example.org,Cali,Calle 117 Bis # 47Z-77 Sur,,4248,whatsapp,U04,2026-06-10 10:44
+C0635,hogar,Enrique Henao,,+573113562619,enrique.henao@example.org,Cali,Cl. 4ª # 75L-5,5,349,whatsapp,U04,2026-06-10 11:11
+C0636,negocio,Alfonso Martínez Moreno,Panadería Marín,+573202077540,panaderia.marin@example.org,Cali,Cr. 4 Bis # 2-22,,3014,whatsapp,U04,2026-06-10 11:38
+C0637,hogar,Elizabeth Herrera,,+573113726468,elizabeth.herrera@example.com,Cali,Cl. 6P # 27-83 Este,5,282,web,U04,2026-06-10 15:43
+C0638,hogar,Gloria Prada Fernández,,+573052543063,gloria.prada@example.com,Bogotá,Cr. 52 # 2W-9,4,270,referido,U02,2026-06-10 17:02
+C0639,hogar,Socorro López Bedoya,,+573018043361,socorro.lopez@example.org,Bogotá,Cl. 95 # 57-70,3,198,web,U02,2026-06-11 15:02
+C0640,hogar,Alexander Castellanos,,+573176477996,alexander.castellanos@example.org,Bogotá,Dg. 144 # 2-3,3,165,web,U02,2026-06-12 10:38
+C0641,hogar,Daniela Cantillo,,+573238685306,daniela.cantillo@example.org,Bogotá,Calle 2ª # 53-74 Este,5,383,anuncios,U02,2026-06-12 17:32
+C0642,hogar,Yury Zuluaga León,,+573129888363,yury.zuluaga@example.com,Cali,Carrera 1ª # 57-47,6,561,whatsapp,U04,2026-06-14 08:41
+C0643,hogar,Mauricio Vargas,,+573172836874,mauricio.vargas@example.com,Cali,Carrera 9ª # 9-7 Sur,3,157,anuncios,U04,2026-06-14 13:54
+C0644,negocio,Juan Bernal,Taller Pérez S.A.S.,+573201589777,taller.perez@example.net,Cali,Av. Carlos Moreno # 95-8 Sur,,3463,anuncios,U04,2026-06-14 18:27
+C0645,hogar,Rodolfo Sierra Rodríguez,,+573044899452,rodolfo.sierra@example.net,Cali,Cr. 2R # 2-98,4,325,referido,U04,2026-06-14 18:43
+C0646,hogar,Dario Murillo,,+573143590743,dario.murillo@example.com,Cali,Cl. 109 # 8-1 Sur,4,348,anuncios,U04,2026-06-15 13:28
+C0647,hogar,César Ruiz Rojas,,+573150347004,cesar.ruiz@example.net,Bogotá,Calle 5X # 99-41,3,227,anuncios,U02,2026-06-15 15:38
+C0648,negocio,Lorena Bermúdez,Taller Pérez S.A.S.,+573047320960,taller.perez@example.com,Medellín,Cr. 126 # 9-59,,2012,whatsapp,U03,2026-06-15 15:38
+C0649,hogar,Yuri Mesa Sandoval,,+573232935050,yuri.mesa@example.com,Bogotá,Carrera 87 # 7-5 Sur,3,221,web,U02,2026-06-15 17:27
+C0650,hogar,Deicy Muñoz Ramírez,,+573057460615,deicy.munoz@example.com,Medellín,Carrera 30 # 4-8,3,251,anuncios,U03,2026-06-15 18:52
+C0651,hogar,Enrique Buitrago Pardo,,+573218776245,enrique.buitrago@example.org,Bogotá,Cr. 70J # 98-3,6,523,referido,U02,2026-06-16 13:25
+C0652,negocio,Ignacio Mena Montoya,Oficinas Escobar,+573013030097,oficinas.escobar@example.net,Cali,Cl. 12 # 27O-40,,2656,web,U04,2026-06-16 15:21
+C0653,hogar,Alonso Valencia Rodríguez,,+573019157045,alonso.valencia@example.net,Medellín,Cr. 34 # 3-11,3,225,anuncios,U03,2026-06-17 11:34
+C0654,hogar,Matilde Díaz,,+573215974837,matilde.diaz@example.org,Cali,Cl. 30 # 3-28 Este,3,257,web,U04,2026-06-17 13:39
+C0655,negocio,Sandra Contreras Forero,Ferretería Gómez,+573015140067,ferreteria.gomez@example.org,Bogotá,Calle 82 # 34-70 Este,,4390,web,U02,2026-06-17 18:44
+C0656,negocio,Paola Hernández,Panadería Palacio,+573053741029,panaderia.palacio@example.net,Medellín,Calle 69C # 7-6 Sur,,1015,anuncios,U03,2026-06-18 09:26
+C0657,hogar,María García Cuesta,,+573120876264,maria.garcia@example.com,Bogotá,Cr. 182 # 59-43,3,179,anuncios,U02,2026-06-18 14:06
+C0658,negocio,Liliana Estrada Molina,Oficinas Gómez,+573049992617,oficinas.gomez82@example.net,Bogotá,Av. calle 55 # 63M-54,,1750,referido,U02,2026-06-19 12:15
+C0659,hogar,Carolina Fuentes Vera,,+573007651797,carolina.fuentes@example.com,Bogotá,Calle 45Q # 49-38,4,280,anuncios,U02,2026-06-19 12:36
+C0660,hogar,Andrés Martínez,,+573050801716,andres.martinez@example.com,Bogotá,Avenida Norte de Santander # 8-8 Sur,5,389,referido,U02,2026-06-19 12:49
+C0661,hogar,César Ruiz,,+573235811957,cesar.ruiz@example.com,Cali,Carrera 39 # 8-95 Sur,3,236,anuncios,U04,2026-06-19 14:39
+C0662,hogar,María Martínez,,+573171302167,maria.martinez@example.com,Medellín,Transversal 8ª # 33-89,5,461,anuncios,U03,2026-06-20 13:05
+C0663,negocio,David Mosquera,Supermercado Cuéllar,+573026685026,supermercado.cuellar@example.org,Bogotá,Cr. 25 # 5-8 Este,,2529,web,U02,2026-06-20 15:39
+C0664,negocio,Jeferson Perea,Oficinas Ruiz,+573177627400,oficinas.ruiz@example.org,Bogotá,Cr. 97 # 48-4 Este,,1604,anuncios,U02,2026-06-21 08:12
+C0665,negocio,Paola Cardona,Colegio Rodríguez,+573004398177,colegio.rodriguez@example.org,Medellín,Cl. 65 # 33X-7,,978,whatsapp,U03,2026-06-21 08:26
+C0666,hogar,Luis Hernández,,+573029919702,luis.hernandez@example.com,Bogotá,Avenida calle 2ª # 66P-99 Sur,4,291,web,U02,2026-06-21 09:24
+C0667,hogar,Dina Pérez,,+573501962669,dina.perez@example.com,Bogotá,Cl. 99 # 2-8 Este,3,186,anuncios,U02,2026-06-21 09:51
+C0668,hogar,Carlos López,,+573237541336,carlos.lopez@example.net,Medellín,Cl. 4 Sur # 8Y-8 Sur,3,156,web,U03,2026-06-22 15:21
+C0669,hogar,Luz Castro,,+573232938438,luz.castro@example.com,Bogotá,Carrera 138L Bis D # 2-55 Sur,3,257,referido,U02,2026-06-22 17:05
+C0670,negocio,Alexander Guzmán Sierra,Restaurante Gallego,+573002992045,restaurante.gallego@example.net,Medellín,Cl. 8ª # 36-67 Sur,,2193,whatsapp,U03,2026-06-22 18:07
+C0671,negocio,Elsa Agudelo,Taller Cortés,+573178899417,taller.cortes@example.net,Cali,Cl. 184 # 26W-6 Sur,,4410,whatsapp,U04,2026-06-22 18:50
+C0672,negocio,Héctor Castillo,Gimnasio Mena,+573052396700,gimnasio.mena@example.net,Bogotá,Calle 25 # 18U-13 Este,,3234,anuncios,U02,2026-06-23 13:19
+C0673,hogar,Aura García,,+573138750763,aura.garcia@example.org,Bogotá,Avenida calle 36 # 6-99,5,332,whatsapp,U02,2026-06-24 08:59
+C0674,hogar,Pedro Salamanca Rodríguez,,+573054946464,pedro.salamanca@example.org,Medellín,Cr. 10 # 89-99,3,203,web,U03,2026-06-26 10:31
+C0675,negocio,Tulia Rivera Torres,Taller Vanegas,+573149780412,taller.vanegas@example.com,Medellín,Av. La Florida # 3-71,,1515,web,U03,2026-06-26 16:46
+C0676,hogar,Betty Molina Velandia,,+573507859775,betty.molina@example.org,Bogotá,Cr. 26 # 84-56,5,462,anuncios,U02,2026-06-26 17:16
+C0677,negocio,John Valencia Castro,Restaurante Estrada,+573214304737,restaurante.estrada@example.com,Medellín,Calle 152 # 4-37,,2511,web,U03,2026-06-27 11:08
+C0678,hogar,Isaac Alzate,,+573166500573,isaac.alzate@example.net,Bogotá,Av. carrera 189 # 9C-90,5,317,referido,U02,2026-06-27 11:23
+C0679,negocio,Felipe Pérez,Restaurante Gómez S.A.S.,+573120381406,restaurante.gomez@example.com,Cali,Transversal 2 Bis Z # 20-7 Sur,,1254,whatsapp,U04,2026-06-28 08:19
+C0680,hogar,Rocío Mosquera,,+573511731360,rocio.mosquera@example.net,Bogotá,Av. carrera 74 # 4-9 Este,3,239,anuncios,U02,2026-06-28 08:37
+C0681,hogar,Cristian Cruz,,+573056108189,cristian.cruz@example.org,Bogotá,Avenida Leydi Suárez # 34F-10 Sur,3,232,whatsapp,U02,2026-06-28 08:40
+C0682,hogar,Heriberto Herrera Sánchez,,+573519628105,heriberto.herrera@example.net,Cali,Cr. 2L # 83P-42,5,415,whatsapp,U04,2026-06-28 13:52
+C0683,hogar,Fanny Mendoza González,,+573154138256,fanny.mendoza@example.com,Bogotá,Diagonal 1I Bis I # 1-9 Sur,6,546,anuncios,U02,2026-06-28 17:07
+C0684,hogar,Lucía Sandoval Jiménez,,+573504296111,lucia.sandoval@example.net,Medellín,Carrera 9ª # 9A-7,4,280,whatsapp,U03,2026-06-28 17:53
+C0685,hogar,Marcela Pérez,,+573056754981,marcela.perez@example.net,Bogotá,Diagonal 8I # 43-89,3,240,anuncios,U02,2026-06-29 14:48
+C0686,hogar,Humberto Ruiz Burbano,,+573018792477,humberto.ruiz@example.net,Medellín,Carrera 154Q # 55P-61 Este,3,157,whatsapp,U03,2026-06-29 14:55
+C0687,negocio,Diana Espinosa,Oficinas Herrera S.A.S.,+573116061386,oficinas.herrera@example.org,Bogotá,Dg. 33 # 29-2 Sur,,1218,anuncios,U02,2026-06-29 16:44
+C0688,hogar,Carlos Martínez,,+573503269466,carlos.martinez@example.net,Medellín,Carrera 10 # 85-63 Este,5,457,anuncios,U03,2026-06-30 12:08
+C0689,hogar,Javier Ávila Barragán,,+573136539475,javier.avila@example.net,Cali,Transversal 7Z # 1-36 Sur,4,230,anuncios,U04,2026-06-30 14:56
+C0690,negocio,Jaime Castro Betancur,Gimnasio Flórez,+573102791318,gimnasio.florez@example.net,Bogotá,Cr. 71 # 37-27 Sur,,3853,web,U02,2026-06-30 16:12
+C0691,hogar,Valentina Estrada Mena,,+573166797648,valentina.estrada@example.com,Medellín,Calle 77 # 47-22 Sur,3,241,web,U03,2026-06-30 16:27
+C0692,hogar,Humberto Gómez,,+573500267315,humberto.gomez@example.com,Bogotá,Transversal 25 # 1-7,4,304,anuncios,U02,2026-07-01 09:24
+C0693,negocio,Valeria Mejía Martínez,Restaurante Gamboa,+573005199055,restaurante.gamboa@example.org,Cali,Avenida San Sebastián # 7-79,,1907,anuncios,U04,2026-07-01 10:06
+C0694,hogar,Nataly Rodríguez Niño,,+573189134793,nataly.rodriguez@example.org,Cali,Calle 33 # 9-57 Este,5,488,referido,U04,2026-07-01 11:20
+C0695,hogar,Juan Mercado Vargas,,+573130899990,juan.mercado@example.net,Medellín,Cr. 7ª # 84-8 Este,4,324,anuncios,U03,2026-07-01 16:33
+C0696,hogar,Martha Rodríguez Caballero,,+573151985435,martha.rodriguez@example.net,Medellín,Dg. 31 # 87T-78 Este,3,206,anuncios,U03,2026-07-01 18:37
+C0697,hogar,Álvaro Zapata,,+573114270282,alvaro.zapata@example.org,Bogotá,Carrera 141 # 83-22 Este,4,200,anuncios,U02,2026-07-02 08:18
+C0698,hogar,Cecilia Muñoz,,+573200637716,cecilia.munoz@example.net,Medellín,Dg. 5ª # 10-2,5,360,anuncios,U03,2026-07-02 17:29
+C0699,hogar,Antonio Suárez,,+573026758187,antonio.suarez@example.org,Bogotá,Calle 119Y # 45-70 Este,5,418,web,U02,2026-07-03 08:24
+C0700,hogar,Mary Buitrago,,+573055683798,mary.buitrago@example.com,Bogotá,Tr. 186L # 6-40,4,236,whatsapp,U02,2026-07-03 11:09
+C0701,hogar,Inés Benavides,,+573111919394,ines.benavides@example.com,Bogotá,Tr. 98 # 29-68,2,120,referido,U02,2026-07-03 13:37
+C0702,negocio,Felipe Naranjo Gómez,Panadería Díaz,+573175661187,panaderia.diaz@example.net,Bogotá,Avenida calle 132 # 2H-2 Este,,2710,anuncios,U02,2026-07-03 16:03
+C0703,hogar,María Ríos Valencia,,+573002829179,maria.rios@example.com,Cali,Carrera 58 # 4-93 Este,4,310,referido,U04,2026-07-04 09:04
+C0704,hogar,María Montoya,,+573111657150,maria.montoya@example.net,Medellín,Carrera 4B # 37-1 Sur,4,309,whatsapp,U03,2026-07-04 18:35
+C0705,hogar,María Peña,,+573514085560,maria.pena@example.net,Bogotá,Carrera 61 # 94-81 Sur,3,217,whatsapp,U02,2026-07-05 14:04
+C0706,hogar,Octavio Henao Lara,,+573002870380,octavio.henao@example.com,Bogotá,Carrera 91 # 40-4 Este,3,199,anuncios,U02,2026-07-05 15:04
+C0707,hogar,Aníbal Cabrera Pinto,,+573024963321,anibal.cabrera@example.org,Medellín,Cl. 93 # 1-89,5,301,anuncios,U03,2026-07-06 10:52
+C0708,hogar,Judith Hernández,,+573188987664,judith.hernandez@example.net,Medellín,Diagonal 2ª # 4V-1 Sur,4,222,whatsapp,U03,2026-07-06 13:38
+C0709,negocio,Judith Cortés,Colegio García,+573232092488,colegio.garcia@example.net,Medellín,Cr. 6ª # 33-5 Sur,,4362,anuncios,U03,2026-07-06 13:38
+C0710,hogar,Eugenia Ruiz Medina,,+573025155959,eugenia.ruiz@example.com,Bogotá,Cr. 141 # 20-3 Sur,4,294,web,U02,2026-07-06 15:12
+C0711,negocio,María Sánchez,Lavandería Solano,+573118508017,lavanderia.solano@example.net,Bogotá,Carrera 4ª # 3-68 Este,,3855,whatsapp,U02,2026-07-06 18:47
+C0712,hogar,Paula Hernández,,+573050530260,paula.hernandez@example.org,Bogotá,Av. La Macarena # 44U-6,2,145,referido,U02,2026-07-07 08:27
+C0713,hogar,Susana Jiménez,,+573024979184,susana.jimenez@example.com,Bogotá,Tr. 51 # 78-60 Este,5,321,anuncios,U02,2026-07-07 11:31
+C0714,hogar,Jhon Castañeda,,+573023010747,jhon.castaneda@example.net,Medellín,Carrera 37 # 47Q-4 Este,3,160,whatsapp,U03,2026-07-08 09:40
+C0715,hogar,Adriana Arboleda,,+573049132258,adriana.arboleda@example.net,Medellín,Cl. 55 # 6Y-9 Sur,2,151,anuncios,U03,2026-07-08 10:42
+C0716,hogar,León Espitia Cáceres,,+573119785411,leon.espitia@example.com,Bogotá,Carrera 165 # 7T-1 Este,4,265,anuncios,U02,2026-07-08 14:59
+C0717,hogar,Eugenia García,,+573186745043,eugenia.garcia@example.net,Bogotá,Carrera 12 # 3-4,5,331,anuncios,U02,2026-07-08 15:02
+C0718,hogar,Edgar Díaz,,+573050472386,edgar.diaz@example.com,Cali,Cl. 6ª # 2F-72,4,204,web,U04,2026-07-08 15:49
+C0719,hogar,Luz Cortés Sanabria,,+573500190103,luz.cortes@example.com,Cali,Cl. 50 # 8-7 Este,3,175,referido,U04,2026-07-09 08:40
+C0720,hogar,Manuel Prieto,,+573129421920,manuel.prieto@example.net,Medellín,Av. calle 66 # 68H-44 Sur,5,372,anuncios,U03,2026-07-10 13:22
+C0721,negocio,Enrique Ortiz Carvajal,Oficinas Angulo,+573512789563,oficinas.angulo@example.com,Medellín,Cl. 147A # 28U-14 Este,,4341,anuncios,U03,2026-07-10 15:29
+C0722,hogar,Alexander Rodríguez,,+573055452190,alexander.rodriguez@example.com,Cali,Cr. 43 # 1E-45,4,232,whatsapp,U04,2026-07-10 16:09
+C0723,hogar,María Narváez Pineda,,+573118462422,maria.narvaez@example.org,Cali,Av. carrera 105 # 38-1 Sur,4,302,anuncios,U04,2026-07-11 13:29
+C0724,hogar,Sara Parra,,+573209974549,sara.parra@example.org,Cali,Cl. 76 # 3-91,4,305,whatsapp,U04,2026-07-11 14:29
+C0725,hogar,Rosa Rivas,,+573236611509,rosa.rivas@example.org,Medellín,Carrera 106 # 8-95 Sur,4,263,whatsapp,U03,2026-07-11 14:30
+C0726,hogar,Kelly Bermúdez Villa,,+573155626644,kelly.bermudez@example.org,Medellín,Carrera 125 Este # 61-3 Sur,3,206,anuncios,U03,2026-07-11 18:21
+C0727,hogar,Natalia López,,+573164507557,natalia.lopez@example.com,Bogotá,Calle 105F # 6-9 Sur,3,246,anuncios,U02,2026-07-12 10:27
+C0728,negocio,Marina Castaño Sánchez,Taller Salazar,+573500210969,taller.salazar@example.org,Bogotá,Cl. 60 Este # 69-67,,1441,whatsapp,U02,2026-07-12 15:13
+C0729,hogar,Hilda Amaya,,+573054243121,hilda.amaya@example.org,Medellín,Carrera 185 # 4E-8,4,325,referido,U03,2026-07-12 15:53
+C0730,hogar,Carlos Garzón,,+573044895865,carlos.garzon@example.org,Bogotá,Carrera 8A # 41-6 Sur,3,163,whatsapp,U02,2026-07-13 13:39
+C0731,negocio,José Moreno Rubio,Carnicería Pérez S.A.S.,+573027783782,carniceria.perez@example.com,Medellín,Cl. 19 # 38-4,,4221,web,U03,2026-07-13 14:05
+C0732,hogar,Mercedes Molano,,+573121426452,mercedes.molano@example.org,Cali,Carrera 6Z # 81-77 Este,4,257,whatsapp,U04,2026-07-13 18:19
+C0733,hogar,Victoria Delgado,,+573184583801,victoria.delgado@example.com,Medellín,Avenida Norte de Santander # 80-86 Este,3,253,referido,U03,2026-07-13 18:21
+C0734,negocio,Brian Mejía,Panadería Vargas,+573110452682,panaderia.vargas@example.org,Bogotá,Calle 16 # 14T-7,,1161,web,U02,2026-07-13 18:52
+C0735,hogar,Fernando Cuéllar,,+573162632972,fernando.cuellar@example.net,Medellín,Cr. 3ª # 42-51 Sur,3,157,web,U03,2026-07-15 09:29
+C0736,hogar,Pilar Bejarano Bustos,,+573500140153,pilar.bejarano@example.com,Cali,Carrera 54 # 46-19,3,181,anuncios,U04,2026-07-15 10:10
+C0737,hogar,José Forero,,+573152697893,jose.forero@example.com,Medellín,Carrera 3ª # 32-53 Sur,2,175,whatsapp,U03,2026-07-15 13:36
+C0738,negocio,Ferney Sánchez Carrillo,Restaurante Vera,+573140965325,restaurante.vera@example.com,Bogotá,Cr. 15E # 83-49,,3261,whatsapp,U02,2026-07-16 10:17
+C0739,hogar,Alba Zuluaga,,+573122291404,alba.zuluaga@example.net,Cali,Transversal 71 # 9-2 Sur,6,656,anuncios,U04,2026-07-16 11:54
+C0740,hogar,Benjamín García Martínez,,+573236064017,benjamin.garcia@example.org,Cali,Carrera 73 # 18-60 Sur,5,363,web,U04,2026-07-16 12:14
+C0741,hogar,Sandra Paz,,+573025542416,sandra.paz@example.net,Bogotá,Cl. 39 # 52J-41,4,265,anuncios,U02,2026-07-16 12:52
+C0742,hogar,Milena Galindo,,+573237690268,milena.galindo@example.com,Bogotá,Cr. 96I Sur # 97X-40 Este,3,178,web,U02,2026-07-16 13:22
+C0743,hogar,Catalina López Rojas,,+573131958596,catalina.lopez@example.org,Medellín,Av. Falan # 1-29 Sur,3,194,whatsapp,U03,2026-07-16 14:23
+C0744,hogar,Leonardo Amaya,,+573135454298,leonardo.amaya@example.net,Cali,Cr. 97 Bis F # 1-1 Este,3,221,anuncios,U04,2026-07-16 16:19
+C0745,hogar,Laura Contreras,,+573136117692,laura.contreras@example.com,Medellín,Cl. 3O Bis W # 6-2,4,272,whatsapp,U03,2026-07-17 17:27
+C0746,hogar,Carlos Zapata Soto,,+573124743922,carlos.zapata@example.net,Cali,Carrera 156 # 5L-85 Este,6,481,anuncios,U04,2026-07-17 18:28
+C0747,hogar,Cristian Jaramillo,,+573186194028,cristian.jaramillo@example.com,Medellín,Av. carrera 4ª # 41-2 Sur,5,344,anuncios,U03,2026-07-18 17:10
+C0748,negocio,Víctor Muñoz Gil,Ferretería Rodríguez,+573133114501,ferreteria.rodriguez@example.net,Cali,Carrera 79E # 21-51,,2668,anuncios,U04,2026-07-19 11:19
+C0749,negocio,Jesús Hurtado,Panadería Cruz,+573234342466,panaderia.cruz@example.net,Cali,Carrera 84 Este # 77-9 Este,,2737,referido,U04,2026-07-19 14:53
+C0750,hogar,Olga Cantillo León,,+573512341324,olga.cantillo@example.net,Medellín,Av. Santander # 8-5 Sur,3,152,anuncios,U03,2026-07-19 17:37
+C0751,hogar,Mateo Morales Duarte,,+573237999924,mateo.morales@example.net,Cali,Calle 114 Sur # 82-97 Sur,6,453,web,U04,2026-07-20 08:11
+C0752,hogar,Ruby Castrillón,,+573143846441,ruby.castrillon@example.com,Cali,Carrera 145Q Bis # 33-58 Este,3,157,anuncios,U04,2026-07-20 10:07
+C0753,hogar,José Álvarez,,+573017475793,jose.alvarez@example.org,Bogotá,Carrera 113L # 11-9 Sur,4,285,web,U02,2026-07-21 15:03
+C0754,hogar,Pilar García López,,+573211653921,pilar.garcia@example.net,Bogotá,Cl. 110 # 4-9,3,205,referido,U02,2026-07-21 17:15
+C0755,hogar,Alejandro Rojas,,+573145085424,alejandro.rojas@example.net,Cali,Cl. 9ª # 1-3 Este,4,341,anuncios,U04,2026-07-22 08:59
+C0756,hogar,Danny Martínez Cardona,,+573169744100,danny.martinez@example.com,Bogotá,Calle 28 # 83-32 Este,3,164,whatsapp,U02,2026-07-23 12:03
+C0757,negocio,Ana Carrillo,Supermercado Rodríguez,+573500175918,supermercado.rodriguez@example.com,Cali,Calle 53 # 39-5 Este,,3628,anuncios,U04,2026-07-23 15:37
+C0758,negocio,Janeth Ortiz,Droguería Chaparro,+573136423380,drogueria.chaparro@example.org,Bogotá,Avenida Andrés Giovanny Zapata Osorio # 3R-17 Este,,1107,referido,U02,2026-07-24 08:13
+C0759,hogar,Luz González Muñoz,,+573137709185,luz.gonzalez@example.com,Medellín,Cl. 28 # 41R-7 Este,3,207,whatsapp,U03,2026-07-24 12:22
+C0760,negocio,Concepción Ríos,Restaurante Rubio,+573112473459,restaurante.rubio@example.org,Bogotá,Cl. 21 # 2-6 Sur,,2670,web,U02,2026-07-25 08:14
+C0761,hogar,Saúl García González,,+573008331361,saul.garcia@example.com,Bogotá,Calle 141S # 67-46,2,184,web,U02,2026-07-25 09:55
+C0762,hogar,Liliana Solano Riascos,,+573127775634,liliana.solano@example.com,Medellín,Tr. 47 # 22-74 Este,3,192,whatsapp,U03,2026-07-25 12:05
+C0763,hogar,Martha Vargas Barrera,,+573148550511,martha.vargas@example.net,Cali,Cl. 29 Este # 3-44 Sur,5,398,anuncios,U04,2026-07-26 14:02
+C0764,hogar,Leidy Sánchez Hurtado,,+573153617419,leidy.sanchez@example.com,Medellín,Av. calle 113 # 6-84 Sur,6,707,anuncios,U03,2026-07-26 15:30
+C0765,negocio,Luis Cifuentes,Hotel Orozco,+573004098937,hotel.orozco@example.com,Medellín,Carrera 116 Sur # 40-4,,2016,anuncios,U03,2026-07-26 16:17
+C0766,negocio,Alejandro Herrera,Oficinas García,+573166735041,oficinas.garcia@example.net,Medellín,Cl. 72 # 68-69 Este,,970,anuncios,U03,2026-07-27 14:28
+C0767,hogar,Lidia Castrillón,,+573160067801,lidia.castrillon@example.com,Bogotá,Avenida carrera 58 # 2-7 Sur,3,183,referido,U02,2026-07-28 08:28
+C0768,hogar,Elizabeth López Mena,,+573028999301,elizabeth.lopez@example.net,Bogotá,Cr. 9A # 3-62,4,236,web,U02,2026-07-28 10:54
+C0769,hogar,Lorena Camargo Orozco,,+573176604749,lorena.camargo@example.com,Cali,Calle 39 # 56-36 Este,4,219,anuncios,U04,2026-07-29 15:15
+C0770,hogar,Rosa Sánchez González,,+573506211876,rosa.sanchez@example.com,Bogotá,Avenida Zipaquirá # 7-35 Sur,3,241,anuncios,U02,2026-07-29 17:07
+C0771,negocio,Piedad Guerrero,Lavandería Ramírez S.A.S.,+573052932177,lavanderia.ramirez@example.org,Bogotá,Cr. 68 # 4-5 Este,,4328,referido,U02,2026-07-30 11:11
+C0772,hogar,Ana Mosquera,,+573135730853,ana.mosquera@example.com,Cali,Dg. 14 # 2-4 Este,4,261,referido,U04,2026-07-30 15:32
+C0773,hogar,Dina Vélez Figueroa,,+573053464833,dina.velez@example.org,Bogotá,Cl. 2Y Bis # 3-3 Sur,4,335,web,U02,2026-07-30 16:57
+C0774,hogar,Henry Pinzón,,+573160029399,henry.pinzon@example.com,Bogotá,Av. carrera 171 # 42D-44 Este,2,142,anuncios,U02,2026-07-31 08:23
+C0775,hogar,Sonia Salazar Perea,,+573211015517,sonia.salazar@example.net,Bogotá,Tr. 13Y # 9-58 Sur,3,170,anuncios,U02,2026-08-01 13:26
+C0776,hogar,Fabio Mendoza,,+573148297703,fabio.mendoza@example.org,Bogotá,Cl. 105J # 8-53,3,217,anuncios,U02,2026-08-01 14:21
+C0777,hogar,Julieth Muñoz,,+573111453737,julieth.munoz@example.com,Cali,Av. Daniel Mejía Hoyos # 22-21,5,468,web,U04,2026-08-01 16:32
+C0778,hogar,Josefina Salazar Cabrera,,+573151165078,josefina.salazar@example.com,Cali,Cl. 98 # 6W-23 Este,6,699,web,U04,2026-08-01 18:06
+C0779,hogar,María Rueda Santos,,+573124941094,maria.rueda@example.net,Medellín,Calle 161 # 3-2 Este,3,155,whatsapp,U03,2026-08-02 08:58
+C0780,hogar,Humberto Gómez Martínez,,+573136721198,humberto.gomez46@example.net,Bogotá,Av. Guaviare # 3-93 Este,4,338,anuncios,U02,2026-08-02 11:06
+C0781,hogar,Jhon Bastidas,,+573125287125,jhon.bastidas@example.com,Bogotá,Avenida calle 50 # 75-33,4,337,web,U02,2026-08-02 13:02
+C0782,negocio,Elizabeth Silva Sánchez,Gimnasio Ceballos S.A.S.,+573510510602,gimnasio.ceballos@example.com,Bogotá,Cr. 56 # 3-5 Este,,990,web,U02,2026-08-02 14:17
+C0783,hogar,Wilson Villegas Uribe,,+573166873623,wilson.villegas@example.org,Bogotá,Diagonal 79 # 3-77 Sur,5,369,anuncios,U02,2026-08-02 15:47
+C0784,negocio,Javier Contreras,Oficinas Gómez,+573178316328,oficinas.gomez@example.com,Cali,Cl. 91 # 5-10,,2789,anuncios,U04,2026-08-03 11:51
+C0785,negocio,Alberto Orozco Ramírez,Ferretería Montoya S.A.S.,+573160508795,ferreteria.montoya@example.net,Medellín,Avenida carrera 17 # 4-23 Sur,,2834,referido,U03,2026-08-03 16:25
+C0786,hogar,Alejandra Palacios Castaño,,+573110365871,alejandra.palacios@example.net,Cali,Av. Nancy Restrepo # 39F-2 Sur,5,331,referido,U04,2026-08-03 16:35
+C0787,negocio,Mary Pérez Cuéllar,Oficinas Cortés,+573180619745,oficinas.cortes@example.com,Cali,Cr. 7ª # 49-70,,3519,anuncios,U04,2026-08-04 17:24
+C0788,hogar,Marlon Martínez Zambrano,,+573165821277,marlon.martinez@example.net,Bogotá,Av. carrera 5ª # 4-5,4,214,anuncios,U02,2026-08-05 08:42
+C0789,hogar,Milena Arrieta Ruiz,,+573024146646,milena.arrieta@example.net,Bogotá,Avenida Cauca # 7-78 Este,6,412,web,U02,2026-08-05 11:04
+C0790,hogar,Ruth Rodríguez,,+573166858322,ruth.rodriguez@example.com,Medellín,Carrera 24 # 85-53,3,217,anuncios,U03,2026-08-05 13:08
+C0791,hogar,Enrique Acevedo Sánchez,,+573515133900,enrique.acevedo@example.org,Bogotá,Carrera 37 # 37-9 Sur,3,167,whatsapp,U02,2026-08-05 16:51
+C0792,hogar,Leonardo Gutiérrez,,+573513077451,leonardo.gutierrez@example.com,Medellín,Diagonal 95 # 2-9 Sur,3,197,web,U03,2026-08-06 12:38
+C0793,negocio,Amparo Ortiz Ruiz,Taller Sierra,+573189593988,taller.sierra@example.com,Bogotá,Calle 194 # 82-3,,3570,web,U02,2026-08-07 12:22
+C0794,hogar,Nicolás Serrano,,+573043264621,nicolas.serrano@example.org,Cali,Transversal 81 # 88-34 Sur,6,569,referido,U04,2026-08-07 15:58
+C0795,hogar,José Zuluaga Herrera,,+573117544717,jose.zuluaga@example.org,Bogotá,Cr. 52J # 12-67 Este,4,345,anuncios,U02,2026-08-08 08:31
+C0796,hogar,Adriana Campo,,+573184432494,adriana.campo@example.com,Bogotá,Dg. 151I Sur # 36-90 Este,3,210,referido,U02,2026-08-08 13:24
+C0797,hogar,José Murcia Villa,,+573168190157,jose.murcia@example.com,Bogotá,Calle 128 # 8-75 Este,4,269,anuncios,U02,2026-08-08 16:14
+C0798,negocio,Mario Sierra,Carnicería Amaya,+573002771148,carniceria.amaya@example.org,Bogotá,Transversal 3ª # 76-7 Este,,1484,anuncios,U02,2026-08-08 16:28
+C0799,hogar,Maira Castro,,+573163486113,maira.castro@example.com,Medellín,Avenida Sandra Mirian Torres Álvarez # 3-78,5,417,anuncios,U03,2026-08-09 18:03
+C0800,hogar,Eugenia Medina,,+573509027228,eugenia.medina@example.net,Medellín,Tr. 75 # 21Q-95 Este,5,302,anuncios,U03,2026-08-09 18:45
+C0801,hogar,Guillermo Silva,,+573058784775,guillermo.silva@example.com,Bogotá,Carrera 115 # 88-72,4,221,anuncios,U02,2026-08-11 08:33
+C0802,hogar,Elvira Pardo Jaimes,,+573201707618,elvira.pardo@example.net,Medellín,Carrera 5T # 3-12,3,155,whatsapp,U03,2026-08-11 17:22
+C0803,negocio,Guillermo Rojas Castro,Oficinas Fernández S.A.S.,+573231566534,oficinas.fernandez@example.org,Bogotá,Cr. 9P # 35-31,,966,whatsapp,U02,2026-08-12 10:09
+C0804,hogar,Fabián Becerra Becerra,,+573023613424,fabian.becerra@example.org,Medellín,Carrera 35 # 2-4 Sur,5,292,whatsapp,U03,2026-08-12 13:56
+C0805,negocio,Luis Sánchez,Lavandería Ruiz S.A.S.,+573204287938,lavanderia.ruiz@example.net,Bogotá,Cl. 9V # 25-54 Sur,,1681,web,U02,2026-08-12 14:03
+C0806,hogar,Patricia Corredor,,+573055605185,patricia.corredor@example.com,Medellín,Carrera 49 # 4C-1 Sur,3,170,anuncios,U03,2026-08-12 15:02
+C0807,hogar,Olga Salcedo,,+573161460543,olga.salcedo@example.com,Cali,Av. calle 12 # 20D-4 Sur,4,347,whatsapp,U04,2026-08-12 16:15
+C0808,negocio,Alexander Herrera,Oficinas Romero,+573154196018,oficinas.romero@example.com,Cali,Cl. 5K # 8-3,,2782,whatsapp,U04,2026-08-13 08:30
+C0809,hogar,Lilian Serna,,+573100248866,lilian.serna@example.org,Cali,Tr. 8 Bis # 9-2,6,693,web,U04,2026-08-13 12:09
+C0810,hogar,Gloria Cruz,,+573118655710,gloria.cruz@example.org,Bogotá,Cl. 9N # 95Z-4 Este,5,483,anuncios,U02,2026-08-13 15:21
+C0811,hogar,Daniel Rodríguez,,+573180913666,daniel.rodriguez@example.org,Cali,Carrera 27 # 51-1,3,254,anuncios,U04,2026-08-13 16:21
+C0812,hogar,María Cruz Ariza,,+573233953124,maria.cruz@example.org,Medellín,Carrera 40 # 8-79 Este,4,299,web,U03,2026-08-14 08:34
+C0813,hogar,Magnolia Ángel Parada,,+573160063645,magnolia.angel@example.com,Cali,Cr. 121A # 8-5 Este,3,254,anuncios,U04,2026-08-14 13:25
+C0814,hogar,Isabel Martínez Díaz,,+573200291475,isabel.martinez@example.org,Bogotá,Cr. 6V # 3H-97 Este,4,348,whatsapp,U02,2026-08-14 13:55
+C0815,hogar,Silvia Barrera,,+573172627806,silvia.barrera@example.net,Bogotá,Carrera 137A # 9-16 Sur,4,337,whatsapp,U02,2026-08-14 14:17
+C0816,hogar,Fernando Gómez,,+573103502347,fernando.gomez@example.org,Medellín,Calle 88 # 3C-96 Este,4,227,referido,U03,2026-08-14 17:18
+C0817,negocio,Wilmer López Cardona,Carnicería Vásquez,+573059157065,carniceria.vasquez@example.com,Bogotá,Avenida calle 193 # 1-99 Sur,,4412,whatsapp,U02,2026-08-14 17:56
+C0818,hogar,Alex Calderón,,+573202525506,alex.calderon@example.org,Cali,Cl. 95 # 7-10 Sur,3,191,anuncios,U04,2026-08-15 08:14
+C0819,hogar,Mercedes Ruiz,,+573006158491,mercedes.ruiz@example.net,Medellín,Diagonal 7ª # 62-4 Este,5,381,whatsapp,U03,2026-08-15 08:43
+C0820,hogar,Marina Giraldo,,+573162215921,marina.giraldo@example.org,Medellín,Transversal 1ª # 6-1,3,179,anuncios,U03,2026-08-15 10:11
+C0821,hogar,Diana Gamboa Díaz,,+573023192292,diana.gamboa@example.com,Medellín,Transversal 3C # 90-2,4,330,whatsapp,U03,2026-08-16 15:43
+C0822,hogar,Jesús Bernal,,+573108389396,jesus.bernal@example.net,Cali,Transversal 7ª # 45-26 Sur,5,283,whatsapp,U04,2026-08-16 18:21
+C0823,hogar,Luis Camargo González,,+573127062963,luis.camargo@example.org,Bogotá,Calle 9E # 1-74 Este,4,296,anuncios,U02,2026-08-17 10:34
+C0824,hogar,Dora Sarmiento Padilla,,+573175610141,dora.sarmiento@example.com,Bogotá,Cr. 38 # 90M-3,4,348,anuncios,U02,2026-08-17 15:18
+C0825,negocio,Beatriz Burbano,Gimnasio Ramírez,+573028086629,gimnasio.ramirez@example.net,Bogotá,Calle 12G # 2-8,,2191,anuncios,U02,2026-08-18 12:13
+C0826,negocio,Giovanni Sánchez Suárez,Panadería Restrepo,+573002253550,panaderia.restrepo@example.org,Medellín,Avenida Pinzón # 51-75 Este,,1165,anuncios,U03,2026-08-18 12:44
+C0827,negocio,Yamid Osorio Rojas,Taller Flórez,+573163536406,taller.florez@example.org,Medellín,Diagonal 4ª # 28-47 Este,,4078,web,U03,2026-08-18 14:39
+C0828,hogar,Humberto Álvarez Castañeda,,+573168724276,humberto.alvarez@example.com,Bogotá,Avenida carrera 190 # 3-98,5,286,referido,U02,2026-08-19 17:23
+C0829,hogar,Elizabeth Medina Parra,,+573112460666,elizabeth.medina@example.com,Bogotá,Av. Boyacá # 44-82,3,217,anuncios,U02,2026-08-19 17:29
+C0830,hogar,Luis Osorio Blanco,,+573156321493,luis.osorio@example.com,Cali,Diagonal 153 # 32M-33 Sur,5,478,whatsapp,U04,2026-08-20 11:37
+C0831,hogar,Álvaro López Caicedo,,+573177609725,alvaro.lopez@example.net,Bogotá,Cr. 31 # 8-69 Este,4,264,anuncios,U02,2026-08-20 13:30
+C0832,hogar,Milena Ruiz,,+573053257875,milena.ruiz@example.org,Medellín,Cr. 83A Sur # 7-25,5,323,anuncios,U03,2026-08-20 14:16
+C0833,negocio,Julio Álvarez Vargas,Oficinas Arias,+573023608330,oficinas.arias@example.com,Cali,Carrera 8ª # 68-91 Sur,,3131,anuncios,U04,2026-08-20 14:46
+C0834,hogar,Catherine Zambrano,,+573027033133,catherine.zambrano@example.com,Bogotá,Carrera 79 # 26-1 Sur,6,648,anuncios,U02,2026-08-20 15:37
+C0835,negocio,Luis López,Carnicería Muñoz,+573004268463,carniceria.munoz@example.com,Bogotá,Carrera 1J Sur # 70-8 Este,,1493,web,U02,2026-08-21 17:14
+C0836,hogar,Luz Serna Moreno,,+573210519978,luz.serna@example.org,Bogotá,Cl. 50 # 72-23 Este,4,290,anuncios,U02,2026-08-22 09:36
+C0837,hogar,Janneth Meza Jiménez,,+573112882648,janneth.meza@example.org,Medellín,Av. carrera 92 # 37-1,3,181,anuncios,U03,2026-08-23 09:43
+C0838,negocio,Jhon Suárez Guzmán,Hotel Gutiérrez,+573152326513,hotel.gutierrez@example.net,Cali,Carrera 1ª # 58-93 Este,,2652,anuncios,U04,2026-08-24 13:21
+C0839,hogar,Ibeth Quintero,,+573167969472,ibeth.quintero@example.org,Medellín,Dg. 5ª # 28-87 Sur,3,188,anuncios,U03,2026-08-25 14:37
+C0840,hogar,David Vallejo Caballero,,+573516060336,david.vallejo@example.net,Cali,Calle 84 # 46-9 Este,3,255,web,U04,2026-08-25 16:03
+C0841,hogar,Mariela Aguirre,,+573139731755,mariela.aguirre@example.com,Medellín,Cl. 151O # 4-2 Este,4,213,anuncios,U03,2026-08-26 11:47
+C0842,hogar,Mateo Angarita López,,+573138066916,mateo.angarita@example.net,Cali,Tr. 9ª # 85S-98,4,232,anuncios,U04,2026-08-26 16:02
+C0843,hogar,Gina Flórez,,+573044337917,gina.florez@example.com,Cali,Av. calle 8ª # 1-4 Sur,4,336,anuncios,U04,2026-08-27 18:12
+C0844,negocio,Miguel Torres Niño,Ferretería Villa,+573050785719,ferreteria.villa@example.net,Bogotá,Cr. 65 # 59-7 Este,,2508,referido,U02,2026-08-28 09:12
+C0845,negocio,Fernando Sarmiento Moreno,Supermercado Beltrán,+573200221603,supermercado.beltran@example.net,Medellín,Calle 59 # 4-82 Sur,,1255,anuncios,U03,2026-08-28 12:38
+C0846,hogar,Luz Agudelo,,+573056713972,luz.agudelo@example.org,Cali,Cr. 41 # 2-6 Este,4,238,anuncios,U04,2026-08-28 15:58
+C0847,hogar,Flor Reyes Jiménez,,+573016267805,flor.reyes@example.com,Bogotá,Dg. 156 # 4-65 Este,5,394,anuncios,U02,2026-08-29 13:42
+C0848,negocio,David Tovar Peña,Supermercado Niño,+573135177368,supermercado.nino@example.net,Bogotá,Tr. 9U # 1-80 Este,,2490,anuncios,U02,2026-08-29 13:59
+C0849,hogar,Alba Restrepo Lara,,+573154394147,alba.restrepo@example.org,Bogotá,Cr. 84 # 32-8,4,337,web,U02,2026-08-29 14:38
+C0850,negocio,Ibeth Castellanos Martínez,Ferretería Ardila,+573040769153,ferreteria.ardila@example.net,Bogotá,Cr. 48 # 27-36 Sur,,1464,web,U02,2026-08-29 15:10
+C0851,hogar,Hernán Pérez Acosta,,+573509434508,hernan.perez@example.com,Medellín,Carrera 114W # 25-28 Este,4,302,anuncios,U03,2026-08-29 18:26
+C0852,hogar,Luz Mercado,,+573115684391,luz.mercado@example.net,Bogotá,Carrera 113 # 50-8 Este,4,339,whatsapp,U02,2026-08-30 14:11
+C0853,hogar,Mauricio Galvis,,+573022901403,mauricio.galvis@example.org,Bogotá,Tr. 145 # 73-42 Este,4,350,anuncios,U02,2026-08-30 17:25
+C0854,hogar,Fabián Romero,,+573155041284,fabian.romero@example.net,Bogotá,Calle 46R # 74-54 Sur,4,227,referido,U02,2026-08-31 10:40
+C0855,hogar,Olga García Osorio,,+573149688804,olga.garcia@example.net,Bogotá,Dg. 51 Este # 4-40 Sur,4,350,whatsapp,U02,2026-08-31 13:26
+C0856,hogar,Santiago Uribe Calderón,,+573172947377,santiago.uribe@example.com,Medellín,Avenida carrera 6ª # 84-2 Este,3,178,whatsapp,U03,2026-08-31 13:51
+C0857,hogar,Leidy Murillo Rodríguez,,+573159681486,leidy.murillo@example.org,Bogotá,Avenida López # 24-4,5,472,web,U02,2026-08-31 16:04
+C0858,hogar,Xiomara Granados,,+573162017178,xiomara.granados@example.org,Medellín,Cl. 46 Este # 58-9,3,245,anuncios,U03,2026-08-31 17:11
+C0859,hogar,Magaly Martínez Rodríguez,,+573170084032,magaly.martinez@example.net,Cali,Calle 80 Bis # 12-86 Este,4,238,whatsapp,U04,2026-09-01 11:53
+C0860,hogar,Jorge Prieto Martínez,,+573219546799,jorge.prieto@example.org,Bogotá,Av. calle 19 # 23-32 Este,3,191,anuncios,U02,2026-09-01 15:44
+C0861,negocio,Carolina Rojas,Oficinas Gutiérrez,+573135135997,oficinas.gutierrez@example.com,Bogotá,Avenida Andrés Cardona # 35-99 Este,,3451,anuncios,U02,2026-09-02 10:00
+C0862,negocio,Leonardo Valencia,Supermercado Rincón,+573007497348,supermercado.rincon@example.net,Medellín,Av. Víctor Perdomo Ortiz # 5-2 Sur,,3322,anuncios,U03,2026-09-02 11:05
+C0863,negocio,Edwin Salcedo Pérez,Carnicería León,+573133509322,carniceria.leon@example.net,Bogotá,Av. carrera 30 # 51-34,,2940,web,U02,2026-09-02 13:55
+C0864,hogar,Elizabeth Rojas Pérez,,+573514582313,elizabeth.rojas@example.com,Cali,Carrera 126Y Bis S # 1-2,6,452,anuncios,U04,2026-09-03 12:17
+C0865,hogar,José Gómez Martínez,,+573149643172,jose.gomez@example.com,Bogotá,Cl. 53 # 95-53 Este,5,424,whatsapp,U02,2026-09-03 15:54
+C0866,hogar,Marcela Ortega,,+573051393541,marcela.ortega@example.net,Cali,Cl. 183 # 8-62 Sur,4,289,referido,U04,2026-09-04 12:56
+C0867,hogar,Gabriel López,,+573150471235,gabriel.lopez@example.com,Medellín,Calle 43F # 67-33 Este,5,345,whatsapp,U03,2026-09-04 14:42
+C0868,hogar,Mauricio Morales Beltrán,,+573139168062,mauricio.morales@example.net,Medellín,Cl. 94 # 3-1 Este,5,285,anuncios,U03,2026-09-05 10:55
+C0869,hogar,Juan López Barragán,,+573238715326,juan.lopez@example.net,Bogotá,Carrera 186 Bis # 8-1 Sur,3,163,whatsapp,U02,2026-09-05 17:00
+C0870,negocio,Laura Padilla Quintero,Hotel Guerrero,+573170908402,hotel.guerrero@example.org,Medellín,Av. carrera 138 # 5-2 Este,,1135,anuncios,U03,2026-09-05 18:59
+C0871,hogar,Eduardo Arango,,+573025225845,eduardo.arango@example.net,Bogotá,Cl. 198B # 37-3,4,252,whatsapp,U02,2026-09-06 08:44
+C0872,hogar,Emilia Sierra Cortés,,+573209819959,emilia.sierra@example.net,Cali,Cl. 67 # 2-8 Sur,4,291,anuncios,U04,2026-09-06 15:49
+C0873,hogar,Emerson Rendón,,+573004811989,emerson.rendon@example.org,Medellín,Calle 9J # 9-9,4,264,referido,U03,2026-09-07 11:50
+C0874,negocio,Luz Reyes,Oficinas Gutiérrez,+573204715436,oficinas.gutierrez@example.org,Medellín,Cr. 78 # 2-7 Sur,,1498,whatsapp,U03,2026-09-07 17:31
+C0875,hogar,Omar Rodríguez Palacio,,+573508390546,omar.rodriguez@example.net,Bogotá,Cl. 93Q Bis D # 7-7 Sur,3,160,anuncios,U02,2026-09-08 17:20
+C0876,hogar,Gloria Páez,,+573114384392,gloria.paez@example.org,Bogotá,Carrera 18 # 7T-62 Este,6,659,web,U02,2026-09-08 18:56
+C0877,hogar,Andrea Sánchez,,+573133867140,andrea.sanchez@example.org,Bogotá,Cl. 16I # 1-56 Sur,4,342,anuncios,U02,2026-09-09 13:11
+C0878,hogar,Carlos Pineda Gutiérrez,,+573209495233,carlos.pineda@example.net,Bogotá,Tr. 67 # 4-65 Sur,3,229,anuncios,U02,2026-09-09 14:52
+C0879,hogar,Diego Domínguez,,+573514553746,diego.dominguez@example.org,Cali,Dg. 30 # 64R-4 Este,4,214,anuncios,U04,2026-09-10 08:01
+C0880,hogar,Andrés Tovar Gaitán,,+573161378626,andres.tovar@example.net,Bogotá,Carrera 22H # 16-1 Este,5,408,anuncios,U02,2026-09-10 10:28
+C0881,hogar,Omaira Henao Hernández,,+573148912870,omaira.henao@example.net,Bogotá,Carrera 36D # 7-79 Sur,5,355,anuncios,U02,2026-09-10 17:24
+C0882,hogar,Martha Acevedo Angulo,,+573006940038,martha.acevedo@example.com,Medellín,Carrera 4 Bis N # 41-4 Sur,3,175,web,U03,2026-09-11 18:55
+C0883,hogar,Rosa Pérez,,+573044028087,rosa.perez@example.org,Bogotá,Cl. 80 # 46-58,4,288,anuncios,U02,2026-09-12 08:34
+C0884,hogar,Andrea Gil,,+573107853573,andrea.gil@example.com,Medellín,Cl. 48 # 75-5 Este,3,185,anuncios,U03,2026-09-12 10:36
+C0885,negocio,Nelson Bejarano Moreno,Droguería Jiménez S.A.S.,+573103008322,drogueria.jimenez@example.com,Medellín,Carrera 12 # 7-18,,2254,whatsapp,U03,2026-09-12 15:03
+C0886,hogar,Víctor López,,+573023121918,victor.lopez@example.com,Medellín,Cl. 165 # 5G-75,4,262,referido,U03,2026-09-12 17:16
+C0887,hogar,Paola Ayala Castro,,+573135887603,paola.ayala@example.com,Bogotá,Av. carrera 111 # 9-4,3,243,referido,U02,2026-09-13 10:23
+C0888,hogar,Ángel Ospina Vargas,,+573509200884,angel.ospina@example.com,Cali,Av. carrera 113 # 5-38,3,190,web,U04,2026-09-13 13:19
+C0889,hogar,Derly Acosta Vega,,+573157639000,derly.acosta@example.net,Bogotá,Cl. 68 Sur # 1-96 Sur,4,338,whatsapp,U02,2026-09-13 13:45
+C0890,hogar,Wilber Gonzáles Muñoz,,+573015189180,wilber.gonzales@example.net,Cali,Cl. 92P # 8-74 Este,5,478,web,U04,2026-09-13 16:27
+C0891,hogar,Yohana Medina Guerrero,,+573184340431,yohana.medina@example.net,Bogotá,Tr. 8F # 9H-4,5,288,anuncios,U02,2026-09-14 09:18
+C0892,hogar,Aida Bernal,,+573129686642,aida.bernal@example.com,Bogotá,Calle 51 Sur # 26Q-3 Sur,4,236,anuncios,U02,2026-09-14 15:53
+C0893,negocio,Juan Ríos Galeano,Hotel Herrera,+573130705884,hotel.herrera@example.com,Cali,Carrera 105 # 9-44 Este,,3833,anuncios,U04,2026-09-14 17:05
+C0894,hogar,María Burbano Hernández,,+573130305940,maria.burbano@example.com,Bogotá,Calle 58 # 1-2 Este,3,260,web,U02,2026-09-14 17:33
+C0895,negocio,Carlos Estrada Hernández,Gimnasio Rojas,+573207221847,gimnasio.rojas@example.net,Bogotá,Cr. 4 Sur # 2-32,,1595,web,U02,2026-09-14 18:45
+C0896,negocio,Martha Pérez,Oficinas Cardona,+573142394667,oficinas.cardona@example.net,Medellín,Dg. 50 # 7-50,,4475,anuncios,U03,2026-09-15 09:52
+C0897,hogar,Lucía Pérez Rodríguez,,+573026075263,lucia.perez@example.org,Bogotá,Calle 167 # 3H-5,5,493,web,U02,2026-09-15 14:53
+C0898,hogar,Manuel Santos Alarcón,,+573047972881,manuel.santos@example.org,Bogotá,Carrera 92 # 14-5 Este,4,204,anuncios,U02,2026-09-15 18:45
+C0899,hogar,Cristina Torres,,+573517284618,cristina.torres@example.com,Medellín,Calle 17 # 4-88,4,233,whatsapp,U03,2026-09-16 09:56
+C0900,negocio,Mariana Vásquez Carvajal,Carnicería Serna,+573164168682,carniceria.serna@example.com,Medellín,Transversal 71 # 90C-24,,1874,referido,U03,2026-09-16 14:07
+C0901,hogar,Jesús Gómez,,+573019368801,jesus.gomez@example.org,Cali,Cr. 36 # 50V-86,5,422,whatsapp,U04,2026-09-16 16:31
+C0902,hogar,Sandra García,,+573153535367,sandra.garcia@example.org,Bogotá,Calle 47X # 8A-4 Sur,5,310,whatsapp,U02,2026-09-16 16:42
+C0903,hogar,María Contreras,,+573504235144,maria.contreras@example.com,Cali,Dg. 154 # 27-3 Este,4,297,anuncios,U04,2026-09-17 13:48
+C0904,hogar,Luis Ángel Suárez,,+573140238678,luis.angel@example.net,Cali,Calle 9 Sur # 3M-6 Este,3,231,anuncios,U04,2026-09-17 14:40
+C0905,hogar,César Giraldo Quintero,,+573232576930,cesar.giraldo@example.net,Bogotá,Dg. 90E # 96-76 Sur,6,478,anuncios,U02,2026-09-18 08:54
+C0906,hogar,Julián Ávila Jiménez,,+573047789990,julian.avila@example.org,Cali,Tr. 29 # 76-64 Sur,2,141,anuncios,U04,2026-09-18 12:17
+C0907,negocio,Martha Becerra Cortés,Restaurante Jaramillo,+573048499785,restaurante.jaramillo@example.net,Bogotá,Cl. 94 # 5-2 Sur,,1677,anuncios,U02,2026-09-18 12:59
+C0908,negocio,Julio Sepúlveda Ortega,Hotel Castillo S.A.S.,+573100244018,hotel.castillo@example.net,Bogotá,Av. García # 8F-80 Este,,3996,anuncios,U02,2026-09-18 18:13
+C0909,hogar,Dario Ruiz,,+573129897692,dario.ruiz@example.net,Medellín,Carrera 110 # 63R-8 Este,4,277,referido,U03,2026-09-18 18:58
+C0910,hogar,María Cano,,+573140326899,maria.cano@example.com,Bogotá,Avenida carrera 130 # 7-1 Sur,4,218,whatsapp,U02,2026-09-19 11:02
+C0911,negocio,Cristina Restrepo,Droguería Villa,+573151751978,drogueria.villa@example.com,Medellín,Cl. 4ª # 37-9 Sur,,2491,referido,U03,2026-09-19 11:13
+C0912,hogar,Daniel Páez,,+573157235035,daniel.paez@example.org,Bogotá,Dg. 67N # 57-79 Sur,4,335,web,U02,2026-09-19 11:55
+C0913,negocio,María Murillo Arias,Taller Jiménez,+573048680157,taller.jimenez@example.net,Bogotá,Cl. 79O # 5-8 Este,,3966,web,U02,2026-09-19 12:14
+C0914,negocio,Olga Valencia,Ferretería Hernández,+573137708256,ferreteria.hernandez@example.net,Cali,Diagonal 50 # 7-78,,1141,anuncios,U04,2026-09-20 08:44
+C0915,hogar,Diana Morales Monroy,,+573001128537,diana.morales@example.com,Bogotá,Transversal 7ª # 8-82 Este,4,327,web,U02,2026-09-20 10:54
+C0916,hogar,María Cabrera,,+573029228924,maria.cabrera@example.org,Cali,Cr. 4ª # 6Q-71,5,446,whatsapp,U04,2026-09-20 12:37
+C0917,hogar,Inés López Flórez,,+573519311034,ines.lopez@example.com,Medellín,Diagonal 3ª # 70-2 Este,5,294,whatsapp,U03,2026-09-20 18:36
+C0918,negocio,Cristina Bernal Torres,Gimnasio Escobar,+573144498589,gimnasio.escobar@example.org,Bogotá,Avenida Zarzal # 1-23 Este,,2689,web,U02,2026-09-22 09:14
+C0919,hogar,María Forero,,+573019250273,maria.forero@example.com,Cali,Cl. 73 # 44-1,3,215,whatsapp,U04,2026-09-22 10:08
+C0920,hogar,Isabel Pérez,,+573507773884,isabel.perez@example.net,Bogotá,Cr. 7Q # 23V-95 Este,5,349,web,U02,2026-09-22 10:49
+C0921,hogar,Eduard Rojas,,+573514784205,eduard.rojas@example.org,Medellín,Calle 83 # 95-86,5,286,web,U03,2026-09-22 13:54
+C0922,hogar,María Mesa,,+573044005388,maria.mesa@example.net,Cali,Carrera 189M Este # 6-83 Este,5,320,referido,U04,2026-09-22 15:51
+C0923,hogar,Luis Correa Escobar,,+573045539962,luis.correa@example.net,Cali,Cr. 136Z # 69Q-9 Este,4,259,anuncios,U04,2026-09-23 08:42
+C0924,hogar,Luis Bolaños Ortega,,+573213109103,luis.bolanos@example.org,Bogotá,Carrera 38 # 5-9 Este,3,252,web,U02,2026-09-24 08:06
+C0925,hogar,Ramiro Guevara,,+573152198948,ramiro.guevara@example.com,Bogotá,Tr. 91 # 5-7,6,401,anuncios,U02,2026-09-24 08:37
+C0926,hogar,Jesús Vallejo Flórez,,+573143725479,jesus.vallejo@example.org,Cali,Tr. 168W # 7U-5 Este,6,676,anuncios,U04,2026-09-24 12:37
+C0927,hogar,Daniel Gómez Rincón,,+573512957517,daniel.gomez@example.net,Bogotá,Cl. 28 # 85T-40 Este,4,323,anuncios,U02,2026-09-26 09:05
+C0928,hogar,Maicol García,,+573236597411,maicol.garcia@example.net,Bogotá,Cr. 8ª # 40-7,5,467,anuncios,U02,2026-09-26 09:36
+C0929,hogar,María Álvarez Guerra,,+573001252044,maria.alvarez@example.net,Bogotá,Cl. 43 # 14-3 Este,5,346,web,U02,2026-09-26 14:25
+C0930,hogar,Gloria González,,+573151452081,gloria.gonzalez@example.com,Bogotá,Cr. 71 # 78-7 Este,3,227,anuncios,U02,2026-09-26 15:42
+C0931,hogar,Arley Zapata,,+573112908563,arley.zapata@example.com,Bogotá,Cr. 122 # 73-6 Sur,4,208,whatsapp,U02,2026-09-26 15:55
+C0932,hogar,Jackeline Gil,,+573022495655,jackeline.gil@example.org,Cali,Calle 64 # 8M-2 Este,4,315,anuncios,U04,2026-09-26 17:04
+C0933,hogar,Yadira Gutiérrez,,+573027826254,yadira.gutierrez@example.com,Medellín,Calle 64 # 83-6,5,447,anuncios,U03,2026-09-27 09:06
+C0934,hogar,Víctor Hernández Salazar,,+573233259987,victor.hernandez@example.net,Bogotá,Dg. 62 # 68-2 Sur,4,304,web,U02,2026-09-27 12:00
+C0935,hogar,Alfonso Rivera Lozano,,+573142669884,alfonso.rivera@example.com,Cali,Calle 1ª # 59C-74 Sur,3,164,web,U04,2026-09-27 14:43
+C0936,hogar,Julio Jaimes Sepúlveda,,+573100763304,julio.jaimes@example.com,Bogotá,Tr. 16I # 70-12,3,160,whatsapp,U02,2026-09-28 15:27
+C0937,hogar,Blanca Sánchez Salazar,,+573132947269,blanca.sanchez@example.net,Medellín,Cl. 46 # 12-8 Sur,3,212,anuncios,U03,2026-09-28 15:29
+C0938,hogar,Alexis Bermúdez,,+573205716945,alexis.bermudez@example.com,Cali,Av. Mena # 97-90 Este,3,191,anuncios,U04,2026-09-29 15:52
+C0939,negocio,Felipe Quintero,Taller Muñoz,+573175597046,taller.munoz@example.org,Medellín,Carrera 4ª # 5-5 Este,,3290,anuncios,U03,2026-09-29 17:42
+C0940,negocio,Astrid Leal Díaz,Hotel Castellanos,+573057783918,hotel.castellanos@example.com,Cali,Av. carrera 4ª # 8G-5 Sur,,3507,referido,U04,2026-09-29 18:07
+C0941,hogar,Andrés Mejía,,+573147561495,andres.mejia@example.org,Medellín,Cr. 8W # 28-24 Este,6,579,web,U03,2026-09-30 11:12
+C0942,hogar,Yeison Rengifo,,+573148203418,yeison.rengifo@example.com,Bogotá,Cl. 157 # 76S-47,3,224,whatsapp,U02,2026-09-30 17:29
+C0943,hogar,Piedad Medina,,+573131693186,piedad.medina@example.com,Bogotá,Cr. 1P # 86-9 Este,3,172,anuncios,U02,2026-09-30 18:37
+C0944,negocio,David Loaiza,Gimnasio López S.A.S.,+573176173915,gimnasio.lopez@example.org,Cali,Carrera 8J # 14-2 Este,,1511,referido,U04,2026-10-01 10:24
+C0945,negocio,Daniel Rodríguez Velásquez,Colegio Vargas,+573187984994,colegio.vargas@example.net,Medellín,Cr. 86 # 1P-15,,4185,anuncios,U03,2026-10-01 11:40
+C0946,hogar,Paola Rojas,,+573237267637,paola.rojas@example.org,Cali,Cr. 49 # 7-5 Sur,5,487,anuncios,U04,2026-10-02 08:23
+C0947,negocio,José Agudelo Barrera,Ferretería Medina,+573020590385,ferreteria.medina@example.com,Bogotá,Av. calle 7ª # 31-53 Este,,2983,web,U02,2026-10-02 15:21
+C0948,hogar,José Gómez,,+573210992778,jose.gomez@example.org,Bogotá,Calle 36F # 86-1 Este,4,296,anuncios,U02,2026-10-02 17:32
+C0949,hogar,Augusto Guzmán,,+573002754062,augusto.guzman@example.com,Cali,Carrera 1ª # 83M-27,4,243,whatsapp,U04,2026-10-03 08:43
+C0950,hogar,Hugo Rodríguez Castillo,,+573167482803,hugo.rodriguez@example.net,Medellín,Av. Bolívar # 8Q-4,4,322,whatsapp,U03,2026-10-03 14:50
+C0951,hogar,Camilo Cerón,,+573048932003,camilo.ceron@example.net,Bogotá,Cl. 66 # 80-21,4,229,referido,U02,2026-10-03 16:48
+C0952,negocio,Humberto Morales Ospino,Droguería Pardo,+573163905081,drogueria.pardo@example.net,Bogotá,Calle 71 # 92-6 Sur,,1504,referido,U02,2026-10-04 09:36
+C0953,negocio,Enrique Rodríguez González,Hotel Peña,+573123273197,hotel.pena@example.net,Bogotá,Diagonal 94 # 8-55 Este,,4494,anuncios,U02,2026-10-04 14:07
+C0954,hogar,Luis Henao Arévalo,,+573007856690,luis.henao@example.com,Cali,Av. Perdomo # 6-8 Este,4,318,whatsapp,U04,2026-10-04 16:43
+C0955,negocio,Esteban Villegas Hernández,Oficinas Gamboa S.A.S.,+573239241532,oficinas.gamboa@example.org,Medellín,Av. Caldas # 7-24,,3249,anuncios,U03,2026-10-05 14:42
+C0956,hogar,Carol León,,+573016407617,carol.leon@example.net,Medellín,Calle 2X # 31-8 Este,3,213,whatsapp,U03,2026-10-06 13:29
+C0957,hogar,Myriam Morales Gaitán,,+573201368350,myriam.morales@example.net,Bogotá,Av. calle 3ª # 52-68 Sur,3,159,anuncios,U02,2026-10-06 15:17
+C0958,negocio,María Velásquez Durán,Supermercado Martínez,+573109167913,supermercado.martinez@example.org,Medellín,Carrera 103U # 7Q-9 Este,,1081,anuncios,U03,2026-10-06 17:34
+C0959,hogar,Pablo Londoño,,+573017492543,pablo.londono@example.com,Medellín,Cr. 2ª # 75-3 Este,4,278,whatsapp,U03,2026-10-06 18:03
+C0960,hogar,Alonso Angulo Díaz,,+573237071905,alonso.angulo@example.org,Medellín,Cl. 169 # 29-75 Este,5,299,anuncios,U03,2026-10-06 18:22
+C0961,hogar,Lizeth Barrera,,+573134402511,lizeth.barrera@example.org,Medellín,Calle 10 # 3M-1,4,259,whatsapp,U03,2026-10-07 10:47
+C0962,hogar,Nelsy Ríos Galindo,,+573059303118,nelsy.rios@example.com,Bogotá,Carrera 63 # 92-2 Sur,4,237,whatsapp,U02,2026-10-07 15:17
+C0963,hogar,Fabiola Franco Forero,,+573161603461,fabiola.franco@example.net,Medellín,Calle 76 # 4-4 Sur,4,229,referido,U03,2026-10-07 15:20
+C0964,negocio,Nayibe Gutiérrez Acosta,Droguería Vargas,+573134410845,drogueria.vargas@example.com,Cali,Avenida Agudelo # 56-41 Este,,1738,anuncios,U04,2026-10-08 08:13
+C0965,negocio,Alejandra Guerrero Montoya,Colegio Salazar,+573161819498,colegio.salazar@example.com,Bogotá,Carrera 167 # 3-98 Sur,,3131,web,U02,2026-10-08 18:38
+C0966,hogar,Hernán Rodríguez,,+573056387830,hernan.rodriguez@example.net,Bogotá,Cl. 143N # 44-8 Este,5,410,anuncios,U02,2026-10-09 09:07
+C0967,negocio,Gregorio Aguilar Jiménez,Panadería García S.A.S.,+573517666583,panaderia.garcia@example.org,Bogotá,Carrera 8ª # 86-8 Este,,2955,whatsapp,U02,2026-10-09 10:57
+C0968,hogar,Bernardo Jiménez,,+573006896942,bernardo.jimenez@example.net,Medellín,Carrera 8C # 2D-9 Sur,3,208,whatsapp,U03,2026-10-09 12:00
+C0969,hogar,Carolina Duque Ochoa,,+573180258872,carolina.duque@example.com,Bogotá,Calle 118U # 2-59 Sur,4,265,anuncios,U02,2026-10-09 12:07
+C0970,hogar,María Jaramillo Gómez,,+573027493343,maria.jaramillo@example.org,Cali,Cl. 54 # 2-29 Sur,3,169,whatsapp,U04,2026-10-09 14:15
+C0971,hogar,Luis González,,+573517685037,luis.gonzalez@example.org,Cali,Carrera 76 # 6-7 Sur,3,187,whatsapp,U04,2026-10-09 16:45
+C0972,negocio,Amparo Bravo,Oficinas Garzón,+573056653847,oficinas.garzon@example.com,Medellín,Cr. 65 # 9-16,,3270,whatsapp,U03,2026-10-09 17:39
+C0973,hogar,Alberto Hurtado Osorio,,+573044981860,alberto.hurtado@example.net,Cali,Calle 58L # 1-75,3,243,anuncios,U04,2026-10-10 16:21
+C0974,hogar,Jaime Castro Gómez,,+573011002827,jaime.castro@example.com,Bogotá,Cr. 53 Bis # 11C-8,6,742,referido,U02,2026-10-10 16:54
+C0975,negocio,Armando Caballero Rodríguez,Supermercado Reyes S.A.S.,+573105763858,supermercado.reyes@example.org,Bogotá,Cr. 102 Bis # 2-2 Sur,,2716,whatsapp,U02,2026-10-11 09:09
+C0976,hogar,Felipe Díaz,,+573029057140,felipe.diaz@example.org,Cali,Av. carrera 8ª # 8-3,4,295,web,U04,2026-10-11 10:15
+C0977,negocio,Iván Rodríguez Cardona,Taller Torres S.A.S.,+573217130403,taller.torres@example.org,Bogotá,Carrera 150Z Bis # 11-5 Este,,2336,web,U02,2026-10-11 11:35
+C0978,hogar,Ana Tovar Morales,,+573116044181,ana.tovar@example.org,Medellín,Diagonal 105T # 41-37 Sur,2,181,referido,U03,2026-10-11 13:06
+C0979,hogar,Luz Morales Flórez,,+573162406954,luz.morales@example.net,Cali,Dg. 167 # 2-63 Sur,4,229,web,U04,2026-10-11 14:22
+C0980,hogar,Zulma Acosta,,+573162905129,zulma.acosta@example.com,Cali,Carrera 30P # 2-7 Sur,6,656,whatsapp,U04,2026-10-11 14:40
+C0981,hogar,Leidy Valencia,,+573117440539,leidy.valencia@example.net,Bogotá,Carrera 67 # 6-10,3,175,web,U02,2026-10-12 08:05
+C0982,negocio,José Herrera Arias,Restaurante Rendón,+573510226774,restaurante.rendon@example.com,Medellín,Cr. 90G # 6R-27,,2897,whatsapp,U03,2026-10-12 10:23
+C0983,hogar,Fernanda Bustamante Pérez,,+573129148900,fernanda.bustamante@example.net,Cali,Transversal 40 # 51-1,4,339,referido,U04,2026-10-12 12:27
+C0984,negocio,Carolina Carrillo Mosquera,Taller Forero S.A.S.,+573204785901,taller.forero@example.com,Bogotá,Carrera 88 # 6C-12,,3097,whatsapp,U02,2026-10-12 15:35
+C0985,hogar,Marlén Ortega Hernández,,+573055428688,marlen.ortega@example.net,Medellín,Calle 1 Bis F # 6-54 Sur,2,165,anuncios,U03,2026-10-12 16:23
+C0986,hogar,Antonio Rivera Acosta,,+573140469318,antonio.rivera@example.net,Medellín,Cl. 140 # 67R-88,2,145,anuncios,U03,2026-10-14 12:40
+C0987,negocio,Sandra Sepúlveda,Carnicería Rodríguez,+573216638050,carniceria.rodriguez@example.com,Medellín,Av. María Mónica Hernández # 41-58,,2801,anuncios,U03,2026-10-14 13:19
+C0988,negocio,Sandra Martínez,Supermercado García,+573024866094,supermercado.garcia@example.com,Medellín,Cr. 130 # 4-49,,3948,whatsapp,U03,2026-10-15 17:27
+C0989,negocio,Alejandra Rodríguez Saavedra,Hotel Sandoval,+573003082277,hotel.sandoval@example.net,Bogotá,Diagonal 74 # 2-5 Sur,,2027,web,U02,2026-10-16 18:44
+C0990,hogar,Marcela López Morales,,+573167443820,marcela.lopez@example.com,Bogotá,Av. carrera 63 # 4X-2 Este,4,243,web,U02,2026-10-17 15:44
+C0991,hogar,María Murillo,,+573500441680,maria.murillo@example.com,Bogotá,Tr. 12F # 46-3,4,222,web,U02,2026-10-17 17:00
+C0992,negocio,Viviana Polo Salazar,Panadería Cruz,+573511624980,panaderia.cruz@example.org,Cali,Calle 145 # 7-88,,3472,whatsapp,U04,2026-10-17 18:14
+C0993,hogar,Javier Martínez Herrera,,+573022491947,javier.martinez@example.com,Medellín,Cl. 93 # 4-6 Sur,6,670,anuncios,U03,2026-10-18 11:25
+C0994,hogar,Yair Gómez Cárdenas,,+573015123954,yair.gomez@example.com,Bogotá,Cl. 88 # 28-7 Este,3,154,whatsapp,U02,2026-10-19 08:19
+C0995,hogar,José Arias Vásquez,,+573046985423,jose.arias@example.com,Bogotá,Av. Jenesano # 8-61 Este,3,216,anuncios,U02,2026-10-19 09:56
+C0996,hogar,Andrés López,,+573212230507,andres.lopez@example.org,Bogotá,Transversal 7ª # 98F-10,4,329,referido,U02,2026-10-19 10:58
+C0997,hogar,Héctor Medina,,+573200076920,hector.medina@example.net,Cali,Calle 31 # 6-35 Este,4,219,whatsapp,U04,2026-10-20 10:12
+C0998,hogar,Cristian Gómez López,,+573161442699,cristian.gomez@example.net,Bogotá,Avenida carrera 35 # 4-4 Este,4,229,anuncios,U02,2026-10-20 13:09
+C0999,negocio,Miller Castellanos Gil,Hotel Niño,+573009213868,hotel.nino@example.net,Medellín,Cr. 76 # 53O-6 Sur,,3082,anuncios,U03,2026-10-20 15:55
+C1000,hogar,Bertha Cantillo Giraldo,,+573056237165,bertha.cantillo@example.org,Medellín,Carrera 198 # 9Q-6 Este,4,304,whatsapp,U03,2026-10-20 18:41

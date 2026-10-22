@@ -1,0 +1,9 @@
+sku,nombre,categoria,precio_cop
+PAN-550,Panel monocristalino 550 W,panel,620000
+INV-03,Inversor de red 3 kW,inversor,2900000
+INV-05,Inversor de red 5 kW,inversor,4100000
+INV-10,Inversor de red 10 kW,inversor,6800000
+INV-20,Inversor trifásico 20 kW,inversor,11500000
+BAT-05,Batería de litio 5 kWh,bateria,9200000
+EST-01,Estructura de aluminio por panel,estructura,180000
+SRV-MNT,Mantenimiento preventivo,servicio,350000
