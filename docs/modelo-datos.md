@@ -201,4 +201,9 @@ Supabase lo controla **dentro de la base de datos** con *Row Level Security* (se
 ### Filas vs. columnas
 Row Level Security decide **qué filas** ve cada persona, pero no **qué columnas**. Si el técnico pudiera leer la tabla `contactos`, vería todo el registro de sus clientes: correo, consumo, estrato, asesor.
 
-Por eso el técnico no lee `contactos` directamente. Lee una **vista** llamada `visitas_tecnico`: una consulta guardada que solo trae, de sus visitas asignadas, la fecha, la descripción, y el nombre, teléfono y dirección del cliente. Es como entregarle una fotocopia de la ficha con los datos sensibles tapados.
+Por eso el técnico no lee `contactos` directamente. Lee una **vista** llamada `visitas_tecnico`: una consulta guardada que solo trae, de sus visitas y tareas asignadas, la fecha, la descripción, y el nombre, teléfono y dirección del cliente. Es como entregarle una fotocopia de la ficha con los datos sensibles tapados. (Cualquier persona que la consulte ve solo sus propias visitas y tareas.)
+
+## 5. Dónde vive esto
+
+- La base de datos se crea con `supabase/migraciones/001_esquema_crm.sql`.
+- Los permisos se comprueban contra la base de datos real con `tests/test_permisos_supabase.py`: la base de datos se hace pasar por cada persona del equipo y se cuenta qué ve.

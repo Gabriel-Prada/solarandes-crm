@@ -22,7 +22,10 @@ docs/requisitos.md      lo que pidió el cliente, procesos y reglas de negocio
 scripts/datos/          generador de datos ficticios
 data/generados/         CSVs "limpios" que alimentarán el CRM (se regeneran)
 data/heredado/          Excel sucio para la fase 2 y sus respuestas correctas
-tests/                  pruebas con pytest
+docs/modelo-datos.md    diseño de tablas, decisiones y permisos por rol
+supabase/migraciones/   cambios a la base de datos, numerados (001_..., 002_...)
+scripts/supabase/       aplicar migraciones y cargar los datos en Supabase
+tests/                  pruebas con pytest (test_permisos_supabase.py usa la base de datos real)
 .claude/                subagentes, skills y hooks del proyecto
 ```
 
@@ -34,6 +37,8 @@ Llegarán más carpetas por fase (por ejemplo `apps/crm/` en la fase 1 y `automa
 .venv/Scripts/pip install -r requirements.txt      # dependencias de Python
 .venv/Scripts/python scripts/datos/generar_datos.py # regenerar todos los datos
 .venv/Scripts/pytest                               # correr las pruebas
+.venv/Scripts/python scripts/supabase/aplicar_migraciones.py  # aplicar migraciones pendientes en Supabase
+.venv/Scripts/python scripts/supabase/cargar_datos.py         # recargar los datos ficticios en Supabase
 .venv/Scripts/ruff check . && .venv/Scripts/ruff format .
 ```
 
@@ -48,7 +53,8 @@ En Windows se usa `.venv/Scripts/...`; no hay `python3` ni `source`.
 - **Si cambias el generador de datos**, vuelve a correrlo y corre las pruebas: las fases siguientes dependen de esos archivos.
 - **Cada cambio con prueba** cuando sea lógica de negocio (cálculos, limpieza de datos, reglas).
 - **Commits pequeños**, mensaje en español, en imperativo: "Agrega generador de cotizaciones".
-- Los secretos van en `.env` (está en `.gitignore`); en el repo solo va `.env.example`.
+- Los secretos van en `.env` (está en `.gitignore`); en el repo solo va `.env.example`. Nunca imprimas valores secretos del `.env`.
+- **La base de datos solo se cambia con migraciones nuevas** en `supabase/migraciones/`, nunca editando una ya aplicada ni desde el panel de Supabase. Después de una migración que toque permisos, corre `tests/test_permisos_supabase.py`.
 
 ## Herramientas del proyecto
 
