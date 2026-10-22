@@ -25,6 +25,7 @@ data/heredado/          Excel sucio para la fase 2 y sus respuestas correctas
 docs/modelo-datos.md    diseño de tablas, decisiones y permisos por rol
 supabase/migraciones/   cambios a la base de datos, numerados (001_..., 002_...)
 scripts/supabase/       aplicar migraciones y cargar los datos en Supabase
+apps/crm/               la app web del CRM (Next.js 16 + Supabase). Ver apps/crm/README.md y apps/crm/AGENTS.md
 tests/                  pruebas con pytest (test_permisos_supabase.py usa la base de datos real)
 .claude/                subagentes, skills y hooks del proyecto
 ```
@@ -42,7 +43,15 @@ Llegarán más carpetas por fase (por ejemplo `apps/crm/` en la fase 1 y `automa
 .venv/Scripts/ruff check . && .venv/Scripts/ruff format .
 ```
 
+```bash
+npm --prefix apps/crm run dev      # CRM en http://localhost:3000
+npm --prefix apps/crm run lint     # estilo del código del CRM
+cd apps/crm && npx tsc --noEmit    # revisar tipos (si falla por rutas nuevas: npx next typegen)
+```
+
 En Windows se usa `.venv/Scripts/...`; no hay `python3` ni `source`.
+
+**Next.js 16 tiene cambios grandes** (por ejemplo, `middleware` ahora se llama `proxy`). Antes de escribir código del CRM, lee la guía que aplique en `apps/crm/node_modules/next/dist/docs/`. Cache Components está apagado a propósito (ver `apps/crm/next.config.ts`). El caché de npm va en `D:/herramientas/npm-cache` (`apps/crm/.npmrc`).
 
 ## Reglas
 
