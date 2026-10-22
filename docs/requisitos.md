@@ -18,14 +18,14 @@ SolarAndes instala sistemas de energía solar para **hogares** y **pequeños neg
 
 ## 2. Las personas
 
-| Nombre | Rol | Ciudad | Usa el sistema para |
-|---|---|---|---|
-| Laura Méndez | Gerente | Bogotá | Ver todo: ventas, asesores, leads perdidos |
-| Andrés Rojas | Asesor | Bogotá | Sus leads, visitas y cotizaciones |
-| Valentina Ospina | Asesora | Medellín | Ídem |
-| Camilo Torres | Asesor | Cali | Ídem |
-| Jhon Fredy Muñoz | Técnico | Viaja a las 3 | Ver sus visitas técnicas e instalaciones desde el celular |
-| Marcela Díaz | Contadora (externa) | — | Registrar facturas de proveedores (fase 4) |
+| Nombre           | Rol                 | Ciudad        | Usa el sistema para                                       |
+| ---------------- | ------------------- | ------------- | --------------------------------------------------------- |
+| Laura Méndez     | Gerente             | Bogotá        | Ver todo: ventas, asesores, leads perdidos                |
+| Andrés Rojas     | Asesor              | Bogotá        | Sus leads, visitas y cotizaciones                         |
+| Valentina Ospina | Asesora             | Medellín      | Ídem                                                      |
+| Camilo Torres    | Asesor              | Cali          | Ídem                                                      |
+| Jhon Fredy Muñoz | Técnico             | Viaja a las 3 | Ver sus visitas técnicas e instalaciones desde el celular |
+| Marcela Díaz     | Contadora (externa) | —             | Registrar facturas de proveedores (fase 4)                |
 
 ---
 

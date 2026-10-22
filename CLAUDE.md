@@ -2,7 +2,7 @@
 
 Portafolio de Gabriel: el sistema comercial de **SolarAndes S.A.S.**, una instaladora de paneles solares **ficticia** en Bogotá, Medellín y Cali. El plan completo está en `PLAN.md` y los requisitos del "cliente" en `docs/requisitos.md`.
 
-**Fase actual: 0 (Fundación).** Actualiza esta línea al cerrar cada fase.
+**Fase actual: 1 (El CRM).** Fase 0 cerrada el 2026-10-21. Actualiza esta línea al cerrar cada fase.
 
 ## Con quién trabajas
 
