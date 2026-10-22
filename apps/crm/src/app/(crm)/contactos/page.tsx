@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Paginacion } from "@/components/paginacion";
+import { normalizarBusqueda, patronContiene } from "@/lib/busqueda";
 import { formatoFecha, formatoNumero, formatoTelefono } from "@/lib/formato";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
@@ -11,11 +12,6 @@ import { CIUDADES, NOMBRE_CANAL, type Contacto } from "@/lib/tipos";
 export const metadata: Metadata = { title: "Contactos" };
 
 const POR_PAGINA = 25;
-
-// Quita caracteres que tienen significado especial en los filtros de Supabase
-function limpiarBusqueda(texto: string): string {
-  return texto.replace(/[,()%*\\]/g, " ").trim().slice(0, 60);
-}
 
 export default async function PaginaContactos({ searchParams }: PageProps<"/contactos">) {
   const perfil = await exigirRol("gerente", "asesor");
@@ -26,7 +22,8 @@ export default async function PaginaContactos({ searchParams }: PageProps<"/cont
     const v = parametros[clave];
     return typeof v === "string" ? v : undefined;
   };
-  const busqueda = limpiarBusqueda(valor("q") ?? "");
+  const busqueda = (valor("q") ?? "").trim().slice(0, 60); // tal como la escribió la persona
+  const termino = normalizarBusqueda(busqueda); // sin tildes ni mayúsculas, para comparar
   const tipo = valor("tipo") === "hogar" || valor("tipo") === "negocio" ? valor("tipo") : undefined;
   const ciudad = esGerente ? CIUDADES.find((c) => c === valor("ciudad")) : undefined;
   const pagina = Math.max(1, Math.floor(Number(valor("pagina"))) || 1);
@@ -43,11 +40,9 @@ export default async function PaginaContactos({ searchParams }: PageProps<"/cont
     .order("creado_en", { ascending: false })
     .range((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA - 1);
 
-  if (busqueda) {
-    const patron = `%${busqueda}%`;
-    consulta = consulta.or(
-      `nombre.ilike.${patron},empresa.ilike.${patron},telefono.ilike.${patron},codigo.ilike.${patron}`,
-    );
+  if (termino) {
+    // `busqueda` es una columna calculada por la base de datos (migración 002)
+    consulta = consulta.ilike("busqueda", patronContiene(termino));
   }
   if (tipo) consulta = consulta.eq("tipo", tipo);
   if (ciudad) consulta = consulta.eq("ciudad", ciudad);
@@ -139,7 +134,9 @@ export default async function PaginaContactos({ searchParams }: PageProps<"/cont
             {contactos.map((c) => (
               <tr key={c.id} className="hover:bg-stone-50">
                 <td className="px-4 py-3">
-                  <p className="font-medium text-stone-900">{c.empresa ?? c.nombre}</p>
+                  <Link href={`/contactos/${c.codigo}`} className="font-medium text-stone-900 hover:text-amber-700 hover:underline">
+                    {c.empresa ?? c.nombre}
+                  </Link>
                   <p className="text-stone-500">
                     {c.empresa ? `${c.nombre} · ` : ""}
                     <span className="font-mono text-xs">{c.codigo}</span>

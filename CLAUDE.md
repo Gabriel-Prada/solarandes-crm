@@ -46,6 +46,7 @@ Llegarán más carpetas por fase (por ejemplo `apps/crm/` en la fase 1 y `automa
 ```bash
 npm --prefix apps/crm run dev      # CRM en http://localhost:3000
 npm --prefix apps/crm run lint     # estilo del código del CRM
+npm --prefix apps/crm test         # pruebas del CRM (Vitest, archivos *.test.ts junto al código)
 cd apps/crm && npx tsc --noEmit    # revisar tipos (si falla por rutas nuevas: npx next typegen)
 ```
 

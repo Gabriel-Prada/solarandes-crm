@@ -28,3 +28,12 @@ export function formatoFechaHora(iso: string): string {
 export function formatoNumero(n: number): string {
   return new Intl.NumberFormat("es-CO").format(n);
 }
+
+export function formatoPesos(n: number): string {
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(n);
+}
+
+/** Versión corta para tarjetas: $14,9 M */
+export function formatoPesosCorto(n: number): string {
+  return `$${new Intl.NumberFormat("es-CO", { maximumFractionDigits: 1 }).format(n / 1_000_000)} M`;
+}

@@ -121,6 +121,16 @@ def test_mover_una_venta_deja_rastro_en_el_historial(con, equipo):
     assert probabilidad == 35
 
 
+def test_busqueda_ignora_tildes_y_mayusculas(con, equipo):
+    # Migración 002: la columna busqueda guarda todo en minúsculas y sin tildes
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U01"])
+        con_tilde = con.execute("select count(*) from contactos where empresa ilike 'Panadería%'").fetchone()[0]
+        sin_tilde = con.execute("select count(*) from contactos where busqueda like '%panaderia%'").fetchone()[0]
+    assert con_tilde > 0
+    assert sin_tilde == con_tilde
+
+
 def test_no_se_puede_perder_una_venta_sin_motivo(con, equipo):
     with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.CheckViolation):
         como(con, equipo["U01"])

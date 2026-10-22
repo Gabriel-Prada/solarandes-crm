@@ -42,6 +42,79 @@ export type VisitaTecnico = {
   ciudad: Ciudad;
 };
 
+export type Etapa = "nuevo" | "contactado" | "visita_agendada" | "cotizado" | "negociacion" | "ganado" | "perdido";
+export type MotivoPerdida = "precio" | "competencia" | "no_respondio" | "techo_no_apto" | "sin_financiacion" | "aplazo";
+export type TipoActividad = "llamada" | "whatsapp" | "correo" | "visita" | "nota" | "tarea";
+
+export type Oportunidad = {
+  id: string;
+  codigo: string;
+  nombre: string;
+  tipo: "nueva" | "ampliacion";
+  etapa: Etapa;
+  potencia_kwp: number | null;
+  valor_cop: number | null;
+  probabilidad: number;
+  motivo_perdida: MotivoPerdida | null;
+  creada_en: string;
+  actualizada_en: string;
+  fecha_cierre: string | null;
+};
+
+export type Actividad = {
+  id: string;
+  tipo: TipoActividad;
+  descripcion: string;
+  fecha: string;
+  completada: boolean;
+  oportunidad: { codigo: string } | null;
+  usuario: { nombre: string } | null;
+};
+
+export type Cotizacion = {
+  id: string;
+  numero: string;
+  oportunidad_id: string;
+  version: number;
+  fecha: string;
+  potencia_kwp: number;
+  num_paneles: number;
+  descuento_pct: number;
+  valor_total: number;
+  estado: "enviada" | "aceptada" | "rechazada" | "reemplazada";
+};
+
+// El orden del embudo de ventas (docs/requisitos.md, sección 3)
+export const ETAPAS: Etapa[] = ["nuevo", "contactado", "visita_agendada", "cotizado", "negociacion", "ganado", "perdido"];
+
+export const NOMBRE_ETAPA: Record<Etapa, string> = {
+  nuevo: "Nuevo",
+  contactado: "Contactado",
+  visita_agendada: "Visita agendada",
+  cotizado: "Cotizado",
+  negociacion: "Negociación",
+  ganado: "Ganado",
+  perdido: "Perdido",
+};
+
+export const NOMBRE_MOTIVO: Record<MotivoPerdida, string> = {
+  precio: "Le pareció caro",
+  competencia: "Eligió a la competencia",
+  no_respondio: "Dejó de responder",
+  techo_no_apto: "Techo no apto",
+  sin_financiacion: "Sin financiación",
+  aplazo: "Aplazó la decisión",
+};
+
+export const NOMBRE_ACTIVIDAD: Record<TipoActividad, string> = {
+  llamada: "Llamada",
+  whatsapp: "WhatsApp",
+  correo: "Correo",
+  visita: "Visita técnica",
+  nota: "Nota",
+  tarea: "Tarea",
+};
+
 export const CIUDADES: Ciudad[] = ["Bogotá", "Medellín", "Cali"];
 
 export const NOMBRE_ROL: Record<Rol, string> = {
