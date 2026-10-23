@@ -71,7 +71,7 @@ Cada persona se buscó en el CRM con las mismas reglas de los duplicados. Si ya 
 
 ## 4. Verificación: duplicados en el CRM
 
-Se compararon los 1003 contactos del CRM entre sí con las mismas reglas: **0 duplicados**. El CRM no tiene duplicados.
+Se compararon los 1005 contactos del CRM entre sí con las mismas reglas: **0 duplicados**. El CRM no tiene duplicados.
 
 4 pareja(s) se llaman igual, pero sus datos se contradicen: son homónimos.
 
