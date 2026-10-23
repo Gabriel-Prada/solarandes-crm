@@ -2,9 +2,9 @@
 
 Portafolio de Gabriel: el sistema comercial de **SolarAndes S.A.S.**, una instaladora de paneles solares **ficticia** en Bogotá, Medellín y Cali. El plan completo está en `PLAN.md` y los requisitos del "cliente" en `docs/requisitos.md`.
 
-**Fase actual: 1 (El CRM).** Fase 0 cerrada el 2026-10-21. Actualiza esta línea al cerrar cada fase.
+**Fase actual: 2 (Migración de datos).** Fase 0 cerrada el 2026-10-21; fase 1 cerrada el 2026-10-23. Actualiza esta línea al cerrar cada fase.
 
-**Dónde quedamos (2026-10-23):** la fase 1 está construida, revisada y publicada en https://solarandes-crm.vercel.app (82 pruebas pasando). Falta cerrarla con la skill `cerrar-fase`: hacer a Gabriel las 3 preguntas de "Explícalo tú" (ninguna respondida aún) y decidir con él cómo compartir el acceso de demostración en el README. Resumen de lo construido para estudiar: `docs/guia-fase-1.md` (no incluye todavía crear contactos, cotizar, agendar visitas ni las migraciones 005–008: agrégalo al cerrar).
+**Dónde quedamos (2026-10-23):** fase 1 cerrada. El CRM está publicado en https://solarandes-crm.vercel.app (82 pruebas pasando) y el README tiene los usuarios de demostración. Resumen para estudiar: `docs/guia-fase-1.md`. En "Explícalo tú", Gabriel explicó bien las tablas, RLS y el lado de la app; le costó el *por qué* las reglas viven en la base de datos (trigger, cotización): refuérzalo cuando aparezca en la fase 3 con n8n. Pendiente de Gabriel: escribir sus viñetas de la fase 1 en el README. Detalle para la fase 3: si n8n escribe con la llave de servicio, `auth.uid()` es nulo y `historial_etapas.cambiado_por` queda vacío.
 
 ## Con quién trabajas
 

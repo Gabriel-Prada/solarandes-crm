@@ -69,6 +69,11 @@ No todo depende de que la app haga las cosas bien. La propia base de datos tiene
 - **Probabilidad calculada:** la probabilidad de cierre se calcula sola a partir de la etapa (nuevo 5 %, cotizado 50 %…). Nunca queda desactualizada.
 - **Historial automático (trigger):** un *trigger* es una regla que se dispara sola cuando pasa algo. Cada vez que una venta cambia de etapa, la base de datos anota quién la movió y cuándo, y pone o quita la fecha de cierre. **Nadie, ni siquiera la gerente, puede escribir el historial a mano.**
 - **Búsqueda sin tildes:** una columna calculada guarda nombre, empresa, teléfono y código en minúsculas y sin tildes. Así "panaderia" encuentra "Panadería".
+- **Un teléfono = un contacto:** la base de datos no acepta dos contactos con el mismo teléfono. La regla tiene que vivir ahí porque un asesor no ve los contactos de los demás (RLS) y desde la app no podría saber si ya existe.
+- **El precio lo calcula la base de datos:** la función `calcular_cotizacion` es la autoridad final. La pantalla muestra una vista previa, pero lo que se guarda siempre se recalcula en la base.
+- **Numeración sin choques:** las cotizaciones se numeran solas (COT-2026-0001…). Si dos asesores cotizan al mismo tiempo, un "candado" hace que uno espere al otro para que no se repita el número.
+
+**La idea de fondo de toda la fase:** la app no es la única puerta a la base de datos. Cualquier usuario con sesión puede hablarle a Supabase directamente, y en las fases siguientes también lo harán n8n y el servidor MCP. Por eso las reglas que tienen que cumplirse siempre (permisos, historial, precios) viven en la base de datos: es el único punto por el que pasa todo.
 
 ### Migraciones
 
@@ -80,6 +85,10 @@ Una **migración** es un archivo numerado con cambios a la base de datos, como e
 | [002](../supabase/migraciones/002_busqueda_sin_tildes.sql) | La búsqueda sin tildes |
 | [003](../supabase/migraciones/003_panel_gerente.sql) | La función que calcula las métricas del panel |
 | [004](../supabase/migraciones/004_corrige_panel_gerente.sql) | Corrige el panel tras la revisión de código |
+| [005](../supabase/migraciones/005_crear_ventas_y_cotizaciones.sql) | Teléfono único y numeración automática de cotizaciones (con versiones: la anterior queda "reemplazada") |
+| [006](../supabase/migraciones/006_crear_contacto_con_venta.sql) | Crea un contacto y su primera venta en una sola operación: o se guardan los dos, o ninguno |
+| [007](../supabase/migraciones/007_cotizar_en_la_base_de_datos.sql) | La fórmula de cotización en la base de datos y permisos por columna. Cierra huecos que encontró la revisión de código |
+| [008](../supabase/migraciones/008_potencia_sin_ceros_de_mas.sql) | Muestra la potencia como "3,85 kWp" y no "3.8500000000000000" |
 
 **Regla:** una migración ya aplicada nunca se edita. Si hay un error, se corrige con una nueva (por eso existe la 004). Así el historial cuenta la verdad.
 
@@ -110,6 +119,8 @@ RLS decide **qué filas** ve alguien, pero no **qué columnas**. El técnico nec
 - **"Seguridad por defecto" en Supabase:** las tablas nuevas nacen protegidas y ninguna queda disponible para la app por accidente.
 - **Mínimo privilegio:** cada pieza tiene solo los permisos que necesita. Pasa con el subagente revisor (solo lee), con Vercel (solo ve un repositorio) y con el técnico (solo ve sus visitas).
 - **Mensaje de error genérico al iniciar sesión** ("correo o contraseña incorrectos"): no revela si un correo existe.
+- **Permisos por columna** (migración 007): RLS decide qué filas puedes tocar; además, en una venta un asesor solo puede cambiar la etapa y el motivo de pérdida, no el valor. Y nadie puede escribir cotizaciones directamente: solo a través de la función `crear_cotizacion`, que calcula el precio ella misma.
+- **"Venta no encontrada" sirve para todo:** si intentas cotizar una venta ajena, la respuesta es la misma que si no existiera. Así no se revela qué ventas existen.
 
 ---
 
@@ -139,6 +150,17 @@ Cuando alguien guarda algo, como registrar una actividad o mover una venta, el n
 
 Al mover una tarjeta, la pantalla **asume que va a salir bien** y la cambia de columna al instante, sin esperar al servidor. Si el servidor rechaza el cambio, la tarjeta vuelve sola y aparece el error. Así se siente rápido.
 
+### Una venta completa, de principio a fin
+
+Este es el recorrido que pide el "Listo cuando" del plan: un asesor inicia sesión y lleva una venta de cero a "Ganado".
+
+1. **Crear el contacto** (botón "Nuevo contacto"). El formulario llama a la función `crear_contacto_con_venta` (migración 006), que guarda el contacto **y** su primera venta **en una sola operación**: o se guardan los dos, o ninguno. Si se guardaran por separado y fallara la venta, quedaría un contacto suelto que el asesor ni siquiera podría borrar (solo la gerente borra). El teléfono se valida y no puede repetirse.
+2. **Cotizar** (en la ficha del contacto). Mientras el asesor escribe el consumo en kWh, la pantalla calcula al instante paneles y precio con [cotizacion.ts](../apps/crm/src/lib/cotizacion.ts). Al guardar, la función `crear_cotizacion` de la base de datos hace todo en un solo paso: revisa que la venta sea tuya, **recalcula el precio**, numera la cotización, pone el valor en la venta, la pasa a "Cotizado" si estaba antes y anota una actividad "Envío de cotización COT-…".
+3. **Agendar la visita técnica** ([acciones-venta.ts](../apps/crm/src/app/(crm)/contactos/[codigo]/acciones-venta.ts)). Se crea una actividad de tipo visita asignada al técnico, que le aparece en "Mis visitas", y la venta pasa a "Visita agendada". La fecha se interpreta en hora de Colombia y tiene que ser futura.
+4. **Arrastrar a "Ganado"** en el tablero. El trigger anota el historial y la fecha de cierre, la probabilidad sube a 100 % y el panel de la gerente la cuenta como venta ganada.
+
+**¿Por qué la fórmula de cotización está escrita tres veces?** En Python ([reglas.py](../scripts/datos/reglas.py)) genera los datos ficticios; en TypeScript da la vista previa instantánea; en la base de datos es la autoridad que no se puede saltar. El riesgo de duplicar es que se desincronicen. Para evitarlo, una prueba compara más de 2.000 combinaciones de consumo, ciudad y descuento entre Python y la base de datos, y TypeScript usa los mismos ejemplos que Python en sus pruebas.
+
 ### Las pantallas
 
 | Pantalla | Quién la ve | Lo interesante por dentro |
@@ -146,7 +168,8 @@ Al mover una tarjeta, la pantalla **asume que va a salir bien** y la cambia de c
 | **Panel** | Gerente | Todas las métricas se calculan en la base de datos con una sola función que se niega a responder si no eres la gerente |
 | **Ventas** (tablero) | Gerente y asesores | Arrastrar y soltar más un selector accesible; motivo obligatorio al perder; alertas a los 3 y 7 días sin actividad |
 | **Contactos** | Gerente y asesores | Búsqueda sin tildes, filtros en la dirección (se pueden compartir), páginas de 25 |
-| **Ficha del contacto** | Gerente y asesores | Recorrido de etapas desde el historial, cotizaciones y registro de actividades |
+| **Nuevo contacto** | Gerente y asesores | Contacto y primera venta en una sola operación; teléfono validado y sin repetir |
+| **Ficha del contacto** | Gerente y asesores | Recorrido de etapas desde el historial, cotizaciones, registro de actividades, cotizar con vista previa y agendar la visita técnica |
 | **Mis visitas** | Técnico | Diseñada para celular; lee la vista sin datos sensibles |
 
 ---
@@ -168,14 +191,14 @@ Al mover una tarjeta, la pantalla **asume que va a salir bien** y la cambia de c
 
 ## 7. Calidad: pruebas y revisiones
 
-### Pruebas automáticas (47)
+### Pruebas automáticas (82)
 
 | Grupo | Cuántas | Qué comprueban |
 |---|---|---|
 | Datos generados | 12 | Que los datos inventados sean coherentes (teléfonos válidos, embudo realista, historial completo) |
-| Regla de cotización | 7 | La fórmula de paneles y precio, incluido el borde exacto de 10 kWp |
-| Permisos en la base real | 13 | Que cada rol vea solo lo suyo, que nadie escriba el historial, que el panel solo lo vea la gerente… |
-| CRM (Vitest) | 15 | Búsqueda sin tildes y reglas de seguimiento (justo en 2, 3, 6 y 7 días) |
+| Regla de cotización (Python) | 16 | La fórmula de paneles y precio, incluido el borde exacto de 10 kWp, y el redondeo del descuento |
+| Permisos en la base real | 24 | Que cada rol vea solo lo suyo, que nadie escriba el historial, que el panel solo lo vea la gerente, que la base y Python coticen igual y los "intentos de abuso": cotizar una venta ajena, descuentos de 100 %… |
+| CRM (Vitest) | 30 | Búsqueda sin tildes, reglas de seguimiento (justo en 2, 3, 6 y 7 días), la fórmula de cotización en TypeScript y la validación de teléfonos |
 
 Las pruebas de permisos **se hacen pasar por cada persona del equipo** dentro de una transacción que al final se deshace, así que no cambian nada.
 
@@ -248,6 +271,12 @@ Con tres capas: el menú, la revisión del rol en cada página y, sobre todo, Ro
 
 **¿Qué pasa cuando alguien mueve una venta a "Ganado"?**
 La tarjeta cambia de columna al instante (actualización optimista). La acción del servidor verifica el rol y actualiza la venta. La base de datos, con un trigger, anota el cambio en el historial con quién lo hizo, pone la fecha de cierre y recalcula la probabilidad al 100 %. Luego la pantalla se refresca.
+
+**¿Por qué el historial lo escribe un trigger y no la app?**
+Porque la app no es la única que va a cambiar ventas: también lo harán n8n, el servidor MCP o un script. Si el historial dependiera de la app, cualquiera de esas puertas podría olvidarlo. El trigger está pegado a la tabla, así que ningún cambio de etapa se escapa, y nadie puede escribir el historial a mano.
+
+**La fórmula de cotización está en tres lugares. ¿No es duplicar código?**
+Sí, a propósito: en la pantalla para dar respuesta inmediata y en la base de datos porque es la autoridad que no se puede saltar (si alguien manipula la vista previa, la base recalcula el precio real). El riesgo es que se desincronicen, y lo controlo con una prueba que compara más de 2.000 casos entre las versiones.
 
 **¿Por qué calculas las métricas en la base de datos y no en la app?**
 Porque es más rápido calcular donde están los datos que traer miles de filas. Además, la función se protege sola: exige el rol de gerente.
