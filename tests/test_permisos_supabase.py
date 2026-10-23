@@ -144,10 +144,14 @@ def test_panel_cuadra_con_los_datos(con, equipo):
         panel = con.execute("select panel_gerente()").fetchone()[0]
         ganadas = con.execute("select count(*) from oportunidades where etapa = 'ganado'").fetchone()[0]
         total = con.execute("select count(*) from oportunidades").fetchone()[0]
+        # El embudo cuenta hasta dónde LLEGÓ cada venta, aunque después retroceda
+        llegaron_a_ganado = con.execute(
+            "select count(distinct oportunidad_id) from historial_etapas where etapa_nueva = 'ganado'"
+        ).fetchone()[0]
 
     embudo = {e["etapa"]: e["ventas"] for e in panel["embudo"]}
     assert embudo["nuevo"] == total  # todas las ventas entran por "nuevo"
-    assert embudo["ganado"] == ganadas
+    assert embudo["ganado"] == llegaron_a_ganado
     # El embudo nunca crece de una etapa a la siguiente
     orden = ["nuevo", "contactado", "visita_agendada", "cotizado", "negociacion", "ganado"]
     assert all(embudo[a] >= embudo[b] for a, b in zip(orden, orden[1:], strict=False))
