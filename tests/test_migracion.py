@@ -26,6 +26,7 @@ from normalizar import (
     normalizar_tipo,
     separar_nombre,
 )
+from reporte import DatosReporte, calificar, contar_filas_excel, limpieza_por_campo, markdown, para_revisar
 
 DATOS = Path(__file__).resolve().parents[1] / "data"
 RESPUESTAS = DATOS / "heredado" / "respuestas_migracion.csv"
@@ -603,3 +604,108 @@ def test_un_contacto_dudoso_que_comparte_el_celular_no_es_un_homonimo():
     ]
     p = persona(nombre="Jose Alvarez", telefono="+573001111111", ciudad="Bogotá")
     assert isinstance(decidir(p, crm), EnRevision)
+
+
+# --- Paso 5: el reporte de calidad ---
+
+
+@pytest.fixture(scope="module")
+def datos_reporte(filas, deduplicado):
+    """Los datos del reporte, con los contactos cargados (contactos.csv) haciendo de CRM."""
+    with (DATOS / "generados" / "contactos.csv").open(encoding="utf-8") as f:
+        crm = [
+            en_crm(
+                c["id"],
+                nombre=c["nombre"],
+                empresa=c["empresa"] or None,
+                tipo=c["tipo"],
+                telefono=c["telefono"],
+                correo=c["email"] or None,
+                ciudad=c["ciudad"],
+                consumo_kwh_mes=int(c["consumo_kwh_mes"]),
+                asesor=c["asesor_id"],
+            )  # fmt: skip
+            for c in csv.DictReader(f)
+        ]
+    personas, revision = deduplicado
+    grupos_crm, revision_crm = agrupar(crm)
+    return DatosReporte(
+        filas_en_excel=contar_filas_excel(), contactos=[normalizar(f) for f in filas], personas=personas,
+        revision_duplicados=revision, plan=planear(personas, crm), notas_en_crm=92, crm=crm, revision_crm=revision_crm,
+        grupos_duplicados_crm=sum(len(g) > 1 for g in grupos_crm), fecha=date(2026, 10, 23),
+    )  # fmt: skip
+
+
+def test_el_reporte_muestra_las_cifras_de_la_migracion(datos_reporte):
+    texto = markdown(datos_reporte, calificar(datos_reporte))
+    for cifra in [
+        "| Filas que no eran clientes (título, encabezados, vacías, total) | 10 |",
+        "| Personas distintas, después de unir duplicados | 280 |",
+        "| Duplicados unidos | 47 filas, en 43 personas |",
+        "| Duplicados en el CRM | 0 |",
+        "| Datos llenados con un valor equivocado | 0 |",
+        "| Personas asociadas al contacto correcto del CRM | 279 de 279 |",
+        "El CRM no tiene duplicados.",
+        "Medellín (Vale), fila 58",
+    ]:
+        assert cifra in texto, cifra
+
+
+def test_la_limpieza_por_campo_suma_todas_las_filas(datos_reporte):
+    for nombre, entendido, _, ilegible, vacio in limpieza_por_campo(datos_reporte.contactos):
+        assert entendido + ilegible + vacio == 327, nombre
+
+
+def test_la_lista_para_revisar_tiene_lo_que_hay_que_decidir(datos_reporte):
+    [caso] = para_revisar(datos_reporte)
+    assert caso["nombre"] == "Colegio Rodriguez"
+    assert "C0059" in caso["motivo"] and "C0665" in caso["motivo"]
+
+
+def test_si_el_crm_tuviera_duplicados_el_reporte_lo_dice(datos_reporte):
+    from dataclasses import replace
+
+    assert "Ojo: el CRM tiene 2 grupo(s) de duplicados." in markdown(replace(datos_reporte, grupos_duplicados_crm=2))
+
+
+def test_cuenta_todas_las_filas_del_excel():
+    assert contar_filas_excel() == 337  # 245 en la hoja de Bogotá y Cali, 92 en la de Medellín
+
+
+def test_el_reporte_dice_que_ciudad_y_asesor_se_dedujeron_de_la_hoja(datos_reporte):
+    deducidos = {nombre: de_la_hoja for nombre, _, de_la_hoja, _, _ in limpieza_por_campo(datos_reporte.contactos)}
+    assert deducidos["Ciudad"] == deducidos["Asesor"] == 88
+
+
+def test_una_duda_del_paso_3_cuenta_una_sola_vez(datos_reporte):
+    from dataclasses import replace
+
+    ana = contacto(fila=1, nombre="Ana Ruiz", telefono="+573001111111")
+    pedro = contacto(fila=2, nombre="Pedro Ruiz", telefono="+573001111111")
+    personas, revision = deduplicar([ana, pedro])
+    plan = planear(personas, [])  # las dos personas quedan en revisión por estar pendientes
+    assert len(plan.revision) == 2
+    datos = replace(datos_reporte, personas=personas, revision_duplicados=revision, plan=plan)
+    assert len(para_revisar(datos)) == 1
+
+
+def test_si_falta_aplicar_la_migracion_el_reporte_avisa(datos_reporte):
+    from dataclasses import replace
+
+    plan = planear(datos_reporte.personas, datos_reporte.crm)  # contra contactos.csv, sin notas guardadas
+    texto = markdown(replace(datos_reporte, plan=plan, notas_en_crm=0))
+    assert "la migración no está al día" in texto
+    assert "Faltan 92 nota(s)" in texto
+
+
+def test_un_posible_duplicado_del_crm_no_se_presenta_como_homonimo(datos_reporte):
+    from dataclasses import replace
+
+    from duplicados import ParejaEnRevision
+
+    a = en_crm("C9001", nombre="Ana Ruiz", telefono="+573001111111")
+    b = en_crm("C9002", nombre="Pedro Ruiz", telefono="+573001111111")
+    dudosa = ParejaEnRevision(a, b, "mismo teléfono, pero nombres distintos")
+    texto = markdown(replace(datos_reporte, revision_crm=[*datos_reporte.revision_crm, dudosa]))
+    assert "1 pareja(s) son posibles duplicados" in texto
+    assert "El CRM no tiene duplicados seguros, pero hay 1 pareja(s) por revisar." in texto

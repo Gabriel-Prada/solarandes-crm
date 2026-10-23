@@ -234,6 +234,11 @@ def normalizar(fila: FilaHeredada) -> ContactoLimpio:
         notas=str(escritos["notas"]).strip() if escritos.get("notas") else None,
     )
 
+    # Lo que no venía en la fila y se dedujo de la hoja también se anota: es una suposición
+    for campo in ("ciudad", "asesor"):
+        if not escritos.get(campo) and por_hoja.get(campo):
+            contacto.problemas.append(f"{campo}_de_la_hoja")
+
     # Se anota todo lo que venía escrito y no se pudo entender, y lo que falta
     for campo, original in [
         ("telefono", escritos.get("telefono")),
