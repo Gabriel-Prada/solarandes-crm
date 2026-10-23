@@ -5,12 +5,15 @@ migración. Las reglas de limpieza no se sacan de ahí: solo se usa para medir.
 """
 
 import csv
+from dataclasses import fields
 from datetime import date, datetime
 from pathlib import Path
 
 import pytest
+from duplicados import REVISION, SEGURO, agrupar, comparar, deduplicar, unificar
 from leer_excel import FilaHeredada, columnas_de_encabezado, es_fila_de_total, leer_excel, simplificar
 from normalizar import (
+    ContactoLimpio,
     normalizar,
     normalizar_asesor,
     normalizar_ciudad,
@@ -283,3 +286,207 @@ def test_un_cliente_que_empieza_por_total_no_es_la_fila_de_total():
     assert es_fila_de_total(("TOTAL CLIENTES", 239))
     assert es_fila_de_total(("Total:", 239))
     assert not es_fila_de_total(("Totalgas S.A.S.", "3001234567"))
+
+
+# --- Paso 3: duplicados ---
+
+
+def contacto(**campos) -> ContactoLimpio:
+    """Un contacto inventado para las pruebas: solo se llenan los campos que importan."""
+    base = {f.name: None for f in fields(ContactoLimpio)} | {"hoja": "Prueba", "fila": 1, "problemas": []}
+    return ContactoLimpio(**(base | campos))
+
+
+def test_mismo_telefono_y_nombre_compatible_es_seguro():
+    a = contacto(nombre="Aldair Mosquera", telefono="+573002439576")
+    b = contacto(nombre="MOSQUERA ALDAIR", telefono="+573002439576", correo="aldair@example.org")
+    assert comparar(a, b).nivel == SEGURO
+
+
+def test_mismo_nombre_y_misma_ciudad_es_seguro():
+    a = contacto(nombre="Mauricio Hernández", telefono="+573138586020", ciudad="Medellín")
+    b = contacto(nombre="Mauricio  Hernandez", correo="mauricio.hernandez@example.net", ciudad="Medellín")
+    assert comparar(a, b).nivel == SEGURO
+
+
+def test_mismo_nombre_sin_nada_mas_que_lo_confirme_va_a_revision():
+    # "Juan Pérez" hay muchos: sin teléfono, correo ni ciudad en común, decide una persona
+    a = contacto(nombre="Juan Pérez", telefono="+573001111111")
+    b = contacto(nombre="Juan Perez", correo="juan.perez@example.com")
+    assert comparar(a, b).nivel == REVISION
+
+
+def test_nombre_parecido_sin_confirmacion_va_a_revision():
+    a = contacto(nombre="David Sánchez", ciudad="Cali")
+    b = contacto(nombre="David Sánchez Gómez", ciudad="Cali")
+    assert comparar(a, b).nivel == REVISION
+
+
+def test_telefonos_distintos_no_se_unen_aunque_el_nombre_se_parezca():
+    a = contacto(nombre="David Sánchez", telefono="+573114302048")
+    b = contacto(nombre="David Sánchez Gómez", telefono="+573108631648")
+    assert comparar(a, b) is None
+
+
+def test_mismo_nombre_con_telefonos_distintos_va_a_revision():
+    a = contacto(nombre="Ana Ruiz", telefono="+573001111111")
+    b = contacto(nombre="Ana Ruiz", telefono="+573002222222")
+    assert comparar(a, b).nivel == REVISION
+
+
+def test_mismo_telefono_con_nombres_distintos_va_a_revision():
+    # Puede ser una familia que comparte el celular: no se une sola
+    a = contacto(nombre="Ana Ruiz", telefono="+573001111111")
+    b = contacto(nombre="Pedro Ruiz", telefono="+573001111111")
+    assert comparar(a, b).nivel == REVISION
+
+
+def test_la_misma_empresa_con_y_sin_sas_es_la_misma():
+    a = contacto(empresa="Panadería Torres S.A.S.", ciudad="Bogotá")
+    b = contacto(empresa="PANADERIA TORRES", nombre="Astrid Monroy", ciudad="Bogotá")
+    assert comparar(a, b).nivel == SEGURO
+
+
+def test_dos_personas_de_la_misma_empresa_no_son_la_misma():
+    a = contacto(empresa="Hotel López", nombre="Milena Correa", ciudad="Bogotá")
+    b = contacto(empresa="Hotel López", nombre="Juan Pérez", ciudad="Bogotá")
+    assert comparar(a, b) is None
+
+
+def test_una_cadena_que_junta_contradicciones_no_se_une_sola():
+    # A y B comparten teléfono; B y C, correo; pero A es de Bogotá y C de Cali
+    a = contacto(fila=1, nombre="Ana Ruiz", telefono="+573001111111", ciudad="Bogotá")
+    b = contacto(fila=2, telefono="+573001111111", correo="ana@example.com")
+    c = contacto(fila=3, nombre="Ana Ruiz", correo="ana@example.com", ciudad="Cali")
+    grupos, revision = agrupar([a, b, c])
+    assert [len(g) for g in grupos] == [1, 1, 1]  # el grupo entero queda sin unir
+    assert any("ciudad" in r.razon for r in revision)  # y alguien tiene que decidir
+
+
+@pytest.mark.parametrize(
+    "filas",
+    [
+        # Una familia que comparte celular, más una fila sin nombre con ese celular
+        [
+            {"nombre": "Ana Ruiz", "telefono": "+573001111111"},
+            {"nombre": "Pedro Ruiz", "telefono": "+573001111111"},
+            {"telefono": "+573001111111"},
+        ],
+        # Dos personas del mismo hotel, más una fila con solo el nombre del hotel
+        [
+            {"empresa": "Hotel López", "nombre": "Milena Correa", "ciudad": "Bogotá"},
+            {"empresa": "Hotel López", "ciudad": "Bogotá"},
+            {"empresa": "Hotel López", "nombre": "Juan Pérez", "ciudad": "Bogotá"},
+        ],
+        # Dos David distintos, unidos por una fila sin nombre con el teléfono de uno y el correo del otro
+        [
+            {"nombre": "David Sánchez", "telefono": "+573114302048"},
+            {"telefono": "+573114302048", "correo": "david.sanchez@example.com"},
+            {"nombre": "David Sánchez Gómez", "correo": "david.sanchez@example.com"},
+        ],
+    ],
+)
+def test_una_fila_sin_nombre_no_sirve_de_puente_entre_dos_personas(filas):
+    contactos = [contacto(fila=n, **campos) for n, campos in enumerate(filas, start=1)]
+    grupos, revision = agrupar(contactos)
+    assert [len(g) for g in grupos] == [1, 1, 1]
+    assert revision
+
+
+def test_una_pareja_en_revision_nunca_queda_unida():
+    contactos = [
+        contacto(fila=1, nombre="Ana Ruiz", telefono="+573001111111"),
+        contacto(fila=2, nombre="Pedro Ruiz", telefono="+573001111111"),
+        contacto(fila=3, nombre="Ana Ruiz", correo="ana@example.com", ciudad="Cali"),
+    ]
+    grupos, revision = agrupar(contactos)
+    for pareja in revision:
+        assert not any(pareja.a in g and pareja.b in g for g in grupos)
+
+
+def test_el_orden_de_las_filas_no_cambia_los_grupos():
+    contactos = [
+        contacto(fila=1, nombre="Ana Ruiz", telefono="+573001111111"),
+        contacto(fila=2, telefono="+573001111111", correo="ana@example.com"),
+        contacto(fila=3, nombre="Ana Ruiz", telefono="+573002222222", correo="ana@example.com"),
+        contacto(fila=4, nombre="Luis Mora", telefono="+573003333333"),
+        contacto(fila=5, nombre="LUIS MORA", telefono="+573003333333"),
+    ]
+
+    def filas_por_grupo(lista):
+        return sorted(tuple(sorted(c.fila for c in g)) for g in agrupar(lista)[0])
+
+    assert filas_por_grupo(contactos) == filas_por_grupo(list(reversed(contactos)))
+
+
+def test_unificar_toma_lo_mejor_de_cada_fila():
+    vieja = contacto(
+        fila=1, nombre="Mosquera Aldair", telefono="+573002439576", fecha_contacto=date(2025, 11, 1), etapa="contactado"
+    )
+    nueva = contacto(
+        fila=2, nombre="Aldair Mosquera Ríos", correo="aldair@example.org", fecha_contacto=date(2026, 1, 5),
+        etapa="perdido", notas="Pidió financiación",
+    )  # fmt: skip
+    persona = unificar([vieja, nueva])
+    assert persona.nombre == "Aldair Mosquera Ríos"  # la forma más completa
+    assert (persona.telefono, persona.correo) == ("+573002439576", "aldair@example.org")  # se completan
+    assert persona.fecha_contacto == date(2025, 11, 1)  # la primera vez que apareció
+    assert persona.etapa == "perdido"  # lo último que se supo
+    assert persona.notas == ["Pidió financiación"]
+    assert persona.filas == [("Prueba", 1), ("Prueba", 2)]
+
+
+def test_si_las_filas_dicen_cosas_distintas_gana_la_reciente_y_se_anota():
+    vieja = contacto(fila=1, nombre="Ana Ruiz", consumo_kwh_mes=300, fecha_contacto=date(2025, 11, 1))
+    nueva = contacto(fila=2, nombre="Ana Ruiz", consumo_kwh_mes=350, fecha_contacto=date(2026, 1, 5))
+    persona = unificar([vieja, nueva])
+    assert persona.consumo_kwh_mes == 350
+    assert "consumo_kwh_mes_distinto_entre_filas" in persona.problemas
+
+
+@pytest.fixture(scope="module")
+def deduplicado(filas):
+    return deduplicar([normalizar(f) for f in filas])
+
+
+def test_cada_persona_real_queda_una_sola_vez(deduplicado, respuestas):
+    personas, _ = deduplicado
+    contacto_de = {(r["hoja"], int(r["fila"])): r["contacto_id"] for r in respuestas}
+    for persona in personas:  # ningún grupo mezcla a dos personas reales
+        assert len({contacto_de[f] for f in persona.filas}) == 1, persona.filas
+    reales = [contacto_de[p.filas[0]] for p in personas]
+    assert len(reales) == len(set(reales)) == 280  # y ninguna persona quedó partida en dos
+
+
+def test_este_excel_no_deja_nada_en_revision(deduplicado):
+    _, revision = deduplicado
+    assert revision == []
+
+
+def test_unir_duplicados_recupera_datos(deduplicado):
+    """Una foto, como test_cuanto_se_recupera.
+
+    Antes de unir faltaban 24 teléfonos y 51 correos, contados por fila; después de unir faltan
+    16 y 34, contados por persona, porque una fila repetida completa lo que a otra le faltaba.
+    """
+    personas, _ = deduplicado
+    assert sum(p.telefono is None for p in personas) == 16
+    assert sum(p.correo is None for p in personas) == 34
+
+
+def test_unificar_conserva_si_un_dato_no_se_escribio_o_no_se_entendio():
+    ilegible = contacto(fila=1, nombre="Ana Ruiz", problemas=["telefono_ilegible"])
+    sin_escribir = contacto(fila=2, nombre="Ana Ruiz", problemas=["telefono_vacio"])
+    assert "telefono_ilegible" in unificar([ilegible, sin_escribir]).problemas
+    assert "telefono_vacio" in unificar([sin_escribir]).problemas
+    dudoso = contacto(fila=3, problemas=["nombre_dudoso"])
+    assert "nombre_dudoso" in unificar([dudoso]).problemas
+
+
+def test_las_fichas_en_duda_quedan_marcadas_para_no_cargarlas():
+    ana = contacto(fila=1, nombre="Ana Ruiz", telefono="+573001111111")
+    pedro = contacto(fila=2, nombre="Pedro Ruiz", telefono="+573001111111")
+    luis = contacto(fila=3, nombre="Luis Mora", telefono="+573003333333")
+    personas, _ = deduplicar([ana, pedro, luis])
+    pendientes = {p.nombre for p in personas if "pendiente_de_revision" in p.problemas}
+    assert pendientes == {"Ana Ruiz", "Pedro Ruiz"}
