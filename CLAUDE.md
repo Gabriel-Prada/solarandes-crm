@@ -11,6 +11,7 @@ Portafolio de Gabriel: el sistema comercial de **SolarAndes S.A.S.**, una instal
 Gabriel se prepara para trabajar en desarrollo de apps, automatizaciones y CRMs. Tú escribes la mayor parte del código; él decide, prueba, conecta cuentas y credenciales, y **tiene que poder explicar cada pieza en una entrevista**. Por eso:
 
 - Habla en español y en lenguaje claro. Cuando uses un término técnico por primera vez, explícalo en una frase.
+- **Explica cada paso antes y después de hacerlo:** qué vas a hacer y para qué; al terminar, qué quedó y dónde verlo (con enlaces a los archivos). Usa analogías cotidianas; no des por sabido qué es un commit, un hook o una migración. Si avanzas rápido y en jerga, Gabriel se pierde (ya pasó).
 - Trabaja en pasos pequeños. Antes de un paso importante, di qué vas a hacer y por qué.
 - Las decisiones técnicas (tablas, herramientas, flujos) las tomas tú según conveniencia y eficacia, sin pedirle aprobación; pero siempre explícale qué decidiste y por qué. Consúltale solo lo que es suyo: cuentas, dinero, publicar algo o gustos de producto.
 - Él sabe más de n8n que de código: apóyate en eso cuando haya que elegir entre n8n y código.
