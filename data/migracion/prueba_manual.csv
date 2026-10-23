@@ -1,0 +1,13 @@
+﻿nombre;empresa;celular;correo;ciudad;tipo;consumo;asesor;canal;notas;resultado esperado
+Lucía Prueba Manual;;300 555 0201;lucia.prueba@example.com;Bta;hogar;300;;;Prueba manual;Se crea: ciudad Bogotá y asesor Andrés (el de Bogotá)
+LUCIA PRUEBA MANUAL;;3005550201;;;;;;;;Repetida: es la misma persona de la fila 2
+Carlos Sin Dígito;;300555020;;Cali;hogar;250;;;;Error: al celular le falta un dígito
+Marta Consumo Alto;;300 555 0203;;Cali;hogar;350000;;;;Error: consumo demasiado alto (sobra un cero)
+Ana Hogar;Panadería Ana;300 555 0204;;Medellín;hogar;400;;;;Error: dice hogar pero trae empresa
+José Álvarez;;315 907 9267;;Cali;hogar;300;;;;Ya existe: C0119
+Hermano Uno Prueba;;300 555 0205;;Medellín;hogar;200;;;;Revisar: mismo celular que la fila 9, otro nombre
+Hermana Dos Prueba;;300 555 0205;;Medellín;hogar;200;;;;Revisar: mismo celular que la fila 8, otro nombre
+Valentina Cliente Prueba;Ferretería La Prueba;300 555 0206;;Medellin, Antioquia;;1800 kWh;Valentina;wsp;"Dice ""urgente""; llamar en la mañana";Se crea: negocio en Medellín, asesora Valentina, canal WhatsApp, y la nota conserva comillas y punto y coma
+Pedro Gómez - Hijo;;300 555 0207;;Cali;;300;;;;Error: no se sabe qué es persona y qué es empresa
+Ciudad Rara;;300 555 0208;;Pasto;hogar;300;;;;Error: ciudad ilegible (no atendemos Pasto)
+Sin Consumo;;300 555 0209;;Cali;hogar;;;;;Error: falta el consumo
