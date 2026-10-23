@@ -100,7 +100,7 @@ Cada fase tiene: **qué se construye**, **qué demuestra**, **listo cuando** y *
 
 **Qué se construye**
 - Inicio de sesión con roles: gerente (ve todo), asesor (ve lo suyo) y técnico (ve sus visitas).
-- **Contactos:** búsqueda, filtros, ficha con historial e importación desde CSV.
+- **Contactos:** búsqueda, filtros, ficha con historial y creación de contactos nuevos. *(La importación desde CSV pasó a la fase 2.)*
 - **Oportunidades:** un tablero kanban por etapa que se arrastra, con valor y probabilidad.
 - **Actividades:** llamadas, notas, visitas y tareas con fecha de vencimiento.
 - **Cotizaciones:** cálculo según el consumo en kWh, que da número de paneles y precio.
@@ -127,6 +127,7 @@ Cada fase tiene: **qué se construye**, **qué demuestra**, **listo cuando** y *
   - Normaliza teléfonos al formato +57, ciudades y correos.
   - Marca para revisión humana lo que no se puede resolver solo.
 - Un **reporte de calidad**: cuántos registros entraron, cuántos duplicados se unieron y cuántos quedaron en revisión.
+- **Importar contactos desde CSV en el CRM** (viene de la fase 1): la gerente sube un archivo, ve una vista previa con los errores marcados y confirma. Reutiliza la misma limpieza del Excel heredado.
 - Se puede hacer en n8n, en código, o en ambos para comparar.
 
 **Qué demuestra:** una de las tareas más comunes y menos mostradas en implementación de CRMs. Casi todo cliente nuevo llega con un Excel así.

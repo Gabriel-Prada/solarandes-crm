@@ -74,6 +74,12 @@ export default async function PaginaContactos({ searchParams }: PageProps<"/cont
                 : " asignados a ti"}
           </p>
         </div>
+        <Link
+          href="/contactos/nuevo"
+          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
+        >
+          + Nuevo contacto
+        </Link>
       </header>
 
       {/* Formulario GET: los filtros quedan en la dirección, así se pueden compartir o recargar */}

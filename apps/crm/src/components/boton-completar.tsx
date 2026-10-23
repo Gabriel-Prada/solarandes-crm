@@ -2,9 +2,13 @@
 
 import { useState, useTransition } from "react";
 
-import { completarActividad } from "./acciones";
+type Props = {
+  actividadId: string;
+  // La acción del servidor que marca la actividad: cada página pasa la suya (asesor o técnico)
+  accion: (actividadId: string) => Promise<{ error: string | null }>;
+};
 
-export function BotonCompletar({ actividadId }: { actividadId: string }) {
+export function BotonCompletar({ actividadId, accion }: Props) {
   const [pendiente, iniciar] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +19,7 @@ export function BotonCompletar({ actividadId }: { actividadId: string }) {
         disabled={pendiente}
         onClick={() =>
           iniciar(async () => {
-            const resultado = await completarActividad(actividadId);
+            const resultado = await accion(actividadId);
             setError(resultado.error);
           })
         }

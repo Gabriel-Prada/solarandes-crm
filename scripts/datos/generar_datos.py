@@ -21,7 +21,7 @@ from pathlib import Path
 from faker import Faker
 from openpyxl import Workbook
 from openpyxl.styles import Font
-from reglas import cotizar
+from reglas import aplicar_descuento, cotizar
 
 SEMILLA = 2026
 HOY = date(2026, 10, 21)  # fecha fija para que los datos no cambien según el día en que se corran
@@ -275,7 +275,7 @@ class _Simulador:
 
     def _cotizacion(self, opp, fecha, consumo, ciudad, descuento_pct, version):
         c = cotizar(consumo, ciudad)
-        valor = round(c.valor_total * (1 - descuento_pct / 100) / 1000) * 1000
+        valor = aplicar_descuento(c.valor_total, descuento_pct)
         cot = {
             "_opp": opp,
             "version": version,

@@ -7,13 +7,11 @@ Necesita el .env con las llaves y los datos cargados con scripts/supabase/cargar
 Si no hay .env, la prueba se salta.
 """
 
-import csv
 import json
-from collections import Counter
 
 import psycopg
 import pytest
-from conexion import RAIZ, RUTA_ENV
+from conexion import RUTA_ENV
 
 pytestmark = pytest.mark.skipif(not RUTA_ENV.exists(), reason="sin .env no hay base de datos a la cual conectarse")
 
@@ -48,21 +46,29 @@ def contar(con, usuario_id) -> dict[str, int]:
         return {t: con.execute(f"select count(*) from {t}").fetchone()[0] for t in TABLAS}
 
 
-def contactos_por_asesor() -> Counter:
-    with (RAIZ / "data" / "generados" / "contactos.csv").open(encoding="utf-8") as f:
-        return Counter(c["asesor_id"] for c in csv.DictReader(f))
+def lo_que_hay(con, consulta, *parametros):
+    """Lo que hay de verdad en la base de datos, contado sin permisos (como administrador).
+    Se compara contra lo que ve cada rol, así las pruebas siguen valiendo aunque el CRM se use."""
+    resultado = con.execute(consulta, parametros).fetchone()[0]
+    con.rollback()
+    return resultado
 
 
 def test_gerente_ve_todo(con, equipo):
     vistos = contar(con, equipo["U01"])
-    assert vistos["contactos"] == 1000
-    assert vistos["oportunidades"] == 1006
+    assert vistos["contactos"] == lo_que_hay(con, "select count(*) from contactos")
+    assert vistos["oportunidades"] == lo_que_hay(con, "select count(*) from oportunidades")
 
 
 def test_cada_asesor_ve_solo_sus_contactos(con, equipo):
-    esperados = contactos_por_asesor()
+    vistos_en_total = 0
     for codigo in ("U02", "U03", "U04"):
-        assert contar(con, equipo[codigo])["contactos"] == esperados[codigo], codigo
+        suyos = lo_que_hay(con, "select count(*) from contactos where asesor_id = %s", equipo[codigo])
+        vistos = contar(con, equipo[codigo])["contactos"]
+        assert vistos == suyos, codigo
+        vistos_en_total += vistos
+    # Entre los tres ven todos los contactos, y ninguno ve los de otro
+    assert vistos_en_total == lo_que_hay(con, "select count(*) from contactos")
 
 
 def test_tecnico_solo_ve_sus_visitas_por_la_vista(con, equipo):
@@ -172,6 +178,167 @@ def test_embudo_cuenta_las_ventas_que_se_saltan_etapas(con, equipo):
     assert despues["nuevo"] == antes["nuevo"]  # ya estaba contada en "nuevo"
     for etapa in ("contactado", "visita_agendada", "cotizado", "negociacion", "ganado"):
         assert despues[etapa] == antes[etapa] + 1, etapa
+
+
+def _contacto_nuevo(asesor_id, telefono="+573009998877"):
+    return json.dumps(
+        {
+            "tipo": "hogar",
+            "nombre": "Cliente De Prueba",
+            "telefono": telefono,
+            "ciudad": "Bogotá",
+            "estrato": 4,
+            "consumo_kwh_mes": 300,
+            "canal_origen": "web",
+            "asesor_id": str(asesor_id),
+        }
+    )
+
+
+VENTA_NUEVA = json.dumps({"nombre": "Sistema 3.3 kWp - Cliente De Prueba", "potencia_kwp": 3.3, "valor_cop": 14850000})
+
+
+def test_crear_contacto_crea_tambien_su_venta_y_su_historial(con, equipo):
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U02"])
+        codigo = con.execute(
+            "select crear_contacto_con_venta(%s::jsonb, %s::jsonb)", (_contacto_nuevo(equipo["U02"]), VENTA_NUEVA)
+        ).fetchone()[0]
+        venta = con.execute(
+            """select o.etapa, o.asesor_id, h.etapa_nueva, h.cambiado_por
+               from contactos c join oportunidades o on o.contacto_id = c.id
+               join historial_etapas h on h.oportunidad_id = o.id
+               where c.codigo = %s""",
+            (codigo,),
+        ).fetchall()
+    assert codigo.startswith("C")
+    assert venta == [("nuevo", equipo["U02"], "nuevo", equipo["U02"])]
+
+
+def test_asesor_no_puede_crear_contactos_a_nombre_de_otro(con, equipo):
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U02"])  # Andrés intenta crearlo a nombre de Valentina
+        con.execute(
+            "select crear_contacto_con_venta(%s::jsonb, %s::jsonb)", (_contacto_nuevo(equipo["U03"]), VENTA_NUEVA)
+        )
+
+
+def test_no_se_repiten_telefonos_aunque_el_contacto_sea_de_otro_asesor(con, equipo):
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U03"])  # Valentina
+        telefono_de_valentina = con.execute("select telefono from contactos limit 1").fetchone()[0]
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.UniqueViolation):
+        como(con, equipo["U02"])  # Andrés no ve ese contacto, pero la base de datos sí
+        con.execute(
+            "select crear_contacto_con_venta(%s::jsonb, %s::jsonb)",
+            (_contacto_nuevo(equipo["U02"], telefono_de_valentina), VENTA_NUEVA),
+        )
+
+
+def test_numeracion_de_cotizaciones_no_se_repite_entre_asesores(con, equipo):
+    with con.transaction(force_rollback=True):
+        # El año se calcula, no se escribe fijo: la prueba sigue valiendo en 2027
+        anio = con.execute("select to_char(now() at time zone 'America/Bogota', 'YYYY')").fetchone()[0]
+        mayor = con.execute(
+            "select coalesce(max(split_part(numero, '-', 3)::int), 0) from cotizaciones where numero like %s",
+            (f"COT-{anio}-%",),
+        ).fetchone()[0]
+        como(con, equipo["U04"])  # Camilo solo ve sus cotizaciones, que no tienen el número mayor
+        opp_id = con.execute("select id from oportunidades where etapa = 'contactado' limit 1").fetchone()[0]
+        primera = con.execute("select crear_cotizacion(%s, 300, 0)", (opp_id,)).fetchone()[0]
+        segunda = con.execute("select crear_cotizacion(%s, 300, 5)", (opp_id,)).fetchone()[0]
+        cotizaciones = con.execute(
+            "select version, estado from cotizaciones where oportunidad_id = %s order by version", (opp_id,)
+        ).fetchall()
+        venta = con.execute("select etapa, valor_cop from oportunidades where id = %s", (opp_id,)).fetchone()
+    assert primera == f"COT-{anio}-{mayor + 1:04d}"
+    assert segunda == f"COT-{anio}-{mayor + 2:04d}"
+    assert cotizaciones == [(1, "reemplazada"), (2, "enviada")]
+    assert venta[0] == "cotizado"  # pasó sola de "contactado" a "cotizado"
+
+
+def test_la_formula_de_la_base_de_datos_coincide_con_la_de_python():
+    """Cientos de combinaciones: si alguna de las dos fórmulas cambia sin la otra, esto falla."""
+    from conexion import conectar
+    from reglas import CIUDADES, aplicar_descuento, cotizar
+
+    casos = [(c, ciudad, d) for c in range(50, 6001, 37) for ciudad in CIUDADES for d in (0, 2.5, 5, 8, 30)]
+    consumos, ciudades, descuentos = (list(columna) for columna in zip(*casos, strict=True))
+    descuentos = [str(d) for d in descuentos]  # mezcla enteros y decimales: se envían como texto
+    # Todos los casos en una sola consulta (uno por uno serían miles de viajes al servidor)
+    with conectar() as conexion:
+        filas = conexion.execute(
+            """select r.num_paneles, r.precio_kwp, r.valor_total
+               from unnest(%s::integer[], %s::ciudad[], %s::numeric[])
+                    with ordinality as t(consumo, ciudad, descuento, n)
+               cross join lateral calcular_cotizacion(t.consumo, t.ciudad, t.descuento) r
+               order by t.n""",
+            (consumos, ciudades, descuentos),
+        ).fetchall()
+
+    assert len(filas) == len(casos) > 2000
+    for (consumo, ciudad, descuento), fila in zip(casos, filas, strict=True):
+        esperado = cotizar(consumo, ciudad)
+        assert fila == (
+            esperado.num_paneles,
+            esperado.precio_kwp,
+            aplicar_descuento(esperado.valor_total, descuento),
+        ), (consumo, ciudad, descuento)
+
+
+# --- Intentos de abuso: alguien con sesión le habla a la base de datos sin pasar por la app ---
+
+
+def test_nadie_puede_escribir_cotizaciones_directamente(con, equipo):
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U02"])
+        con.execute("update cotizaciones set numero = 'COT-2026-x'")
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U02"])
+        opp_id = con.execute("select id from oportunidades limit 1").fetchone()[0]
+        con.execute(
+            """insert into cotizaciones (numero, oportunidad_id, consumo_kwh_mes, potencia_kwp, num_paneles,
+               precio_kwp, valor_total) values ('COT-1', %s, 300, 3.3, 6, 1, 1)""",
+            (opp_id,),
+        )
+
+
+def test_no_se_puede_cotizar_la_venta_de_otro_asesor(con, equipo):
+    with con.transaction(force_rollback=True):
+        opp_ajena = con.execute(
+            "select id from oportunidades where asesor_id = %s and etapa = 'contactado' limit 1", (equipo["U03"],)
+        ).fetchone()[0]
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U02"])  # Andrés intenta cotizar una venta de Valentina
+        con.execute("select crear_cotizacion(%s, 300, 0)", (opp_ajena,))
+
+
+def test_no_se_aceptan_descuentos_mayores_a_30(con, equipo):
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InvalidParameterValue):
+        como(con, equipo["U01"])
+        opp_id = con.execute("select id from oportunidades where etapa = 'contactado' limit 1").fetchone()[0]
+        con.execute("select crear_cotizacion(%s, 300, 100)", (opp_id,))
+
+
+def test_asesor_no_puede_cambiar_el_valor_de_una_venta(con, equipo):
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U02"])
+        con.execute("update oportunidades set valor_cop = 1 where asesor_id = %s", (equipo["U02"],))
+
+
+def test_tecnico_no_puede_cambiar_el_cliente_de_una_visita(con, equipo):
+    with con.transaction(force_rollback=True), pytest.raises(psycopg.errors.InsufficientPrivilege):
+        como(con, equipo["U05"])
+        con.execute("update actividades set contacto_id = gen_random_uuid() where usuario_id = %s", (equipo["U05"],))
+
+
+def test_tecnico_si_puede_marcar_sus_visitas(con, equipo):
+    with con.transaction(force_rollback=True):
+        como(con, equipo["U05"])
+        marcadas = con.execute(
+            "update actividades set completada = true where usuario_id = %s and not completada", (equipo["U05"],)
+        ).rowcount
+    assert marcadas > 0
 
 
 def test_no_se_puede_perder_una_venta_sin_motivo(con, equipo):

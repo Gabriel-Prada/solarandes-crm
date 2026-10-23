@@ -57,7 +57,7 @@ O0055,C0055,U04,nueva,Sistema 2.75 kWp - Gisela Galvis,perdido,2.75,12375000,0,p
 O0056,C0056,U03,nueva,Sistema 2.2 kWp - David Sánchez Gómez,perdido,2.2,9900000,0,no_respondio,2025-11-13 10:53,2025-12-02 09:59,2025-12-02 09:59
 O0057,C0057,U02,nueva,Sistema 13.75 kWp - Colegio Valencia,perdido,13.75,52250000,0,sin_financiacion,2025-11-13 12:35,2025-12-30 10:15,2025-12-30 10:15
 O0058,C0058,U03,nueva,Sistema 15.4 kWp - Taller Rodríguez,perdido,15.4,58520000,0,no_respondio,2025-11-14 12:55,2025-11-28 13:34,2025-11-28 13:34
-O0059,C0059,U03,nueva,Sistema 39.05 kWp - Colegio Rodríguez,ganado,39.05,140970000,100,,2025-11-14 14:30,2025-12-18 15:23,2025-12-18 15:23
+O0059,C0059,U03,nueva,Sistema 39.05 kWp - Colegio Rodríguez,ganado,39.05,140971000,100,,2025-11-14 14:30,2025-12-18 15:23,2025-12-18 15:23
 O0060,C0060,U03,nueva,Sistema 4.95 kWp - Giovanny Salas,perdido,4.95,22275000,0,precio,2025-11-15 10:07,2025-11-23 14:33,2025-11-23 14:33
 O0061,C0061,U04,nueva,Sistema 3.85 kWp - Cristian Tovar Morales,perdido,3.85,17325000,0,aplazo,2025-11-15 14:35,2025-11-27 18:42,2025-11-27 18:42
 O0062,C0062,U04,nueva,Sistema 12.65 kWp - Gimnasio Giraldo,perdido,12.65,48070000,0,no_respondio,2025-11-15 14:52,2025-11-30 12:56,2025-11-30 12:56
@@ -82,7 +82,7 @@ O0080,C0080,U02,nueva,Sistema 21.45 kWp - Panadería Torres S.A.S.,ganado,21.45,
 O0081,C0081,U02,nueva,Sistema 2.2 kWp - Daniela Arévalo,perdido,2.2,9900000,0,no_respondio,2025-11-24 13:30,2025-12-19 08:01,2025-12-19 08:01
 O0082,C0082,U02,nueva,Sistema 3.3 kWp - Angie Carvajal,perdido,3.3,14850000,0,aplazo,2025-11-24 13:59,2025-11-30 15:05,2025-11-30 15:05
 O0083,C0083,U02,nueva,Sistema 2.2 kWp - Jair Rodríguez Martínez,perdido,2.2,9900000,0,competencia,2025-11-24 17:48,2025-12-27 11:58,2025-12-27 11:58
-O0084,C0084,U02,nueva,Sistema 14.85 kWp - Ferretería Perea,ganado,14.85,53608000,100,,2025-11-24 18:32,2025-12-26 16:31,2025-12-26 16:31
+O0084,C0084,U02,nueva,Sistema 14.85 kWp - Ferretería Perea,ganado,14.85,53609000,100,,2025-11-24 18:32,2025-12-26 16:31,2025-12-26 16:31
 O0085,C0085,U02,nueva,Sistema 2.2 kWp - Guillermo Romero Torres,perdido,2.2,9900000,0,no_respondio,2025-11-25 14:07,2025-12-28 16:19,2025-12-28 16:19
 O0086,C0086,U03,nueva,Sistema 5.5 kWp - Didier Ortiz Mendoza,perdido,5.5,24750000,0,no_respondio,2025-11-27 11:18,2025-12-11 12:44,2025-12-11 12:44
 O0087,C0087,U02,nueva,Sistema 2.75 kWp - Antonio Hurtado,perdido,2.75,12375000,0,techo_no_apto,2025-11-27 14:04,2025-12-12 11:06,2025-12-12 11:06
@@ -98,7 +98,7 @@ O0096,C0096,U02,nueva,Sistema 13.75 kWp - Panadería Luna,perdido,13.75,52250000
 O0097,C0097,U02,nueva,Sistema 2.2 kWp - Luis Sánchez,cotizado,2.2,9900000,50,,2025-11-30 12:18,2025-12-20 16:33,
 O0098,C0098,U02,nueva,Sistema 35.75 kWp - Taller Delgado,perdido,35.75,135850000,0,no_respondio,2025-11-30 15:33,2026-01-01 14:18,2026-01-01 14:18
 O0099,C0099,U02,nueva,Sistema 4.95 kWp - Rosa Villamil,perdido,4.95,22275000,0,no_respondio,2025-12-02 09:59,2025-12-22 10:22,2025-12-22 10:22
-O0100,C0100,U02,nueva,Sistema 46.75 kWp - Ferretería Bedoya S.A.S.,ganado,46.75,172320000,100,,2025-12-03 11:29,2026-01-05 10:51,2026-01-05 10:51
+O0100,C0100,U02,nueva,Sistema 46.75 kWp - Ferretería Bedoya S.A.S.,ganado,46.75,172321000,100,,2025-12-03 11:29,2026-01-05 10:51,2026-01-05 10:51
 O0101,C0101,U03,nueva,Sistema 2.75 kWp - Marina Zuluaga,perdido,2.75,12375000,0,no_respondio,2025-12-04 09:19,2025-12-30 10:34,2025-12-30 10:34
 O0102,C0102,U04,nueva,Sistema 2.2 kWp - Aida Guerra Henao,perdido,2.2,9900000,0,aplazo,2025-12-04 11:48,2025-12-31 10:41,2025-12-31 10:41
 O0103,C0103,U03,nueva,Sistema 3.85 kWp - Victoria Camacho Castro,perdido,3.85,17325000,0,aplazo,2025-12-05 12:51,2026-01-05 14:22,2026-01-05 14:22
@@ -274,7 +274,7 @@ O0272,C0272,U04,nueva,Sistema 30.8 kWp - Gimnasio Torres,perdido,30.8,117040000,
 O0273,C0273,U02,nueva,Sistema 26.4 kWp - Hotel Díaz,perdido,26.4,100320000,0,precio,2026-02-07 10:46,2026-02-24 15:43,2026-02-24 15:43
 O0274,C0274,U04,nueva,Sistema 4.4 kWp - Beatriz Palacio Gallego,perdido,4.4,19800000,0,no_respondio,2026-02-07 15:59,2026-02-28 15:26,2026-02-28 15:26
 O0275,C0275,U04,nueva,Sistema 15.4 kWp - Restaurante Londoño,perdido,15.4,58520000,0,sin_financiacion,2026-02-07 16:09,2026-03-07 18:19,2026-03-07 18:19
-O0276,C0276,U02,nueva,Sistema 34.65 kWp - Lavandería Suárez,negociacion,34.65,125086000,70,,2026-02-07 17:46,2026-02-28 08:09,
+O0276,C0276,U02,nueva,Sistema 34.65 kWp - Lavandería Suárez,negociacion,34.65,125087000,70,,2026-02-07 17:46,2026-02-28 08:09,
 O0277,C0277,U04,nueva,Sistema 4.4 kWp - Yesenia Mosquera Castro,perdido,4.4,19800000,0,no_respondio,2026-02-07 17:46,2026-02-24 09:14,2026-02-24 09:14
 O0278,C0278,U03,nueva,Sistema 2.2 kWp - Sandra Marín,perdido,2.2,9900000,0,sin_financiacion,2026-02-07 17:53,2026-02-21 13:11,2026-02-21 13:11
 O0279,C0279,U03,nueva,Sistema 1.65 kWp - Luz Hurtado Zapata,perdido,1.65,7425000,0,techo_no_apto,2026-02-08 11:09,2026-03-18 12:27,2026-03-18 12:27
@@ -337,7 +337,7 @@ O0335,C0335,U02,nueva,Sistema 2.2 kWp - Fernanda Naranjo,ganado,2.2,9405000,100,
 O0336,C0336,U02,nueva,Sistema 2.75 kWp - Emilia León Aguirre,perdido,2.75,12375000,0,no_respondio,2026-02-23 15:36,2026-03-08 10:07,2026-03-08 10:07
 O0337,C0337,U04,nueva,Sistema 2.2 kWp - Alejandro Álvarez Sánchez,perdido,2.2,9603000,0,competencia,2026-02-23 16:26,2026-04-06 12:39,2026-04-06 12:39
 O0338,C0338,U03,nueva,Sistema 2.2 kWp - Alfonso Osorio,perdido,2.2,9900000,0,no_respondio,2026-02-23 17:40,2026-03-27 08:30,2026-03-27 08:30
-O0339,C0339,U02,nueva,Sistema 3.3 kWp - Mercedes Bohórquez,perdido,3.3,14404000,0,precio,2026-02-24 08:38,2026-04-02 09:54,2026-04-02 09:54
+O0339,C0339,U02,nueva,Sistema 3.3 kWp - Mercedes Bohórquez,perdido,3.3,14405000,0,precio,2026-02-24 08:38,2026-04-02 09:54,2026-04-02 09:54
 O0340,C0340,U02,nueva,Sistema 28.6 kWp - Droguería Benavides S.A.S.,perdido,28.6,108680000,0,aplazo,2026-02-24 16:49,2026-03-26 16:17,2026-03-26 16:17
 O0341,C0341,U02,nueva,Sistema 1.65 kWp - Ramiro Guevara Muñoz,perdido,1.65,7425000,0,techo_no_apto,2026-02-25 09:02,2026-03-26 12:37,2026-03-26 12:37
 O0342,C0342,U02,nueva,Sistema 30.8 kWp - Oficinas Rueda S.A.S.,perdido,30.8,117040000,0,no_respondio,2026-02-25 10:48,2026-03-05 09:31,2026-03-05 09:31
@@ -374,7 +374,7 @@ O0372,C0372,U02,nueva,Sistema 2.75 kWp - Liliana González Murillo,perdido,2.75,
 O0373,C0373,U02,nueva,Sistema 2.75 kWp - Esperanza Ortiz,perdido,2.75,12375000,0,no_respondio,2026-03-08 12:23,2026-03-17 16:12,2026-03-17 16:12
 O0374,C0374,U02,nueva,Sistema 2.75 kWp - Diana Chaparro,perdido,2.75,12375000,0,precio,2026-03-08 17:29,2026-04-04 13:12,2026-04-04 13:12
 O0375,C0375,U04,nueva,Sistema 4.4 kWp - Ángela Martínez,perdido,4.4,19800000,0,no_respondio,2026-03-09 11:59,2026-03-21 14:22,2026-03-21 14:22
-O0376,C0376,U04,nueva,Sistema 12.65 kWp - Carnicería Domínguez,perdido,12.65,45666000,0,aplazo,2026-03-09 13:12,2026-04-19 14:09,2026-04-19 14:09
+O0376,C0376,U04,nueva,Sistema 12.65 kWp - Carnicería Domínguez,perdido,12.65,45667000,0,aplazo,2026-03-09 13:12,2026-04-19 14:09,2026-04-19 14:09
 O0377,C0377,U03,nueva,Sistema 1.65 kWp - David Ballesteros Gómez,perdido,1.65,7425000,0,no_respondio,2026-03-09 13:34,2026-03-18 17:59,2026-03-18 17:59
 O0378,C0378,U03,nueva,Sistema 2.2 kWp - José Navarro Agudelo,perdido,2.2,9900000,0,no_respondio,2026-03-09 15:27,2026-04-12 09:53,2026-04-12 09:53
 O0379,C0379,U04,nueva,Sistema 3.85 kWp - Eduardo Osorio,perdido,3.85,17325000,0,precio,2026-03-10 11:32,2026-04-16 18:49,2026-04-16 18:49
@@ -574,7 +574,7 @@ O0572,C0572,U02,nueva,Sistema 16.5 kWp - Restaurante Suárez,perdido,16.5,627000
 O0573,C0573,U02,nueva,Sistema 1.65 kWp - Andrea Castro Barreto,perdido,1.65,7425000,0,no_respondio,2026-05-17 10:03,2026-06-23 08:35,2026-06-23 08:35
 O0574,C0574,U04,nueva,Sistema 4.4 kWp - Guillermo Quintero Chávez,ganado,4.4,18216000,100,,2026-05-17 16:59,2026-06-23 18:54,2026-06-23 18:54
 O0575,C0575,U02,nueva,Sistema 25.3 kWp - Lavandería Pérez,ganado,25.3,96140000,100,,2026-05-17 17:46,2026-06-04 11:12,2026-06-04 11:12
-O0576,C0576,U02,nueva,Sistema 23.65 kWp - Colegio Melo S.A.S.,ganado,23.65,85376000,100,,2026-05-18 10:08,2026-06-21 16:52,2026-06-21 16:52
+O0576,C0576,U02,nueva,Sistema 23.65 kWp - Colegio Melo S.A.S.,ganado,23.65,85377000,100,,2026-05-18 10:08,2026-06-21 16:52,2026-06-21 16:52
 O0577,C0577,U03,nueva,Sistema 4.4 kWp - Luis Ardila Villa,contactado,4.4,19800000,15,,2026-05-18 10:21,2026-05-20 17:04,
 O0578,C0578,U04,nueva,Sistema 2.2 kWp - Adriana Sarmiento González,perdido,2.2,9900000,0,precio,2026-05-18 12:27,2026-06-14 08:02,2026-06-14 08:02
 O0579,C0579,U02,nueva,Sistema 2.2 kWp - Gloria Montoya,perdido,2.2,9900000,0,techo_no_apto,2026-05-19 11:34,2026-06-01 11:40,2026-06-01 11:40
@@ -654,7 +654,7 @@ O0652,C0652,U04,nueva,Sistema 23.1 kWp - Oficinas Escobar,perdido,23.1,87780000,
 O0653,C0653,U03,nueva,Sistema 2.2 kWp - Alonso Valencia Rodríguez,perdido,2.2,9108000,0,competencia,2026-06-17 11:34,2026-07-28 12:14,2026-07-28 12:14
 O0654,C0654,U04,nueva,Sistema 2.75 kWp - Matilde Díaz,perdido,2.75,12375000,0,aplazo,2026-06-17 13:39,2026-07-19 17:02,2026-07-19 17:02
 O0655,C0655,U02,nueva,Sistema 46.2 kWp - Ferretería Gómez,perdido,46.2,175560000,0,precio,2026-06-17 18:44,2026-07-11 15:04,2026-07-11 15:04
-O0656,C0656,U03,nueva,Sistema 9.9 kWp - Panadería Palacio,perdido,9.9,42322000,0,competencia,2026-06-18 09:26,2026-07-25 10:43,2026-07-25 10:43
+O0656,C0656,U03,nueva,Sistema 9.9 kWp - Panadería Palacio,perdido,9.9,42323000,0,competencia,2026-06-18 09:26,2026-07-25 10:43,2026-07-25 10:43
 O0657,C0657,U02,nueva,Sistema 2.2 kWp - María García Cuesta,perdido,2.2,9900000,0,sin_financiacion,2026-06-18 14:06,2026-07-16 13:10,2026-07-16 13:10
 O0658,C0658,U02,nueva,Sistema 18.7 kWp - Oficinas Gómez,ganado,18.7,65375000,100,,2026-06-19 12:15,2026-07-24 12:52,2026-07-24 12:52
 O0659,C0659,U02,nueva,Sistema 3.3 kWp - Carolina Fuentes Vera,perdido,3.3,14850000,0,no_respondio,2026-06-19 12:36,2026-07-13 14:50,2026-07-13 14:50

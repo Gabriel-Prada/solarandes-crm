@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 
+import { BotonCompletar } from "@/components/boton-completar";
 import { formatoFechaHora, formatoTelefono } from "@/lib/formato";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
 import type { VisitaTecnico } from "@/lib/tipos";
+
+import { marcarVisitaHecha } from "./acciones";
 
 export const metadata: Metadata = { title: "Mis visitas" };
 
@@ -74,6 +77,11 @@ function TarjetaVisita({ visita: v }: { visita: VisitaTecnico }) {
         </a>
         <span>{[v.direccion, v.ciudad].filter(Boolean).join(", ")}</span>
       </div>
+      {!v.completada && (
+        <div className="mt-3 flex justify-end border-t border-stone-100 pt-3">
+          <BotonCompletar actividadId={v.id} accion={marcarVisitaHecha} />
+        </div>
+      )}
     </article>
   );
 }

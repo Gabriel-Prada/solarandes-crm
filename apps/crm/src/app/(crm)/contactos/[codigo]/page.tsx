@@ -24,7 +24,10 @@ import {
   type Oportunidad,
 } from "@/lib/tipos";
 
-import { BotonCompletar } from "./boton-completar";
+import { BotonCompletar } from "@/components/boton-completar";
+
+import { completarActividad } from "./acciones";
+import { AccionesVenta } from "./acciones-venta-formularios";
 import { FormularioActividad } from "./formulario-actividad";
 
 export async function generateMetadata({ params }: PageProps<"/contactos/[codigo]">): Promise<Metadata> {
@@ -185,6 +188,14 @@ export default async function FichaContacto({ params }: PageProps<"/contactos/[c
                       <span className="font-medium">{formatoPesos(c.valor_total)}</span>
                     </div>
                   ))}
+
+                {o.etapa !== "ganado" && o.etapa !== "perdido" && (
+                  <AccionesVenta
+                    oportunidadId={o.id}
+                    consumo={contacto.consumo_kwh_mes}
+                    ciudad={contacto.ciudad}
+                  />
+                )}
               </article>
             ))}
             {(oportunidades ?? []).length === 0 && <p className="text-sm text-stone-500">Sin ventas registradas.</p>}
@@ -205,7 +216,7 @@ export default async function FichaContacto({ params }: PageProps<"/contactos/[c
             <section className="space-y-2">
               <h2 className="font-semibold">Pendientes</h2>
               {pendientes.map((a) => (
-                <ItemActividad key={a.id} actividad={a} accion={<BotonCompletar actividadId={a.id} />} />
+                <ItemActividad key={a.id} actividad={a} accion={<BotonCompletar actividadId={a.id} accion={completarActividad} />} />
               ))}
             </section>
           )}

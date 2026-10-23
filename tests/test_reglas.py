@@ -1,5 +1,5 @@
 import pytest
-from reglas import PRECIO_KWP_GRANDE, PRECIO_KWP_PEQUENO, cotizar
+from reglas import PRECIO_KWP_GRANDE, PRECIO_KWP_PEQUENO, aplicar_descuento, cotizar
 
 
 def test_ejemplo_de_los_requisitos():
@@ -37,3 +37,26 @@ def test_consumo_invalido(consumo):
 def test_ciudad_no_atendida():
     with pytest.raises(ValueError):
         cotizar(300, "Barranquilla")
+
+
+# Los mismos casos están en apps/crm/src/lib/cotizacion.test.ts y, contra la base de datos,
+# en tests/test_permisos_supabase.py: las tres versiones de la fórmula deben coincidir.
+@pytest.mark.parametrize(
+    ("valor", "descuento", "esperado"),
+    [
+        (4_950_000, 5, 4_703_000),  # 4.702.500: la mitad sube (el round() de Python daría 4.702.000)
+        (12_375_000, 5, 11_756_000),
+        (56_430_000, 8, 51_916_000),
+        (14_850_000, 0, 14_850_000),
+        (14_850_000, 2.5, 14_479_000),  # con decimal
+        (14_850_000, 30, 10_395_000),
+    ],
+)
+def test_aplicar_descuento(valor, descuento, esperado):
+    assert aplicar_descuento(valor, descuento) == esperado
+
+
+@pytest.mark.parametrize("descuento", [-1, 30.1, 100])
+def test_descuento_fuera_de_rango(descuento):
+    with pytest.raises(ValueError):
+        aplicar_descuento(14_850_000, descuento)

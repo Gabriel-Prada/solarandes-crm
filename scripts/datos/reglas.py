@@ -16,6 +16,7 @@ POTENCIA_PANEL_W = 550
 LIMITE_SISTEMA_PEQUENO_W = 10_000
 PRECIO_KWP_PEQUENO = 4_500_000  # COP por kWp, hasta 10 kWp
 PRECIO_KWP_GRANDE = 3_800_000  # COP por kWp, más de 10 kWp
+DESCUENTO_MAXIMO_PCT = 30
 
 
 @dataclass(frozen=True)
@@ -48,3 +49,18 @@ def cotizar(consumo_kwh_mes: float, ciudad: str) -> Cotizacion:
         precio_kwp=precio_kwp,
         valor_total=instalada_w * precio_kwp // 1000,
     )
+
+
+def aplicar_descuento(valor_sin_descuento: int, descuento_pct: float) -> int:
+    """Precio con descuento, redondeado a miles de pesos; la mitad sube (4.702.500 -> 4.703.000).
+
+    Se calcula solo con enteros (miles de pesos y décimas de porcentaje) para que Python, la base
+    de datos (migración 007) y el CRM (apps/crm/src/lib/cotizacion.ts) den exactamente lo mismo.
+    """
+    if not 0 <= descuento_pct <= DESCUENTO_MAXIMO_PCT:
+        raise ValueError(f"El descuento debe estar entre 0 % y {DESCUENTO_MAXIMO_PCT} %")
+    if valor_sin_descuento % 1000:
+        raise ValueError("El valor sin descuento debe ser un múltiplo de 1.000")
+    decimas = round(descuento_pct * 10)  # el descuento se guarda con un decimal
+    miles = valor_sin_descuento // 1000
+    return (miles * (1000 - decimas) + 500) // 1000 * 1000
