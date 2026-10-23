@@ -10,7 +10,8 @@ from datetime import date, datetime
 from pathlib import Path
 
 import pytest
-from duplicados import REVISION, SEGURO, agrupar, comparar, deduplicar, unificar
+from conciliar import PREFIJO_NOTA, ContactoCRM, EnRevision, Existente, Nueva, decidir, planear
+from duplicados import REVISION, SEGURO, Persona, agrupar, comparar, deduplicar, unificar
 from leer_excel import FilaHeredada, columnas_de_encabezado, es_fila_de_total, leer_excel, simplificar
 from normalizar import (
     ContactoLimpio,
@@ -490,3 +491,115 @@ def test_las_fichas_en_duda_quedan_marcadas_para_no_cargarlas():
     personas, _ = deduplicar([ana, pedro, luis])
     pendientes = {p.nombre for p in personas if "pendiente_de_revision" in p.problemas}
     assert pendientes == {"Ana Ruiz", "Pedro Ruiz"}
+
+
+# --- Paso 4: conciliar con el CRM (la decisión, sin base de datos) ---
+
+
+def en_crm(codigo: str, **campos) -> ContactoCRM:
+    base = {f.name: None for f in fields(ContactoLimpio)} | {"hoja": "CRM", "fila": 0, "problemas": []}
+    return ContactoCRM(**(base | campos), id=codigo, codigo=codigo)
+
+
+def persona(**campos) -> Persona:
+    base = {f.name: None for f in fields(Persona)} | {"notas": [], "filas": [("Prueba", 1)], "problemas": []}
+    return Persona(**(base | campos))
+
+
+def test_si_ya_esta_en_el_crm_solo_completa_lo_vacio_y_reporta_diferencias():
+    crm = [en_crm("C0001", nombre="Ana Ruiz", tipo="hogar", telefono="+573001111111", correo=None, consumo_kwh_mes=300)]
+    p = persona(nombre="Ana Ruiz", telefono="+573001111111", correo="ana@example.com", consumo_kwh_mes=350,
+                empresa="Panadería Ruiz", notas=["Pidió financiación"])  # fmt: skip
+    decision = decidir(p, crm)
+    assert isinstance(decision, Existente) and decision.contacto.codigo == "C0001"
+    assert decision.completar == {"email": "ana@example.com"}  # el consumo no se toca; la empresa no va en un hogar
+    assert decision.diferencias == [("consumo_kwh_mes", 350, 300)]
+    assert decision.notas_nuevas == [PREFIJO_NOTA + "Pidió financiación"]
+
+
+def test_una_nota_que_ya_esta_en_el_crm_no_se_repite():
+    ya = PREFIJO_NOTA + "Pidió financiación"
+    crm = [en_crm("C0001", nombre="Ana Ruiz", telefono="+573001111111", notas_existentes={ya})]
+    p = persona(nombre="Ana Ruiz", telefono="+573001111111", notas=["Pidió financiación", "Tiene techo de teja"])
+    assert decidir(p, crm).notas_nuevas == [PREFIJO_NOTA + "Tiene techo de teja"]
+
+
+def test_un_homonimo_con_otros_datos_no_es_una_duda():
+    crm = [
+        en_crm("C0119", nombre="José Álvarez", telefono="+573001111111", ciudad="Bogotá"),
+        en_crm("C0753", nombre="José Álvarez", telefono="+573002222222", ciudad="Cali"),
+    ]
+    p = persona(nombre="Jose Alvarez", telefono="+573001111111", ciudad="Bogotá")
+    assert decidir(p, crm).contacto.codigo == "C0119"
+
+
+def test_si_no_se_sabe_a_cual_de_dos_contactos_corresponde_va_a_revision():
+    crm = [
+        en_crm("C0059", nombre="Jaime Prieto", empresa="Colegio Rodríguez", ciudad="Medellín"),
+        en_crm("C0665", nombre="Paola Cardona", empresa="Colegio Rodríguez", ciudad="Medellín"),
+    ]
+    decision = decidir(persona(empresa="Colegio Rodriguez", ciudad="Medellín"), crm)
+    assert isinstance(decision, EnRevision)
+    assert "C0059" in decision.razon and "C0665" in decision.razon
+
+
+def test_una_persona_nueva_se_crea_solo_si_tiene_todo_lo_obligatorio():
+    completa = persona(nombre="Luis Mora", tipo="hogar", telefono="+573009999999", ciudad="Cali", asesor="U04",
+                       consumo_kwh_mes=300, notas=["Referido por Milena"])  # fmt: skip
+    assert decidir(completa, []) == Nueva(completa, "referido")
+    sin_canal = persona(
+        nombre="Luis Mora", tipo="hogar", telefono="+573009999999", ciudad="Cali", asesor="U04", consumo_kwh_mes=300
+    )
+    decision = decidir(sin_canal, [])
+    assert isinstance(decision, EnRevision) and "canal_origen" in decision.razon
+
+
+def test_una_persona_en_duda_desde_el_paso_3_no_se_toca():
+    p = persona(nombre="Ana Ruiz", telefono="+573001111111", problemas=["pendiente_de_revision"])
+    assert isinstance(decidir(p, [en_crm("C0001", nombre="Ana Ruiz", telefono="+573001111111")]), EnRevision)
+
+
+def test_cada_persona_del_excel_se_asocia_al_contacto_correcto(deduplicado, respuestas):
+    """Con los contactos cargados en el CRM (data/generados/contactos.csv) como si fueran el CRM."""
+    with (DATOS / "generados" / "contactos.csv").open(encoding="utf-8") as f:
+        crm = [
+            en_crm(
+                c["id"],
+                nombre=c["nombre"],
+                empresa=c["empresa"] or None,
+                tipo=c["tipo"],
+                telefono=c["telefono"],
+                correo=c["email"] or None,
+                ciudad=c["ciudad"],
+                consumo_kwh_mes=int(c["consumo_kwh_mes"]),
+                asesor=c["asesor_id"],
+            )  # fmt: skip
+            for c in csv.DictReader(f)
+        ]
+    personas, _ = deduplicado
+    plan = planear(personas, crm)
+    contacto_de = {(r["hoja"], int(r["fila"])): r["contacto_id"] for r in respuestas}
+    assert len(plan.existentes) == 279
+    for e in plan.existentes:
+        assert e.contacto.codigo == contacto_de[e.persona.filas[0]], e.persona.filas
+    assert plan.nuevas == []
+    # La única en revisión: una fila con solo "Colegio Rodríguez", y en el CRM hay dos personas de ese colegio
+    assert [r.persona.empresa for r in plan.revision] == ["Colegio Rodriguez"]
+
+
+def test_una_persona_nueva_sin_consumo_va_a_revision():
+    # Sin consumo no se puede estimar la venta que el CRM crea junto con el contacto
+    p = persona(nombre="Luis Mora", tipo="hogar", telefono="+573009999999", ciudad="Cali", asesor="U04",
+                notas=["Referido por Milena"])  # fmt: skip
+    decision = decidir(p, [])
+    assert isinstance(decision, EnRevision) and "consumo_kwh_mes" in decision.razon
+
+
+def test_un_contacto_dudoso_que_comparte_el_celular_no_es_un_homonimo():
+    # El CRM tiene dos "José Álvarez" con el mismo celular (un duplicado del propio CRM)
+    crm = [
+        en_crm("C0119", nombre="José Álvarez", telefono="+573001111111", ciudad="Bogotá"),
+        en_crm("C0753", nombre="José Álvarez", telefono="+573001111111", ciudad="Cali"),
+    ]
+    p = persona(nombre="Jose Alvarez", telefono="+573001111111", ciudad="Bogotá")
+    assert isinstance(decidir(p, crm), EnRevision)
