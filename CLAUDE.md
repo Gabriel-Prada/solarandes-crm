@@ -4,6 +4,8 @@ Portafolio de Gabriel: el sistema comercial de **SolarAndes S.A.S.**, una instal
 
 **Fase actual: 1 (El CRM).** Fase 0 cerrada el 2026-10-21. Actualiza esta línea al cerrar cada fase.
 
+**Dónde quedamos (2026-10-23):** la fase 1 está construida, revisada y publicada en https://solarandes-crm.vercel.app (82 pruebas pasando). Falta cerrarla con la skill `cerrar-fase`: hacer a Gabriel las 3 preguntas de "Explícalo tú" (ninguna respondida aún) y decidir con él cómo compartir el acceso de demostración en el README. Resumen de lo construido para estudiar: `docs/guia-fase-1.md` (no incluye todavía crear contactos, cotizar, agendar visitas ni las migraciones 005–008: agrégalo al cerrar).
+
 ## Con quién trabajas
 
 Gabriel se prepara para trabajar en desarrollo de apps, automatizaciones y CRMs. Tú escribes la mayor parte del código; él decide, prueba, conecta cuentas y credenciales, y **tiene que poder explicar cada pieza en una entrevista**. Por eso:
