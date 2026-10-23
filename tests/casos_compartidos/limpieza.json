@@ -1,0 +1,552 @@
+{
+  "_que_es": "Casos que la limpieza en Python (scripts/migracion) y en TypeScript (apps/crm/src/lib/importar) tienen que resolver igual. Los leen tests/test_migracion.py y apps/crm/src/lib/importar/limpieza.test.ts: si una regla cambia en un lenguaje y no en el otro, alguna prueba falla. \"conciliar\" compara una persona con los contactos del CRM: \"existe:CODIGO\", \"revision\" o \"nueva\" (en Python, decidir de conciliar.py; en TypeScript, buscarEnCrm de analizar.ts).",
+  "telefono": [
+    [
+      "3204989513",
+      "+573204989513"
+    ],
+    [
+      "3056695760.0",
+      "+573056695760"
+    ],
+    [
+      "(+57) 311-194-36-88",
+      "+573111943688"
+    ],
+    [
+      "+57 350 2094429",
+      "+573502094429"
+    ],
+    [
+      "573185859154",
+      "+573185859154"
+    ],
+    [
+      "301-444-7009",
+      "+573014447009"
+    ],
+    [
+      "318933597",
+      null
+    ],
+    [
+      "6024541704",
+      null
+    ],
+    [
+      "llamar en la tarde",
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "correo": [
+    [
+      " Daniela.Trujillo@Example.COM ",
+      "daniela.trujillo@example.com"
+    ],
+    [
+      "panaderia.torres@example",
+      null
+    ],
+    [
+      "sin correo",
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "ciudad": [
+    [
+      "Bta",
+      "Bogotá"
+    ],
+    [
+      "Bogotá D.C.",
+      "Bogotá"
+    ],
+    [
+      "BOGOTA",
+      "Bogotá"
+    ],
+    [
+      "Cali - Valle",
+      "Cali"
+    ],
+    [
+      "Santiago de Cali",
+      "Cali"
+    ],
+    [
+      "Mde",
+      "Medellín"
+    ],
+    [
+      "Medellín, Antioquia",
+      "Medellín"
+    ],
+    [
+      "Localidad de Suba",
+      null
+    ],
+    [
+      "Calima",
+      null
+    ],
+    [
+      "Pasto",
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "tipo": [
+    [
+      "Casa",
+      "hogar"
+    ],
+    [
+      "RESIDENCIAL",
+      "hogar"
+    ],
+    [
+      "hogar",
+      "hogar"
+    ],
+    [
+      "Comercial",
+      "negocio"
+    ],
+    [
+      "Empresa",
+      "negocio"
+    ],
+    [
+      "Industrial",
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "consumo": [
+    [
+      "604",
+      604
+    ],
+    [
+      "604.0",
+      604
+    ],
+    [
+      "2038kwh",
+      2038
+    ],
+    [
+      "604 kWh",
+      604
+    ],
+    [
+      "aprox 277",
+      277
+    ],
+    [
+      "-300",
+      null
+    ],
+    [
+      "0",
+      null
+    ],
+    [
+      "1.200 kWh",
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ],
+  "separar_nombre": [
+    [
+      "HOTEL LÓPEZ - MILENA CORREA  ORDÓÑEZ ",
+      [
+        "Milena Correa Ordóñez",
+        "Hotel López",
+        false
+      ]
+    ],
+    [
+      "Milena Correa - Hotel López",
+      [
+        "Milena Correa",
+        "Hotel López",
+        false
+      ]
+    ],
+    [
+      "carnicería vélez s.a.s. ",
+      [
+        null,
+        "Carnicería Vélez S.A.S.",
+        false
+      ]
+    ],
+    [
+      "sandra  de la torre",
+      [
+        "Sandra de la Torre",
+        null,
+        false
+      ]
+    ],
+    [
+      "Pedro Gómez - Hijo",
+      [
+        null,
+        null,
+        true
+      ]
+    ],
+    [
+      null,
+      [
+        null,
+        null,
+        false
+      ]
+    ]
+  ],
+  "comparar": [
+    {
+      "caso": "mismo teléfono y nombre en otro orden",
+      "a": {
+        "nombre": "Aldair Mosquera",
+        "telefono": "+573002439576"
+      },
+      "b": {
+        "nombre": "MOSQUERA ALDAIR",
+        "telefono": "+573002439576",
+        "correo": "aldair@example.org"
+      },
+      "nivel": "seguro"
+    },
+    {
+      "caso": "mismo nombre y misma ciudad",
+      "a": {
+        "nombre": "Mauricio Hernández",
+        "telefono": "+573138586020",
+        "ciudad": "Medellín"
+      },
+      "b": {
+        "nombre": "Mauricio  Hernandez",
+        "correo": "mauricio.hernandez@example.net",
+        "ciudad": "Medellín"
+      },
+      "nivel": "seguro"
+    },
+    {
+      "caso": "mismo nombre sin nada más que lo confirme",
+      "a": {
+        "nombre": "Juan Pérez",
+        "telefono": "+573001111111"
+      },
+      "b": {
+        "nombre": "Juan Perez",
+        "correo": "juan.perez@example.com"
+      },
+      "nivel": "revision"
+    },
+    {
+      "caso": "nombre parecido sin confirmación",
+      "a": {
+        "nombre": "David Sánchez",
+        "ciudad": "Cali"
+      },
+      "b": {
+        "nombre": "David Sánchez Gómez",
+        "ciudad": "Cali"
+      },
+      "nivel": "revision"
+    },
+    {
+      "caso": "teléfonos distintos aunque el nombre se parezca",
+      "a": {
+        "nombre": "David Sánchez",
+        "telefono": "+573114302048"
+      },
+      "b": {
+        "nombre": "David Sánchez Gómez",
+        "telefono": "+573108631648"
+      },
+      "nivel": null
+    },
+    {
+      "caso": "mismo nombre con teléfonos distintos",
+      "a": {
+        "nombre": "Ana Ruiz",
+        "telefono": "+573001111111"
+      },
+      "b": {
+        "nombre": "Ana Ruiz",
+        "telefono": "+573002222222"
+      },
+      "nivel": "revision"
+    },
+    {
+      "caso": "familia que comparte celular",
+      "a": {
+        "nombre": "Ana Ruiz",
+        "telefono": "+573001111111"
+      },
+      "b": {
+        "nombre": "Pedro Ruiz",
+        "telefono": "+573001111111"
+      },
+      "nivel": "revision"
+    },
+    {
+      "caso": "misma empresa con y sin S.A.S.",
+      "a": {
+        "empresa": "Panadería Torres S.A.S.",
+        "ciudad": "Bogotá"
+      },
+      "b": {
+        "empresa": "PANADERIA TORRES",
+        "nombre": "Astrid Monroy",
+        "ciudad": "Bogotá"
+      },
+      "nivel": "seguro"
+    },
+    {
+      "caso": "dos personas de la misma empresa",
+      "a": {
+        "empresa": "Hotel López",
+        "nombre": "Milena Correa",
+        "ciudad": "Bogotá"
+      },
+      "b": {
+        "empresa": "Hotel López",
+        "nombre": "Juan Pérez",
+        "ciudad": "Bogotá"
+      },
+      "nivel": null
+    }
+  ],
+  "agrupar": [
+    {
+      "caso": "una fila sin nombre no sirve de puente entre dos personas",
+      "filas": [
+        {
+          "nombre": "Ana Ruiz",
+          "telefono": "+573001111111"
+        },
+        {
+          "nombre": "Pedro Ruiz",
+          "telefono": "+573001111111"
+        },
+        {
+          "telefono": "+573001111111"
+        }
+      ],
+      "grupos": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "caso": "una cadena que junta contradicciones no se une sola",
+      "filas": [
+        {
+          "nombre": "Ana Ruiz",
+          "telefono": "+573001111111",
+          "ciudad": "Bogotá"
+        },
+        {
+          "telefono": "+573001111111",
+          "correo": "ana@example.com"
+        },
+        {
+          "nombre": "Ana Ruiz",
+          "correo": "ana@example.com",
+          "ciudad": "Cali"
+        }
+      ],
+      "grupos": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ]
+      ]
+    },
+    {
+      "caso": "tres filas de la misma persona",
+      "filas": [
+        {
+          "nombre": "Luis Mora",
+          "telefono": "+573003333333"
+        },
+        {
+          "nombre": "LUIS MORA",
+          "telefono": "+573003333333",
+          "correo": "luis@example.com"
+        },
+        {
+          "correo": "luis@example.com",
+          "ciudad": "Cali"
+        },
+        {
+          "nombre": "Otra Persona",
+          "telefono": "+573004444444"
+        }
+      ],
+      "grupos": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          3
+        ]
+      ]
+    }
+  ],
+  "conciliar": [
+    {
+      "caso": "un homónimo con otros datos no es una duda",
+      "persona": {
+        "nombre": "Jose Alvarez",
+        "telefono": "+573001111111",
+        "ciudad": "Bogotá"
+      },
+      "crm": [
+        {
+          "codigo": "C0119",
+          "nombre": "José Álvarez",
+          "telefono": "+573001111111",
+          "ciudad": "Bogotá"
+        },
+        {
+          "codigo": "C0753",
+          "nombre": "José Álvarez",
+          "telefono": "+573002222222",
+          "ciudad": "Cali"
+        }
+      ],
+      "resultado": "existe:C0119"
+    },
+    {
+      "caso": "dos personas del mismo colegio y una fila con solo el colegio",
+      "persona": {
+        "empresa": "Colegio Rodriguez",
+        "ciudad": "Medellín"
+      },
+      "crm": [
+        {
+          "codigo": "C0059",
+          "nombre": "Jaime Prieto",
+          "empresa": "Colegio Rodríguez",
+          "ciudad": "Medellín"
+        },
+        {
+          "codigo": "C0665",
+          "nombre": "Paola Cardona",
+          "empresa": "Colegio Rodríguez",
+          "ciudad": "Medellín"
+        }
+      ],
+      "resultado": "revision"
+    },
+    {
+      "caso": "un contacto dudoso que comparte el celular no es un homónimo",
+      "persona": {
+        "nombre": "Jose Alvarez",
+        "telefono": "+573001111111",
+        "ciudad": "Bogotá"
+      },
+      "crm": [
+        {
+          "codigo": "C0119",
+          "nombre": "José Álvarez",
+          "telefono": "+573001111111",
+          "ciudad": "Bogotá"
+        },
+        {
+          "codigo": "C0753",
+          "nombre": "José Álvarez",
+          "telefono": "+573001111111",
+          "ciudad": "Cali"
+        }
+      ],
+      "resultado": "revision"
+    },
+    {
+      "caso": "el celular ya es de otra persona del CRM",
+      "persona": {
+        "nombre": "Ana Ruiz",
+        "telefono": "+573001111111",
+        "correo": "ana@example.com",
+        "ciudad": "Cali",
+        "tipo": "hogar",
+        "consumo_kwh_mes": 300,
+        "asesor": "U04",
+        "notas": [
+          "Referido por Milena"
+        ]
+      },
+      "crm": [
+        {
+          "codigo": "C0005",
+          "nombre": "Pedro Gómez",
+          "telefono": "+573001111111",
+          "correo": "pedro@example.com",
+          "ciudad": "Cali"
+        }
+      ],
+      "resultado": "revision"
+    },
+    {
+      "caso": "una persona nueva y completa",
+      "persona": {
+        "nombre": "Luis Mora",
+        "telefono": "+573009999999",
+        "ciudad": "Cali",
+        "tipo": "hogar",
+        "consumo_kwh_mes": 300,
+        "asesor": "U04",
+        "notas": [
+          "Referido por Milena"
+        ]
+      },
+      "crm": [
+        {
+          "codigo": "C0001",
+          "nombre": "Ana Ruiz",
+          "telefono": "+573001111111",
+          "ciudad": "Cali"
+        }
+      ],
+      "resultado": "nueva"
+    }
+  ]
+}

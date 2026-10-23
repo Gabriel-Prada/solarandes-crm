@@ -130,6 +130,11 @@ def decidir(persona: Persona, crm: list[ContactoCRM]) -> Existente | Nueva | EnR
         candidatos = "; ".join(f"{describir_crm(c)} ({razon})" for c, razon in seguros + dudosos)
         return EnRevision(persona, f"se parece a más de un contacto del CRM o hay dudas: {candidatos}")
 
+    # El celular es único en el CRM: si ya es de otra persona, crearla haría fallar la carga
+    dueno = next((c for c in crm if persona.telefono is not None and c.telefono == persona.telefono), None)
+    if dueno is not None:
+        return EnRevision(persona, f"el celular ya es de {describir_crm(dueno)}, que parece otra persona")
+
     canal = canal_de_origen(persona)
     faltan = [
         campo

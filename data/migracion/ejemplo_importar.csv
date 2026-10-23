@@ -1,0 +1,8 @@
+nombre;empresa;celular;correo;ciudad;tipo;consumo;asesor;canal;notas
+Prueba Importación Uno;;300 555 0101;prueba.uno@example.com;Bogotá;hogar;320;;;Llegó por la feria de energía
+PRUEBA IMPORTACION UNO;;3005550101;;Bogotá;;;;;
+Prueba Importación Dos;Ferretería Prueba;300 555 0102;;Cali;;1800 kWh;Camilo;referido;Pidió financiación
+Paola Torres;;320 498 9513;;Cali;hogar;604;;;
+Ana Prueba;;300 555 0103;;Medellín;hogar;250;;;
+Pedro Prueba;;300 555 0103;;Medellín;hogar;250;;;
+Persona Sin Datos;;318933597;;Pasto;;;;;

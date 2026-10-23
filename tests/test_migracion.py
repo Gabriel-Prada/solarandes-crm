@@ -5,6 +5,7 @@ migración. Las reglas de limpieza no se sacan de ahí: solo se usa para medir.
 """
 
 import csv
+import json
 from dataclasses import fields
 from datetime import date, datetime
 from pathlib import Path
@@ -709,3 +710,52 @@ def test_un_posible_duplicado_del_crm_no_se_presenta_como_homonimo(datos_reporte
     texto = markdown(replace(datos_reporte, revision_crm=[*datos_reporte.revision_crm, dudosa]))
     assert "1 pareja(s) son posibles duplicados" in texto
     assert "El CRM no tiene duplicados seguros, pero hay 1 pareja(s) por revisar." in texto
+
+
+# --- Casos compartidos con la versión en TypeScript (apps/crm/src/lib/importar) ---
+
+CASOS = json.loads((Path(__file__).parent / "casos_compartidos" / "limpieza.json").read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize(
+    ("regla", "funcion"),
+    [
+        ("telefono", normalizar_telefono),
+        ("correo", normalizar_correo),
+        ("ciudad", normalizar_ciudad),
+        ("tipo", normalizar_tipo),
+        ("consumo", normalizar_consumo),
+    ],
+)
+def test_casos_compartidos_de_cada_regla(regla, funcion):
+    for entrada, esperado in CASOS[regla]:
+        assert funcion(entrada) == esperado, entrada
+
+
+def test_casos_compartidos_de_separar_nombre():
+    for entrada, esperado in CASOS["separar_nombre"]:
+        assert list(separar_nombre(entrada)) == esperado, entrada
+
+
+def test_casos_compartidos_de_comparar():
+    for caso in CASOS["comparar"]:
+        coincidencia = comparar(contacto(**caso["a"]), contacto(**caso["b"]))
+        assert (coincidencia.nivel if coincidencia else None) == caso["nivel"], caso["caso"]
+
+
+def test_casos_compartidos_de_agrupar():
+    for caso in CASOS["agrupar"]:
+        filas = [contacto(fila=n, **campos) for n, campos in enumerate(caso["filas"])]
+        grupos, _ = agrupar(filas)
+        assert sorted(sorted(c.fila for c in g) for g in grupos) == caso["grupos"], caso["caso"]
+
+
+def test_casos_compartidos_de_conciliar():
+    for caso in CASOS["conciliar"]:
+        crm = [en_crm(c.pop("codigo"), **c) for c in [dict(c) for c in caso["crm"]]]
+        decision = decidir(persona(**caso["persona"]), crm)
+        if isinstance(decision, Existente):
+            obtenido = f"existe:{decision.contacto.codigo}"
+        else:
+            obtenido = "nueva" if isinstance(decision, Nueva) else "revision"
+        assert obtenido == caso["resultado"], caso["caso"]

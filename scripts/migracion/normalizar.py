@@ -167,7 +167,7 @@ def normalizar_consumo(valor: object) -> int | None:
         valor = int(valor)
     if valor is None or "-" in str(valor):  # un consumo negativo no existe
         return None
-    numeros = re.findall(r"\d+", str(valor))
+    numeros = re.findall(r"\d+", re.sub(r"(\d)\.0$", r"\1", str(valor).strip()))  # "604.0" es 604
     return int(numeros[0]) if len(numeros) == 1 and int(numeros[0]) > 0 else None
 
 

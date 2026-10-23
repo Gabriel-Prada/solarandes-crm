@@ -1,0 +1,3 @@
+﻿nombre;empresa;celular;correo;ciudad;tipo;consumo;asesor;canal;notas
+Persona de Ejemplo;;300 123 4567;persona@example.com;Bogotá;hogar;300;;referido;Referido por un cliente
+Contacto de Ejemplo;Panadería Ejemplo;300 765 4321;;Cali;negocio;1500 kWh;Camilo;;Pidió financiación

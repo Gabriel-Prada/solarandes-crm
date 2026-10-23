@@ -74,12 +74,22 @@ export default async function PaginaContactos({ searchParams }: PageProps<"/cont
                 : " asignados a ti"}
           </p>
         </div>
-        <Link
-          href="/contactos/nuevo"
-          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
-        >
-          + Nuevo contacto
-        </Link>
+        <div className="flex gap-2">
+          {esGerente && (
+            <Link
+              href="/contactos/importar"
+              className="rounded-lg border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50"
+            >
+              Importar CSV
+            </Link>
+          )}
+          <Link
+            href="/contactos/nuevo"
+            className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600"
+          >
+            + Nuevo contacto
+          </Link>
+        </div>
       </header>
 
       {/* Formulario GET: los filtros quedan en la dirección, así se pueden compartir o recargar */}
