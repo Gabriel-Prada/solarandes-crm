@@ -4,7 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 
 [tool.pytest.ini_options]
-pythonpath = ["scripts/datos", "scripts/supabase", "scripts/migracion"]
+pythonpath = ["scripts/datos", "scripts/supabase", "scripts/migracion", "scripts/n8n"]
 testpaths = ["tests"]
 
 [tool.ruff]

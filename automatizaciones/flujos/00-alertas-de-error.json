@@ -1,0 +1,169 @@
+{
+  "name": "00 Alertas de error",
+  "nodes": [
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000001",
+      "name": "Cuando un flujo falla",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000002",
+      "name": "A quién avisar",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "alwaysOutputData": true,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "destinos_prueba"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "tipo",
+              "condition": "eq",
+              "keyValue": "telegram"
+            }
+          ]
+        },
+        "returnAll": true
+      }
+    },
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000004",
+      "name": "¿Hay a quién avisar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6f1d2c3a-0000-4000-8000-000000000041",
+              "leftValue": "={{ $json.valor }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000003",
+      "name": "Avisar por Telegram",
+      "webhookId": "2c70b11e-a0d1-4f89-8e6d-3dd727c96c3e",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "position": [
+        720,
+        -100
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.valor }}",
+        "text": "=⚠️ Falló un flujo de SolarAndes\n\nFlujo: {{ $('Cuando un flujo falla').item.json.workflow.name }}\nPaso: {{ $('Cuando un flujo falla').item.json.execution?.lastNodeExecuted ?? 'el disparador' }}\nError: {{ ($('Cuando un flujo falla').item.json.execution?.error?.message ?? $('Cuando un flujo falla').item.json.trigger?.error?.message ?? 'sin mensaje').slice(0, 500) }}\nHora: {{ $now.setZone('America/Bogota').toFormat('dd/MM/yyyy HH:mm') }}\n\nVer la ejecución: {{ $('Cuando un flujo falla').item.json.execution?.url ?? 'no hay (falló al arrancar)' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "2sifMgLv3pTZN5LS",
+          "name": "Telegram SolarAndes"
+        }
+      }
+    },
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000005",
+      "name": "Sin destino: fallar a la vista",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        720,
+        100
+      ],
+      "parameters": {
+        "errorMessage": "Sin destino para las alertas: agrega en la tabla destinos_prueba una fila con tipo = telegram y el chat_id en valor"
+      }
+    }
+  ],
+  "connections": {
+    "Cuando un flujo falla": {
+      "main": [
+        [
+          {
+            "node": "A quién avisar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A quién avisar": {
+      "main": [
+        [
+          {
+            "node": "¿Hay a quién avisar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay a quién avisar?": {
+      "main": [
+        [
+          {
+            "node": "Avisar por Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin destino: fallar a la vista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Bogota",
+    "executionOrder": "v1"
+  }
+}
