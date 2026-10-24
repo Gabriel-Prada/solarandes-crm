@@ -7,6 +7,19 @@
       "runtimeArgs": ["--prefix", "apps/crm", "run", "dev"],
       "port": 3000,
       "env": { "NEXT_TELEMETRY_DISABLED": "1" }
+    },
+    {
+      "name": "n8n",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["D:/herramientas/n8n/node_modules/n8n/bin/n8n", "start"],
+      "port": 5678,
+      "env": {
+        "N8N_USER_FOLDER": "D:/herramientas/n8n/datos",
+        "N8N_PORT": "5678",
+        "GENERIC_TIMEZONE": "America/Bogota",
+        "TZ": "America/Bogota",
+        "N8N_DIAGNOSTICS_ENABLED": "false"
+      }
     }
   ]
 }
