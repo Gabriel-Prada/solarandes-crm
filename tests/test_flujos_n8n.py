@@ -18,25 +18,50 @@ def test_nombre_de_archivo():
 
 def test_solo_los_flujos_del_proyecto():
     assert f.es_del_proyecto("00 Alertas de error")
+    assert f.es_del_proyecto("01b Reintentar leads pendientes")
     assert not f.es_del_proyecto("Mi flujo de práctica")
     assert not f.es_del_proyecto("0 Casi")
 
 
-def test_flujo_de_errores_va_y_vuelve_igual():
+def un_flujo(nombre, errores=None, subflujo=None):
+    nodos = []
+    if subflujo:
+        referencia = {"__rl": True, "mode": "list", "value": subflujo, "cachedResultName": subflujo}
+        nodos.append({"name": "Llamar", "type": f.SUBFLUJO, "parameters": {"workflowId": referencia}})
+    return {"name": nombre, "nodes": nodos, "settings": {"errorWorkflow": errores} if errores else {}}
+
+
+def test_las_referencias_a_otros_flujos_van_y_vuelven_igual():
     # Subir y luego exportar debe dejar el archivo del repo como estaba
-    flujo = {"name": "99 Prueba", "settings": {"errorWorkflow": "00 Alertas de error", "timezone": "America/Bogota"}}
-    en_n8n = f.flujo_de_errores_a_id(flujo, {"00 Alertas de error": "abc123"})
-    assert en_n8n["settings"]["errorWorkflow"] == "abc123"
-    assert f.flujo_de_errores_a_nombre(en_n8n, {"abc123": "00 Alertas de error"}) == flujo
+    flujo = un_flujo("01 Captura", errores="00 Alertas de error", subflujo="01c Avisos")
+    ids = {"00 Alertas de error": "abc", "01c Avisos": "xyz"}
+    en_n8n = f.referencias_a_ids(flujo, ids)
+    assert en_n8n["settings"]["errorWorkflow"] == "abc"
+    assert en_n8n["nodes"][0]["parameters"]["workflowId"]["value"] == "xyz"
+    assert f.referencias_a_nombres(en_n8n, {v: k for k, v in ids.items()}) == flujo
     assert flujo["settings"]["errorWorkflow"] == "00 Alertas de error"  # no cambia el original
 
 
-def test_flujo_de_errores_que_no_existe_avisa():
-    flujo = {"name": "99 Prueba", "settings": {"errorWorkflow": "00 Alertas de error"}}
+def test_una_referencia_a_un_flujo_que_no_existe_avisa():
     with pytest.raises(SystemExit, match="primero sube"):
-        f.flujo_de_errores_a_id(flujo, {})
+        f.referencias_a_ids(un_flujo("99 Prueba", errores="00 Alertas de error"), {})
     with pytest.raises(SystemExit, match="ya no existe"):
-        f.flujo_de_errores_a_nombre({"name": "99 Prueba", "settings": {"errorWorkflow": "zzz"}}, {})
+        f.referencias_a_nombres(un_flujo("99 Prueba", errores="zzz"), {})
+
+
+def test_se_suben_primero_los_flujos_que_otros_nombran():
+    captura = un_flujo("01 Captura", errores="00 Alertas", subflujo="01c Avisos")
+    avisos = un_flujo("01c Avisos", errores="00 Alertas")
+    alertas = un_flujo("00 Alertas")
+    orden = [x["name"] for x in f.orden_de_subida([captura, avisos, alertas], set())]
+    assert orden.index("00 Alertas") < orden.index("01c Avisos") < orden.index("01 Captura")
+    # Aunque ya estén en n8n, si vienen en la misma subida, los nombrados van primero
+    orden = [x["name"] for x in f.orden_de_subida([captura, avisos], {"00 Alertas", "01c Avisos", "01 Captura"})]
+    assert orden == ["01c Avisos", "01 Captura"]
+    # Si el flujo nombrado ya está en n8n y no viene en esta subida, no hace falta subirlo antes
+    assert [x["name"] for x in f.orden_de_subida([captura], {"00 Alertas", "01c Avisos"})] == ["01 Captura"]
+    with pytest.raises(SystemExit, match="faltan los flujos 01c Avisos"):
+        f.orden_de_subida([captura], {"00 Alertas"})
 
 
 def test_nombres_repetidos_se_detienen():
@@ -55,6 +80,9 @@ def test_flujos_del_repo(archivo):
     # Todo flujo, salvo el de alertas, avisa cuando falla
     if not flujo["name"].startswith("00 "):
         assert flujo["settings"].get("errorWorkflow") == "00 Alertas de error"
+    # Los subflujos se nombran (no por código interno), y el flujo nombrado existe en el repo
+    nombres = {json.loads(a.read_text(encoding="utf-8"))["name"] for a in CARPETA.glob("*.json")}
+    assert f.dependencias(flujo) <= nombres
     # Los archivos van al repo público: nunca datos de prueba ni secretos
     assert "pinData" not in flujo and "staticData" not in flujo
     # Ni correos ni celulares escritos a mano: los destinos viven en la tabla destinos_prueba de n8n

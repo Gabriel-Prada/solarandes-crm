@@ -64,9 +64,10 @@
         "resource": "message",
         "operation": "sendMessage",
         "chatId": "={{ $json.telegram[0] }}",
-        "text": "={{ $json.texto }}",
+        "text": "={{ $json.texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }}",
         "additionalFields": {
-          "appendAttribution": false
+          "appendAttribution": false,
+          "parse_mode": "HTML"
         }
       },
       "credentials": {

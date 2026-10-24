@@ -1,0 +1,461 @@
+{
+  "name": "01 Captura de leads (web)",
+  "nodes": [
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000001",
+      "name": "Formulario web",
+      "webhookId": "6c1f3a52-1b7e-4d0c-9a51-0f1e2d3c4b01",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-web",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000002",
+      "name": "Leer configuración",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "configuracion"
+        },
+        "returnAll": true
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000003",
+      "name": "Preparar envío",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Lo que mandó el formulario, más la configuración (dirección del CRM y correo de la gerente)\nconst cuerpo = $('Formulario web').first().json.body ?? {};\nconst config = Object.fromEntries($('Leer configuración').all().map((i) => [i.json.clave, i.json.valor]));\nif (!config.crm_url) throw new Error('Falta la fila crm_url en la tabla configuracion');\n\n// La clave del envío la genera el formulario (un número por cada vez que se abre la página): así un\n// doble clic o un reintento no duplican nada. Si no viene, se usa la de esta ejecución.\nconst idEnvio = typeof cuerpo.id_envio === 'string' && cuerpo.id_envio.trim().length >= 8 ? cuerpo.id_envio.trim() : null;\nconst texto = (v) => (v === undefined || v === null ? '' : String(v).trim());\n\nreturn [{\n  json: {\n    crm_url: config.crm_url.replace(/\\/$/, ''),\n    correo_gerente: config.correo_gerente ?? '',\n    cuerpo: {\n      clave: idEnvio ? `web-${idEnvio}` : `web-ejecucion-${$execution.id}`,\n      canal: 'web',\n      nombre: texto(cuerpo.nombre),\n      empresa: texto(cuerpo.empresa),\n      celular: texto(cuerpo.celular),\n      ciudad: texto(cuerpo.ciudad),\n      correo: texto(cuerpo.correo),\n      consumo: texto(cuerpo.consumo),\n      mensaje: texto(cuerpo.mensaje),\n    },\n  },\n}];"
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000004",
+      "name": "Registrar en el CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.crm_url }}/api/automatizaciones/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.cuerpo) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000005",
+      "name": "¿Quedó registrado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f969fd28-9aca-547d-84e7-9eda309838b0",
+              "leftValue": "={{ $json.statusCode === 200 && typeof $json.body?.resultado === 'string' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000006",
+      "name": "¿Datos inválidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1100,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "438163d3-2807-5840-a96a-b01c73899aef",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 400,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000007",
+      "name": "Responder: gracias",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        -200
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, mensaje: \"¡Gracias! Te contactaremos pronto.\" }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000012",
+      "name": "Responder: datos inválidos",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: $json.body?.error ?? \"Revisa los datos del formulario.\" }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000013",
+      "name": "Guardar en pendientes",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "executeOnce": true,
+      "position": [
+        1320,
+        250
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "leads_pendientes"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "clave": "={{ $('Preparar envío').first().json.cuerpo.clave }}",
+            "datos": "={{ JSON.stringify($('Preparar envío').first().json.cuerpo) }}",
+            "motivo": "={{ $json.statusCode ? 'el CRM respondió ' + $json.statusCode + ': ' + ($json.body?.error ?? '') : (m => /ECONNREFUSED|ECONNRESET/.test(m) ? 'el CRM no contesta: está apagado o sin conexión' : /ETIMEDOUT|ESOCKETTIMEDOUT|timeout/i.test(m) ? 'el CRM tardó demasiado en contestar' : /ENOTFOUND|EAI_AGAIN/.test(m) ? 'no se encontró la dirección del CRM' : m)($json.error?.message ?? 'el CRM no respondió') }}",
+            "intentos": 0
+          },
+          "schema": [
+            {
+              "id": "clave",
+              "displayName": "clave",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "datos",
+              "displayName": "datos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intentos",
+              "displayName": "intentos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000014",
+      "name": "Responder: recibido",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        250
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, mensaje: \"Recibimos tu solicitud. Te contactaremos pronto.\" }) }}",
+        "options": {
+          "responseCode": 202
+        }
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000015",
+      "name": "Alarma: el CRM no respondió",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        250
+      ],
+      "parameters": {
+        "errorMessage": "=El CRM no registró el lead {{ $('Preparar envío').first().json.cuerpo.clave }} ({{ $('Guardar en pendientes').first().json.motivo }}). Quedó en leads_pendientes: el flujo 01b lo reenvía cada 2 minutos."
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000101",
+      "name": "Datos para los avisos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "// Lo que necesita el subflujo de avisos (01c)\nreturn [{\n  json: {\n    respuesta: $('Registrar en el CRM').first().json.body,\n    cuerpo: $('Preparar envío').first().json.cuerpo,\n    correo_gerente: $('Preparar envío').first().json.correo_gerente,\n    crm_url: $('Preparar envío').first().json.crm_url,\n  },\n}];"
+      }
+    },
+    {
+      "id": "0b1c0001-0000-4000-8000-000000000102",
+      "name": "Avisos del lead (01c)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1540,
+        -200
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "01c Avisos de un lead",
+          "cachedResultName": "01c Avisos de un lead"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Formulario web": {
+      "main": [
+        [
+          {
+            "node": "Leer configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer configuración": {
+      "main": [
+        [
+          {
+            "node": "Preparar envío",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar envío": {
+      "main": [
+        [
+          {
+            "node": "Registrar en el CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar en el CRM": {
+      "main": [
+        [
+          {
+            "node": "¿Quedó registrado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Quedó registrado?": {
+      "main": [
+        [
+          {
+            "node": "Responder: gracias",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Datos inválidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos inválidos?": {
+      "main": [
+        [
+          {
+            "node": "Responder: datos inválidos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guardar en pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder: gracias": {
+      "main": [
+        [
+          {
+            "node": "Datos para los avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en pendientes": {
+      "main": [
+        [
+          {
+            "node": "Responder: recibido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder: recibido": {
+      "main": [
+        [
+          {
+            "node": "Alarma: el CRM no respondió",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datos para los avisos": {
+      "main": [
+        [
+          {
+            "node": "Avisos del lead (01c)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "errorWorkflow": "00 Alertas de error",
+    "timezone": "America/Bogota",
+    "executionOrder": "v1"
+  }
+}

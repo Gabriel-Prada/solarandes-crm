@@ -4,9 +4,12 @@ El repo es la fuente de la verdad (como las migraciones): cada flujo es un archi
 automatizaciones/flujos/. Las credenciales no viajan: los archivos solo traen su nombre y
 su código interno, y el secreto se queda cifrado dentro de n8n.
 
-Solo se manejan los flujos del proyecto: los que empiezan con dos dígitos y un espacio
-("00 Alertas de error"). Cualquier otro flujo de n8n (de práctica, por ejemplo) se ignora,
-para que nada personal termine en el repo, que es público.
+Solo se manejan los flujos del proyecto: los que empiezan con dos dígitos (y quizás una letra)
+y un espacio ("00 Alertas de error", "01b Reintentar leads pendientes"). Cualquier otro flujo
+de n8n (de práctica, por ejemplo) se ignora, para que nada personal termine en el repo, que es público.
+
+Los flujos se nombran entre sí (el de errores, los subflujos): en el repo por su nombre y en n8n
+por su código interno. El script traduce en los dos sentidos y sube primero los que otros nombran.
 
 Uso:
     .venv/Scripts/python scripts/n8n/flujos.py subir            # todos los flujos del repo
@@ -29,7 +32,11 @@ CARPETA_FLUJOS = RAIZ / "automatizaciones" / "flujos"
 # Deja fuera pinData y staticData, donde n8n puede guardar datos de prueba.
 CAMPOS = ("name", "nodes", "connections", "settings")
 
-DEL_PROYECTO = re.compile(r"^\d\d ")
+DEL_PROYECTO = re.compile(r"^\d\d[a-z]? ")
+# El paso de n8n que llama a otro flujo (un subflujo)
+SUBFLUJO = "n8n-nodes-base.executeWorkflow"
+# El primer paso de un subflujo ("Cuando lo llamen")
+ACTIVADOR_DE_SUBFLUJO = "n8n-nodes-base.executeWorkflowTrigger"
 
 
 def es_del_proyecto(nombre: str) -> bool:
@@ -52,24 +59,74 @@ def indice_por_nombre(flujos: list[dict]) -> dict[str, str]:
     return indice
 
 
-def flujo_de_errores_a_id(flujo: dict, por_nombre: dict[str, str]) -> dict:
-    """En el repo el flujo de errores se nombra; n8n necesita su código interno."""
-    nombre = (flujo.get("settings") or {}).get("errorWorkflow")
-    if not nombre:
-        return flujo
-    if nombre not in por_nombre:
-        raise SystemExit(f"{flujo['name']}: primero sube el flujo '{nombre}'")
-    return {**flujo, "settings": {**flujo["settings"], "errorWorkflow": por_nombre[nombre]}}
+def dependencias(flujo: dict) -> set[str]:
+    """Los flujos que este nombra: su flujo de errores y los subflujos que llama."""
+    nombres = set()
+    if (flujo.get("settings") or {}).get("errorWorkflow"):
+        nombres.add(flujo["settings"]["errorWorkflow"])
+    for nodo in flujo.get("nodes", []):
+        referencia = nodo.get("parameters", {}).get("workflowId") if nodo.get("type") == SUBFLUJO else None
+        if isinstance(referencia, dict) and referencia.get("value"):
+            nombres.add(referencia["value"])
+    return nombres
 
 
-def flujo_de_errores_a_nombre(flujo: dict, por_id: dict[str, str]) -> dict:
-    """Lo contrario: al exportar, el código interno vuelve a ser el nombre."""
-    codigo = (flujo.get("settings") or {}).get("errorWorkflow")
-    if not codigo:
-        return flujo
-    if codigo not in por_id:
-        raise SystemExit(f"{flujo['name']}: su flujo de errores ({codigo}) ya no existe en n8n")
-    return {**flujo, "settings": {**flujo["settings"], "errorWorkflow": por_id[codigo]}}
+def _traducir_referencias(flujo: dict, traducir) -> dict:
+    """Cambia cada referencia a otro flujo (el de errores y los subflujos) con traducir(valor) → (valor, nombre)."""
+    configuracion = dict(flujo.get("settings") or {})
+    if configuracion.get("errorWorkflow"):
+        configuracion["errorWorkflow"] = traducir(configuracion["errorWorkflow"])[0]
+    nodos = []
+    for nodo in flujo.get("nodes", []):
+        referencia = nodo.get("parameters", {}).get("workflowId") if nodo.get("type") == SUBFLUJO else None
+        if isinstance(referencia, dict) and referencia.get("value"):
+            valor, nombre = traducir(referencia["value"])
+            referencia = {**referencia, "mode": "list", "value": valor, "cachedResultName": nombre}
+            nodo = {**nodo, "parameters": {**nodo["parameters"], "workflowId": referencia}}
+        nodos.append(nodo)
+    return {**flujo, "settings": configuracion, "nodes": nodos}
+
+
+def referencias_a_ids(flujo: dict, por_nombre: dict[str, str]) -> dict:
+    """En el repo los demás flujos se nombran; n8n necesita su código interno, que cambia de un n8n a otro."""
+
+    def traducir(nombre):
+        if nombre not in por_nombre:
+            raise SystemExit(f"{flujo['name']}: primero sube el flujo '{nombre}'")
+        return por_nombre[nombre], nombre
+
+    return _traducir_referencias(flujo, traducir)
+
+
+def referencias_a_nombres(flujo: dict, por_id: dict[str, str]) -> dict:
+    """Lo contrario: al exportar, cada código interno vuelve a ser el nombre."""
+
+    def traducir(codigo):
+        if codigo not in por_id:
+            raise SystemExit(f"{flujo['name']}: nombra un flujo ({codigo}) que ya no existe en n8n")
+        return por_id[codigo], por_id[codigo]
+
+    return _traducir_referencias(flujo, traducir)
+
+
+def orden_de_subida(flujos: list[dict], en_n8n: set[str]) -> list[dict]:
+    """Primero los flujos que otros nombran: así nadie apunta a uno que todavía no existe.
+
+    Si el flujo nombrado también viene en esta subida, va primero aunque ya esté en n8n: puede
+    traer cambios o tener que publicarse antes (un subflujo).
+    """
+    pendientes, orden = list(flujos), []
+    disponibles = set(en_n8n) - {f["name"] for f in flujos}
+    while pendientes:
+        listos = [f for f in pendientes if dependencias(f) - {f["name"]} <= disponibles]
+        if not listos:
+            faltan = sorted(set().union(*(dependencias(f) for f in pendientes)) - disponibles)
+            raise SystemExit(f"No se pueden subir: faltan los flujos {', '.join(faltan)}")
+        for f in listos:
+            orden.append(f)
+            disponibles.add(f["name"])
+            pendientes.remove(f)
+    return orden
 
 
 def cliente() -> httpx.Client:
@@ -101,15 +158,18 @@ def subir(prefijos: list[str]) -> None:
     if not archivos:
         raise SystemExit("No hay flujos que subir")
 
+    flujos = []
     for archivo in archivos:
         flujo = {k: v for k, v in json.loads(archivo.read_text(encoding="utf-8")).items() if k in CAMPOS}
         if not es_del_proyecto(flujo["name"]):
             raise SystemExit(f"{archivo.name}: el nombre debe empezar con dos dígitos y un espacio")
-        # Se vuelve a preguntar en cada vuelta: así el flujo 99 encuentra al 00 recién creado
-        por_nombre = indice_por_nombre(flujos_en_n8n(api))
-        flujo = flujo_de_errores_a_id(flujo, por_nombre)
+        flujos.append(flujo)
 
+    for flujo in orden_de_subida(flujos, set(indice_por_nombre(flujos_en_n8n(api)))):
+        # Se vuelve a preguntar en cada vuelta: así un flujo encuentra al que se acaba de crear
+        por_nombre = indice_por_nombre(flujos_en_n8n(api))
         existente = por_nombre.get(flujo["name"])
+        flujo = referencias_a_ids(flujo, por_nombre)
         if existente:
             respuesta = api.put(f"/workflows/{existente}", json=flujo)
             accion = "actualizado"
@@ -117,7 +177,13 @@ def subir(prefijos: list[str]) -> None:
             respuesta = api.post("/workflows", json=flujo)
             accion = "creado"
         if respuesta.is_error:
-            raise SystemExit(f"{archivo.name}: n8n respondió {respuesta.status_code}: {respuesta.text}")
+            raise SystemExit(f"{flujo['name']}: n8n respondió {respuesta.status_code}: {respuesta.text}")
+        # Un flujo publicado no puede llamar a un subflujo sin publicar (n8n 2.x): los subflujos se publican
+        if any(n.get("type") == ACTIVADOR_DE_SUBFLUJO for n in flujo["nodes"]):
+            publicado = api.post(f"/workflows/{respuesta.json()['id']}/activate")
+            if publicado.is_error:
+                raise SystemExit(f"{flujo['name']}: no se pudo publicar: {publicado.text}")
+            accion += " y publicado"
         print(f"{flujo['name']}: {accion} (id {respuesta.json()['id']})")
 
 
@@ -136,7 +202,7 @@ def exportar() -> None:
         respuesta = api.get(f"/workflows/{resumen['id']}")
         respuesta.raise_for_status()
         flujo = {k: v for k, v in respuesta.json().items() if k in CAMPOS}
-        flujo = flujo_de_errores_a_nombre(flujo, por_id)
+        flujo = referencias_a_nombres(flujo, por_id)
         archivo = CARPETA_FLUJOS / nombre_de_archivo(flujo["name"])
         archivo.write_text(json.dumps(flujo, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         escritos.add(archivo.name)

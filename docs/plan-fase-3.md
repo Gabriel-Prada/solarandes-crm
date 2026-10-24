@@ -20,12 +20,14 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 |---|---|---|---|---|
 | 0 | **Alertas de error** ✅ | Cuando cualquier otro flujo falla | Avisa por Telegram (y correo) qué falló, cuándo y con enlace a la ejecución. Hecho y probado el 2026-10-23, con Telegram y correo como canales independientes | Telegram + correo (SMTP) |
 | 1 | **Captura de leads por la web** | Alguien llena el formulario | Revisa duplicados, crea el lead en el CRM, lo asigna, da la bienvenida y avisa al asesor | CRM + correo |
-| 2 | **Captura por WhatsApp** | Alguien le escribe al número de la empresa | Lo mismo que el 1, pero desde WhatsApp | Meta (WhatsApp) + n8n visible desde internet |
+| 2 | **Captura por WhatsApp** ⏸️ pospuesto | Alguien le escribe al número de la empresa | Lo mismo que el 1, pero desde WhatsApp | Meta (WhatsApp) + n8n visible desde internet |
 | 3 | **Seguimiento** | Todos los días a las 8 a. m. | Lead con 3 días sin actividad → recordatorio al asesor; con 7 → aviso a Laura | CRM + correo |
-| 4 | **Visitas técnicas** | Un asesor agenda una visita en el CRM | Crea el evento en el calendario, avisa al técnico y le recuerda al cliente el día antes | Google Calendar |
+| 4 | **Visitas técnicas** ⏸️ pospuesto | Un asesor agenda una visita en el CRM | Crea el evento en el calendario, avisa al técnico y le recuerda al cliente el día antes | Google Calendar |
 | 5 | **Reporte semanal** | Cada lunes a las 7 a. m. | Correo a Laura con las métricas de la semana | CRM + correo |
 | 6 | **Posventa** | Todos los días | Instalación cumple 6 meses → recordatorio de mantenimiento | CRM + correo o WhatsApp |
 | 7 | **Entrega** | Al final | Flujos exportados al repo, documentación, diagrama y guía de estudio | — |
+
+**Decisión de Gabriel (2026-10-24): WhatsApp (2) y visitas técnicas con Google Calendar (4) quedan para después.** Son los más engorrosos de configurar (Meta for Developers con su llave que vence y su verificación de números; Google Cloud con su permiso que vence cada 7 días en modo prueba) y no son parte del "Listo cuando". La fase sigue con: terminar la captura web (publicar, formulario y túnel), seguimiento (3), reporte semanal (5), posventa (6) y la entrega (7).
 
 **Por qué este orden:**
 - **El 0 va primero** porque todos los demás se cuelgan de él. Construirlo al final sería como instalar la alarma de incendios después de mudarse.
@@ -85,25 +87,27 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 
 ---
 
-## 4. El primer flujo, diseñado: captura de leads por la web
+## 4. El primer flujo, diseñado (y construido): captura de leads por la web
 
 ### El recorrido
 
 ```mermaid
 flowchart TD
-    F[Formulario web] -->|nombre, celular, ciudad, correo,<br/>consumo, mensaje, id del envío| W[n8n: Webhook]
+    F[Formulario web] -->|nombre, celular, ciudad, correo,<br/>consumo, mensaje, id del envío| W[n8n 01: Webhook]
     W --> P[Preparar datos y clave del envío]
     P --> C{{CRM: /api/automatizaciones/leads}}
-    C -->|3 intentos; si sigue fallando| E[Flujo 0: alerta de error]
-    C --> S{¿Qué respondió?}
-    S -->|creado| B[Bienvenida al lead] --> A[Aviso al asesor]
-    S -->|posible duplicado| B2[Bienvenida al lead] --> A2[Aviso al asesor y a Laura]
-    S -->|ya era cliente| A3[Aviso al asesor: tu cliente volvió a escribir]
-    S -->|ya procesado| N[Nada: era un envío repetido]
-    A & A2 & A3 & N --> R[Responder al formulario: recibido]
+    C -->|200 con respuesta| G[Responder al formulario: ¡Gracias!]
+    C -->|400 datos inválidos| I[Responder al formulario: el motivo]
+    C -->|sin respuesta u otro código| Q[Guardar en leads_pendientes]
+    Q --> R[Responder: recibimos tu solicitud] --> E[Alarma: flujo 0 por Telegram y correo]
+    Q -.->|cada 2 minutos| B[n8n 01b: reenviar al CRM]
+    B -->|entró| V
+    G --> V[n8n 01c: avisos del lead]
+    V --> RS{{CRM: /api/automatizaciones/avisos<br/>¿le tocan a esta ejecución?}}
+    RS -->|sí, una sola vez| D[Armar avisos → destino seguro → enviar]
 ```
 
-Todos los mensajes pasan por el paso **Destino seguro** antes de salir.
+Todos los correos pasan por el paso **Destino seguro** antes de salir. Los detalles de cada flujo están en `automatizaciones/README.md`.
 
 ### Lo que pasa dentro del CRM (la puerta de entrada)
 
@@ -124,23 +128,31 @@ Los pasos 3 a 6 ocurren **en una sola operación** de la base de datos: o se gua
 - Para la puerta del CRM: un error `22023` (por ejemplo, sin nombre ni empresa) es **dato inválido** y no se reintenta; un `23505` (celular único) solo pasa si llegan dos envíos distintos de la misma persona nueva a la vez, y sí se reintenta (la segunda vez entra como cliente existente).
 - La migración 010 corrigió lo que encontró la revisión de código de la 009: un asesor sin ciudad se llevaba todos los leads, la tarea de un cliente de un asesor inactivo quedaba huérfana, los datos raros tumbaban el lead, no había turno al asignar y sobraban permisos en la tabla de radicados.
 
+**La reserva de los avisos (migración 012).** Para que la bienvenida y los avisos salgan una sola vez, n8n le pide al CRM una reserva antes de avisar (`/api/automatizaciones/avisos` → `reservar_avisos(clave)`), y solo la primera ejecución que la pide la obtiene. Primero se probó con una tabla en n8n ("¿ya se avisó?" y anotar al terminar), y en una prueba en vivo los avisos salieron dos veces: el mismo envío llegó de nuevo mientras los primeros correos todavía salían. Es el problema de "revisar y después actuar". La base de datos lo resuelve en una sola operación; hay una prueba con dos conexiones a la vez.
+
+**Migración 013** (dos huecos que encontró la revisión de la 012): el radicado guarda la **respuesta completa** de la primera vez y "ya procesado" la repite tal cual (antes llegaba incompleta, y si la reserva la ganaba esa ejecución, el aviso podía ir al asesor que ya no está); y la reserva **reconoce a su dueño** (el número de la ejecución de n8n), así que si se pierde la respuesta de la reserva y la misma ejecución reintenta, sigue siendo suya. La captura quedó como un envoltorio: la función de la 010 se llama ahora `registrar_lead_interno` y solo la usa `capturar_lead`.
+
 ### Cuando algo falla
 
 | Qué falla | Qué pasa |
 |---|---|
-| El mismo envío llega dos veces (doble clic, el formulario reintenta) | La segunda vez el CRM responde "ya procesado" y n8n no manda nada |
-| El CRM está caído o tarda | n8n reintenta 3 veces, con pausas. Si sigue fallando, el flujo 0 te avisa por Telegram con el enlace a la ejecución; el lead queda guardado en esa ejecución y se puede **reintentar** desde n8n cuando el CRM vuelva |
-| Los datos vienen malos | No se reintenta; queda registrado como error de datos y el formulario le pide al cliente corregir |
-| El correo de bienvenida falla | El lead **ya quedó** en el CRM (lo importante). Te llega la alerta y el correo se puede reenviar |
+| El mismo envío llega dos veces (doble clic, el formulario reintenta) | La segunda vez el CRM responde "ya procesado" y no crea nada. Los avisos salen una sola vez: los reserva el CRM, aunque los dos envíos lleguen al mismo tiempo |
+| El CRM está caído o no contesta | n8n lo intenta hasta 3 veces (solo cuando no hay respuesta; un código de error del CRM no se reintenta ahí). Si sigue sin respuesta: el lead va a `leads_pendientes`, el formulario recibe "Recibimos tu solicitud" y suena la alarma por Telegram y correo. La cola (01b) lo reenvía cada 2 minutos y, cuando entra, salen sus avisos |
+| El CRM guardó el lead pero su respuesta se perdió | El reintento recibe "ya procesado" y los avisos igual salen, porque todavía no se habían reservado |
+| Un choque momentáneo del CRM (503: dos envíos distintos de la misma persona nueva a la vez) | Va a la cola y suena la alarma, aunque la cola lo resuelve en 2 minutos. Es raro; se aceptó así |
+| Los datos vienen malos | El formulario recibe el motivo ("el celular no es válido…"). No es una falla del sistema: no suena alarma ni se reintenta |
+| Falla el envío de un correo | El lead ya está en el CRM (lo importante) y suena la alarma. Si Gmail falló a la mitad, el paso de correo reintenta y un aviso que ya había salido puede llegar dos veces |
 
 ### Qué se construye para este flujo
 
 | Pieza | Dónde | Prueba |
 |---|---|---|
-| ✅ Migraciones 009 y 010: tabla de claves de envío y función que asigna asesor y crea el lead en una sola operación | `supabase/migraciones/` | ✅ `tests/test_captura_leads_supabase.py`, 20 pruebas contra la base real: asignación y rotación, envío repetido, cliente existente, celular compartido, asesor inactivo, datos raros, nadie de afuera puede llamarla |
-| ✅ Puerta de entrada del CRM (y migración 011: la llave de servicio solo lee las 6 columnas que se comparan) | `apps/crm/src/app/api/automatizaciones/leads/route.ts`, con la lógica en `apps/crm/src/lib/automatizaciones/lead.ts` | ✅ Vitest (`lead.test.ts`): llave, datos malos, negocio que vuelve, familia con un celular, consumo absurdo, errores de la base. En vivo contra el CRM local: 401, 400, creado, ya procesado y negocio existente |
-| Flujo 0 (alertas) y flujo 1 (captura) | n8n, exportados a `automatizaciones/` | Prueba de punta a punta: un envío real del formulario y, con el CRM apagado, la alerta |
+| ✅ Migraciones 009, 010, 012 y 013: tabla de claves de envío, función que asigna asesor y crea el lead en una sola operación, y la reserva de avisos | `supabase/migraciones/` | ✅ `tests/test_captura_leads_supabase.py`, 26 pruebas contra la base real: asignación y rotación, envío repetido, cliente existente, celular compartido, asesor inactivo, datos raros, reserva de avisos (también con dos conexiones a la vez), nadie de afuera puede llamarlas |
+| ✅ Puertas del CRM: leads y reserva de avisos (y migración 011: la llave de servicio solo lee las 6 columnas que se comparan) | `apps/crm/src/app/api/automatizaciones/leads/route.ts` y `.../avisos/route.ts`, con la lógica en `apps/crm/src/lib/automatizaciones/lead.ts` | ✅ Vitest (`lead.test.ts`): llave, datos malos, negocio que vuelve, familia con un celular, consumo absurdo, errores de la base. En vivo contra el CRM local: 401, 400, creado, ya procesado y negocio existente |
+| ✅ Flujo 0 (alertas) y flujo 1 (captura), con la cola de reintentos (01b) y el subflujo de avisos (01c) | n8n, exportados a `automatizaciones/flujos/` (ver `automatizaciones/README.md`) | ✅ De punta a punta en local (2026-10-24): lead nuevo con bienvenida y aviso al asesor desviado por el destino seguro, envío repetido sin avisos, dato inválido, y **con el CRM apagado llegó la alerta** por Telegram y correo; al prenderlo, la cola metió los leads sola |
 | Formulario web | Una página pública sencilla (se decide al construir si va dentro del CRM) | Se prueba con el flujo |
+
+**Antes de abrir el túnel** (cuando el formulario sea público): hoy el webhook `lead-web` acepta envíos de cualquier sitio y sin límite. Cualquiera podría llenar el CRM de contactos falsos y gastar el cupo diario de Gmail con los avisos, y con el cupo agotado tampoco saldrían por correo las alertas del flujo 0. Antes de publicarlo: limitar el origen al formulario, poner un límite de envíos y una protección contra robots (por ejemplo, un campo oculto o un captcha).
 
 ---
 
