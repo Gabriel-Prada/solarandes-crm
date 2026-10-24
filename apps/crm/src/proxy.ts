@@ -58,6 +58,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Todas las rutas menos los archivos estáticos (imágenes, íconos, estilos)
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  // Todas las rutas menos los archivos estáticos (imágenes, íconos, estilos) y la puerta de las
+  // automatizaciones: n8n no inicia sesión; esa puerta la protege su propia llave (route.ts)
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };

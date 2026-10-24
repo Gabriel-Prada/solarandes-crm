@@ -289,3 +289,21 @@ def test_con_sesion_no_se_puede_elegir_asesor_ni_leer_los_radicados(con):
             con.execute("select asesor_para_lead('Bogotá')")
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
         con.execute("select count(*) from envios_recibidos")
+
+
+def test_la_llave_de_servicio_solo_lee_lo_que_compara_y_no_escribe_directo(con):
+    # Migración 011: lo mínimo para buscar duplicados; para escribir, solo capturar_lead()
+    aplicadas = {n for (n,) in con.execute("select nombre from control.migraciones")}
+    if "011_puerta_lee_contactos.sql" not in aplicadas:
+        con.execute((RAIZ / "supabase" / "migraciones" / "011_puerta_lee_contactos.sql").read_text(encoding="utf-8"))
+    con.execute("set local role service_role")
+    with con.transaction():
+        con.execute("select codigo, nombre, empresa, telefono, email, ciudad from contactos limit 1")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        with con.transaction():
+            con.execute("select consumo_kwh_mes from contactos limit 1")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        with con.transaction():
+            con.execute("select count(*) from oportunidades")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        con.execute("update contactos set nombre = 'x' where false")

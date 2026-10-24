@@ -138,7 +138,7 @@ Los pasos 3 a 6 ocurren **en una sola operación** de la base de datos: o se gua
 | Pieza | Dónde | Prueba |
 |---|---|---|
 | ✅ Migraciones 009 y 010: tabla de claves de envío y función que asigna asesor y crea el lead en una sola operación | `supabase/migraciones/` | ✅ `tests/test_captura_leads_supabase.py`, 20 pruebas contra la base real: asignación y rotación, envío repetido, cliente existente, celular compartido, asesor inactivo, datos raros, nadie de afuera puede llamarla |
-| Puerta de entrada del CRM | `apps/crm/src/app/api/automatizaciones/leads/` | Vitest: sin llave, datos malos, cliente existente, duda, envío repetido |
+| ✅ Puerta de entrada del CRM (y migración 011: la llave de servicio solo lee las 6 columnas que se comparan) | `apps/crm/src/app/api/automatizaciones/leads/route.ts`, con la lógica en `apps/crm/src/lib/automatizaciones/lead.ts` | ✅ Vitest (`lead.test.ts`): llave, datos malos, negocio que vuelve, familia con un celular, consumo absurdo, errores de la base. En vivo contra el CRM local: 401, 400, creado, ya procesado y negocio existente |
 | Flujo 0 (alertas) y flujo 1 (captura) | n8n, exportados a `automatizaciones/` | Prueba de punta a punta: un envío real del formulario y, con el CRM apagado, la alerta |
 | Formulario web | Una página pública sencilla (se decide al construir si va dentro del CRM) | Se prueba con el flujo |
 

@@ -1,7 +1,8 @@
 "use server";
 
 import { cotizar } from "@/lib/cotizacion";
-import { analizar, TAMANO_MAXIMO, type Asesor, type ContactoDelCrm, type Estado } from "@/lib/importar/analizar";
+import { analizar, TAMANO_MAXIMO, type Asesor, type Estado } from "@/lib/importar/analizar";
+import { leerContactos } from "@/lib/importar/contactos-del-crm";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
 import { NOMBRE_CANAL, type CanalOrigen, type Ciudad } from "@/lib/tipos";
@@ -30,31 +31,7 @@ export type EstadoImportacion = {
   } | null;
 };
 
-type Supabase = Awaited<ReturnType<typeof crearClienteSupabase>>;
-
 const vacio = (error: string): EstadoImportacion => ({ error, filas: [], importado: null });
-
-/** Todos los contactos del CRM. Supabase entrega un máximo de filas por consulta: se piden por páginas. */
-async function leerContactos(supabase: Supabase): Promise<ContactoDelCrm[]> {
-  const contactos: ContactoDelCrm[] = [];
-  const PAGINA = 1000;
-  // Se avanza tantas filas como llegaron y se para en una página vacía: así no importa si el
-  // servidor entrega menos filas por página de las que se pidieron
-  let desde = 0;
-  while (true) {
-    const { data, error } = await supabase
-      .from("contactos")
-      .select("codigo, nombre, empresa, telefono, email, ciudad")
-      .order("codigo")
-      .range(desde, desde + PAGINA - 1);
-    if (error) throw error;
-    if (data.length === 0) return contactos;
-    for (const c of data) {
-      contactos.push({ fila: 0, codigo: c.codigo, nombre: c.nombre, empresa: c.empresa, telefono: c.telefono, correo: c.email, ciudad: c.ciudad });
-    }
-    desde += data.length;
-  }
-}
 
 /**
  * "ver" analiza el archivo y devuelve la vista previa. "importar" lo vuelve a analizar desde cero
