@@ -117,6 +117,13 @@ Todos los mensajes pasan por el paso **Destino seguro** antes de salir.
 
 Los pasos 3 a 6 ocurren **en una sola operación** de la base de datos: o se guarda todo, o nada (como `crear_contacto_con_venta` en la fase 1).
 
+**Lo que quedó construido en la base de datos (migraciones 009 y 010, aplicadas el 2026-10-24):**
+- `envios_recibidos`: el libro de radicados (clave única por envío).
+- `asesor_para_lead(ciudad)`: asesor activo de la ciudad; entre varios, el que lleva más tiempo sin recibir un contacto; sin asesor en la ciudad, rota entre todos (y la respuesta trae `fuera_de_ciudad`).
+- `capturar_lead(...)`: solo la llama la llave de servicio. Casos: lead nuevo (`creado`), cliente que vuelve (`existente`), dudoso (`revision`: si su celular ya es de otro contacto, solo deja una nota en ese contacto, sin unir datos ni abrir venta), envío repetido (`ya_procesado`). Si el asesor del cliente ya no está activo, la tarea va a la gerente (`asesor_inactivo`). Los datos raros no tumban el lead: con empresa es negocio, consumo con decimales se redondea y fuera de rango deja la venta "por definir".
+- Para la puerta del CRM: un error `22023` (por ejemplo, sin nombre ni empresa) es **dato inválido** y no se reintenta; un `23505` (celular único) solo pasa si llegan dos envíos distintos de la misma persona nueva a la vez, y sí se reintenta (la segunda vez entra como cliente existente).
+- La migración 010 corrigió lo que encontró la revisión de código de la 009: un asesor sin ciudad se llevaba todos los leads, la tarea de un cliente de un asesor inactivo quedaba huérfana, los datos raros tumbaban el lead, no había turno al asignar y sobraban permisos en la tabla de radicados.
+
 ### Cuando algo falla
 
 | Qué falla | Qué pasa |
@@ -130,7 +137,7 @@ Los pasos 3 a 6 ocurren **en una sola operación** de la base de datos: o se gua
 
 | Pieza | Dónde | Prueba |
 |---|---|---|
-| Migración 009: tabla de claves de envío y función que asigna asesor y crea el lead en una sola operación | `supabase/migraciones/` | pytest contra la base real: asignación, envío repetido, nadie de afuera puede llamarla |
+| ✅ Migraciones 009 y 010: tabla de claves de envío y función que asigna asesor y crea el lead en una sola operación | `supabase/migraciones/` | ✅ `tests/test_captura_leads_supabase.py`, 20 pruebas contra la base real: asignación y rotación, envío repetido, cliente existente, celular compartido, asesor inactivo, datos raros, nadie de afuera puede llamarla |
 | Puerta de entrada del CRM | `apps/crm/src/app/api/automatizaciones/leads/` | Vitest: sin llave, datos malos, cliente existente, duda, envío repetido |
 | Flujo 0 (alertas) y flujo 1 (captura) | n8n, exportados a `automatizaciones/` | Prueba de punta a punta: un envío real del formulario y, con el CRM apagado, la alerta |
 | Formulario web | Una página pública sencilla (se decide al construir si va dentro del CRM) | Se prueba con el flujo |
