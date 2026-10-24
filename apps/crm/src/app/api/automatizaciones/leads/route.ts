@@ -54,5 +54,7 @@ export async function POST(request: Request) {
     const mensaje = estado === 400 ? error.message : "El CRM no pudo registrar el lead. Intenta de nuevo.";
     return Response.json({ error: mensaje }, { status: estado });
   }
-  return Response.json(data);
+  // Los datos ya limpios (nombre con mayúsculas, ciudad bien escrita), para que los avisos de n8n se vean bien
+  const { nombre, empresa, ciudad, telefono } = lead.contacto;
+  return Response.json({ ...data, contacto: { nombre, empresa, ciudad, telefono } });
 }

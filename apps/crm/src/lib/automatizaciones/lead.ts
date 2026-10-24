@@ -48,6 +48,12 @@ export function llaveValida(cabecera: string | null, esperada: string | undefine
   return timingSafeEqual(huella(cabecera.slice("Bearer ".length)), huella(esperada));
 }
 
+/** La clave de un envío (la misma regla de la tabla envios_recibidos: de 8 a 200 caracteres). */
+export function leerClave(valor: unknown): string | null {
+  const clave = typeof valor === "string" ? valor.trim() : "";
+  return clave.length >= 8 && clave.length <= 200 ? clave : null;
+}
+
 /** Un texto si viene como texto o número; null si no viene o viene vacío. */
 function texto(valor: unknown): string | null {
   if (typeof valor === "number" && Number.isFinite(valor)) return String(valor);
@@ -64,10 +70,8 @@ export function prepararLead(entrada: unknown): { lead: LeadPreparado } | { erro
   if (typeof entrada !== "object" || entrada === null) return { error: "El cuerpo debe ser un objeto JSON." };
   const e = entrada as Record<string, unknown>;
 
-  const clave = texto(e.clave);
-  if (!clave || clave.length < 8 || clave.length > 200) {
-    return { error: "Falta la clave del envío (entre 8 y 200 caracteres)." };
-  }
+  const clave = leerClave(e.clave);
+  if (!clave) return { error: "Falta la clave del envío (entre 8 y 200 caracteres)." };
   const canal = texto(e.canal);
   if (!CANALES.includes(canal as Canal)) return { error: "El canal debe ser web o whatsapp." };
 

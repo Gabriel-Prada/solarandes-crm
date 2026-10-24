@@ -1,4 +1,4 @@
-"""Comprueba en la base de datos real la captura de leads de la fase 3 (migraciones 009 y 010).
+"""Comprueba en la base de datos real la captura de leads de la fase 3 (migraciones 009 a 013).
 
 Cada prueba corre dentro de una transacción que al final se deshace: no queda nada guardado.
 Si alguna de esas migraciones todavía no está aplicada, la prueba la carga dentro de esa misma
@@ -15,7 +15,13 @@ from conexion import RAIZ, RUTA_ENV
 
 pytestmark = pytest.mark.skipif(not RUTA_ENV.exists(), reason="sin .env no hay base de datos a la cual conectarse")
 
-MIGRACIONES = ["009_capturar_leads.sql", "010_corrige_captura_de_leads.sql"]
+MIGRACIONES = [
+    "009_capturar_leads.sql",
+    "010_corrige_captura_de_leads.sql",
+    "011_puerta_lee_contactos.sql",
+    "012_reservar_avisos.sql",
+    "013_respuesta_completa_y_dueno_de_la_reserva.sql",
+]
 # Celulares inventados que no existen en el set de datos (se comprueba en cada prueba)
 CELULAR_NUEVO = "+573009990001"
 OTRO_CELULAR_NUEVO = "+573009990002"
@@ -293,9 +299,6 @@ def test_con_sesion_no_se_puede_elegir_asesor_ni_leer_los_radicados(con):
 
 def test_la_llave_de_servicio_solo_lee_lo_que_compara_y_no_escribe_directo(con):
     # Migración 011: lo mínimo para buscar duplicados; para escribir, solo capturar_lead()
-    aplicadas = {n for (n,) in con.execute("select nombre from control.migraciones")}
-    if "011_puerta_lee_contactos.sql" not in aplicadas:
-        con.execute((RAIZ / "supabase" / "migraciones" / "011_puerta_lee_contactos.sql").read_text(encoding="utf-8"))
     con.execute("set local role service_role")
     with con.transaction():
         con.execute("select codigo, nombre, empresa, telefono, email, ciudad from contactos limit 1")
@@ -307,3 +310,86 @@ def test_la_llave_de_servicio_solo_lee_lo_que_compara_y_no_escribe_directo(con):
             con.execute("select count(*) from oportunidades")
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
         con.execute("update contactos set nombre = 'x' where false")
+
+
+def reservar(con, clave, ejecucion="ejecucion-1") -> bool:
+    con.execute("set local role service_role")
+    reservado = con.execute("select reservar_avisos(%s, %s)", (clave, ejecucion)).fetchone()[0]
+    con.execute("reset role")
+    return reservado
+
+
+def test_los_avisos_de_un_lead_se_reservan_una_sola_vez(con):
+    # Migración 012: solo la primera ejecución que pide avisar obtiene el permiso
+    capturar(con, "envio-prueba-0020", lead())
+    assert reservar(con, "envio-prueba-0020", "ejecucion-1") is True
+    assert reservar(con, "envio-prueba-0020", "ejecucion-2") is False
+    # La misma ejecución que la reservó (por ejemplo, si se perdió la respuesta y reintenta) sigue siendo la dueña
+    assert reservar(con, "envio-prueba-0020", "ejecucion-1") is True
+    # Un envío que nunca quedó registrado no tiene avisos que reservar
+    assert reservar(con, "envio-que-no-existe") is False
+
+
+def test_con_sesion_no_se_pueden_reservar_avisos(con):
+    con.execute("set local role authenticated")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        con.execute("select reservar_avisos('envio-prueba-0021', 'x')")
+
+
+def test_dos_reservas_al_mismo_tiempo_solo_gana_una():
+    # El caso que se vio en vivo: el mismo envío llega dos veces casi a la vez. Aquí dos conexiones
+    # piden la reserva al mismo tiempo; la base de datos debe dársela a una sola.
+    # Esta prueba sí guarda un radicado de verdad (las dos conexiones deben verlo) y lo borra al final.
+    import threading
+
+    from conexion import conectar
+
+    clave = "envio-prueba-simultanea-0001"
+    with conectar() as preparar:
+        aplicadas = {n for (n,) in preparar.execute("select nombre from control.migraciones")}
+        if "013_respuesta_completa_y_dueno_de_la_reserva.sql" not in aplicadas:
+            pytest.skip("la migración 013 todavía no está aplicada")
+        preparar.execute("insert into envios_recibidos (clave, canal) values (%s, 'web')", (clave,))
+        preparar.commit()
+    try:
+        resultados, salida = [], threading.Barrier(2)
+
+        def pedir():
+            with conectar() as con:
+                con.execute("set role service_role")
+                salida.wait()  # las dos salen a la vez
+                # Dos ejecuciones distintas de n8n (cada una con su número)
+                resultados.append(con.execute("select reservar_avisos(%s, %s)", (clave, str(id(con)))).fetchone()[0])
+                con.commit()
+
+        hilos = [threading.Thread(target=pedir) for _ in range(2)]
+        for h in hilos:
+            h.start()
+        for h in hilos:
+            h.join(timeout=60)
+        assert sorted(resultados) == [False, True]
+    finally:
+        with conectar() as limpiar:
+            limpiar.execute("delete from envios_recibidos where clave = %s", (clave,))
+            limpiar.commit()
+
+
+def test_ya_procesado_repite_la_respuesta_completa_de_la_primera_vez(con):
+    # Migración 013: un envío repetido ve lo mismo que el primero, incluido quién atiende.
+    # Cliente de un asesor que ya no está: la primera vez atiende la gerente; la repetición debe decir lo mismo
+    codigo, asesor = uno(con, "select c.codigo, c.asesor_id from contactos c order by c.codigo limit 1")
+    con.execute("update perfiles set activo = false where id = %s", (asesor,))
+    primera = capturar(con, "envio-prueba-0022", lead(), existente=codigo)
+    segunda = capturar(con, "envio-prueba-0022", lead(), existente=codigo)
+
+    assert primera["asesor_inactivo"] is True and primera["asesor"]["codigo"] == "U01"
+    assert segunda["resultado"] == "ya_procesado" and segunda["resultado_original"] == "existente"
+    assert {k: v for k, v in segunda.items() if k not in ("resultado", "resultado_original")} == {
+        k: v for k, v in primera.items() if k != "resultado"
+    }
+
+
+def test_nadie_mas_puede_llamar_la_funcion_interna(con):
+    con.execute("set local role service_role")
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        con.execute("select registrar_lead_interno('envio-prueba-0023', 'web', %s::jsonb)", (json.dumps(lead()),))

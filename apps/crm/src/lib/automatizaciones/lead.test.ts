@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { ContactoDelCrm } from "../importar/analizar";
-import { decidir, llaveValida, prepararLead, tratarErrorDeBase, type LeadPreparado } from "./lead";
+import { decidir, leerClave, llaveValida, prepararLead, tratarErrorDeBase, type LeadPreparado } from "./lead";
 
 const LLAVE = "una-llave-de-prueba-bastante-larga-123456";
 
@@ -142,6 +142,16 @@ describe("decidir", () => {
     const r = decidir(preparado({ nombre: "Pedro Ruiz", celular: "311 555 0000", ciudad: "Cali" }), crm);
     expect(r.existente).toBeNull();
     expect(r.duda).toBeTruthy();
+  });
+});
+
+describe("leerClave", () => {
+  it("acepta una clave de 8 a 200 caracteres, sin espacios a los lados", () => {
+    expect(leerClave("  web-12345678  ")).toBe("web-12345678");
+    expect(leerClave("corta")).toBeNull();
+    expect(leerClave("x".repeat(201))).toBeNull();
+    expect(leerClave(12345678)).toBeNull(); // un número no es una clave
+    expect(leerClave(undefined)).toBeNull();
   });
 });
 
