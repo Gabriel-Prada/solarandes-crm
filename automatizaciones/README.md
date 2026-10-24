@@ -10,7 +10,7 @@ Los flujos de la fase 3. El plan completo y las decisiones están en [docs/plan-
 
 | Archivo | Qué hace | Estado |
 |---|---|---|
-| [00-alertas-de-error.json](flujos/00-alertas-de-error.json) | Cuando cualquier flujo falla, avisa por Telegram: qué flujo, en qué paso, el error, la hora y el enlace a la ejecución. Si Telegram falla, reintenta 3 veces. Si la tabla no tiene a quién avisar, **falla a la vista** (queda una ejecución roja en n8n) en vez de terminar en verde sin avisar a nadie | ✅ Activo, probado |
+| [00-alertas-de-error.json](flujos/00-alertas-de-error.json) | Cuando cualquier flujo falla, avisa por **dos canales independientes**, Telegram y correo: qué flujo, en qué paso, el error, la hora y el enlace a la ejecución. Cada canal lo intenta hasta 3 veces (el primer intento y 2 reintentos), y si uno falla el otro igual se intenta. Solo termina en verde si llegaron los dos; si falló uno, termina en rojo diciendo cuál y el motivo probable ("Telegram falló; el aviso llegó solo por correo: no hay fila telegram en destinos_prueba"). Si la tabla no tiene a quién avisar, también falla a la vista | ✅ Activo, probado (normal, Telegram roto y sin destino) |
 | [99-prueba-de-error.json](flujos/99-prueba-de-error.json) | Falla a propósito, para probar las alertas | Apagado (se prende solo para probar) |
 
 Reglas:
@@ -18,7 +18,7 @@ Reglas:
 - **El flujo "00 Alertas de error" no se renombra**: los demás lo buscan por ese nombre.
 - Si renombras un flujo en n8n, `exportar` avisa del archivo viejo que sobra. Bórralo; si no, el próximo `subir` revive el flujo viejo.
 - El flujo 99 tiene una dirección conocida (el repo es público). Cuando haya túnel, mantenerlo apagado es lo que evita que cualquiera llene de alertas falsas el Telegram.
-- Pendiente: si Telegram falla los 3 reintentos, no hay segundo aviso. El respaldo por correo llega con el Gmail (flujo 1).
+- Ningún flujo lleva destinos escritos a mano: los campos de destino (`chatId`, `toEmail`, `fromEmail`…) siempre son expresiones que leen la tabla `destinos_prueba`. Las pruebas lo revisan, y también que no aparezcan correos ni celulares en los archivos.
 
 ## Comandos
 
@@ -32,14 +32,16 @@ Necesitan n8n prendido (configuración `n8n` de `.claude/launch.json`, http://lo
 
 ## Lo que vive dentro de n8n y no en el repo
 
-- **Credenciales:** `Telegram SolarAndes` (el token del bot @Solarandes_bot).
-- **Tabla de datos `destinos_prueba`** (columnas `tipo`, `valor`, `nota`): los únicos destinos que pueden recibir mensajes reales (el chat de Telegram de las alertas, el correo y el celular de prueba). Son datos personales de Gabriel; por eso no van en el repo. Para que las alertas le lleguen a otra persona, se agrega una fila con `tipo = telegram` y su chat_id.
+- **Credenciales:**
+  - `Telegram SolarAndes`: el token del bot @Solarandes_bot.
+  - `Correo SolarAndes` (SMTP): el Gmail de SolarAndes con una **contraseña de aplicación** (`smtp.gmail.com`, puerto 465, SSL). Se eligió SMTP en vez de OAuth con Google Cloud porque Google marcó el proyecto de Cloud recién creado; para *enviar* correos, SMTP alcanza y no necesita Google Cloud.
+- **Tabla de datos `destinos_prueba`** (columnas `tipo`, `valor`, `nota`): los únicos destinos que pueden recibir mensajes reales. Tipos: `telegram` (chat de las alertas), `correo` (a donde llegan los correos), `celular` (de prueba) y `remitente` (la cuenta que envía; Gmail solo deja enviar desde la cuenta de la credencial). Si falta la fila `remitente`, el correo no se envía y la alerta queda en rojo diciéndolo: no se adivina el remitente. Son datos personales de Gabriel; por eso no van en el repo. El flujo 00 usa el primer chat de Telegram y todos los correos.
 
 ## Cómo probar las alertas
 
 1. En n8n, activa **99 Prueba de error**.
 2. Llama a su dirección: `POST http://localhost:5678/webhook/prueba-error`.
-3. Llega un Telegram con "Falló un flujo de SolarAndes".
+3. Llegan un Telegram y un correo con "Falló un flujo de SolarAndes".
 4. Vuelve a apagar el flujo 99.
 
 Dos cosas que aprendimos con n8n 2.x:

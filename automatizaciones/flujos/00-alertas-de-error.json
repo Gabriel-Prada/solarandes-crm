@@ -14,12 +14,12 @@
     },
     {
       "id": "6f1d2c3a-0000-4000-8000-000000000002",
-      "name": "A quién avisar",
+      "name": "Leer destinos",
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "alwaysOutputData": true,
       "position": [
-        240,
+        220,
         0
       ],
       "parameters": {
@@ -30,51 +30,20 @@
           "mode": "name",
           "value": "destinos_prueba"
         },
-        "matchType": "allConditions",
-        "filters": {
-          "conditions": [
-            {
-              "keyName": "tipo",
-              "condition": "eq",
-              "keyValue": "telegram"
-            }
-          ]
-        },
         "returnAll": true
       }
     },
     {
-      "id": "6f1d2c3a-0000-4000-8000-000000000004",
-      "name": "¿Hay a quién avisar?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "id": "6f1d2c3a-0000-4000-8000-000000000006",
+      "name": "Preparar alerta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        480,
+        440,
         0
       ],
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "6f1d2c3a-0000-4000-8000-000000000041",
-              "leftValue": "={{ $json.valor }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
+        "jsCode": "// Arma el mensaje una sola vez y separa los destinos por canal\nconst falla = $('Cuando un flujo falla').first().json;\nconst filas = $input.all().map((i) => i.json);\nconst destinos = (tipo) => filas.filter((f) => f.tipo === tipo && f.valor).map((f) => String(f.valor).trim());\nconst telegram = destinos('telegram');\nconst correos = destinos('correo');\n// La cuenta que envía: Gmail solo deja enviar desde la cuenta de la credencial SMTP. Sin fila, no se adivina\nconst remitente = destinos('remitente')[0] ?? null;\n\n// Sin nadie a quien avisar, la alarma no puede quedarse callada: falla a la vista\nif (!telegram.length && !correos.length) {\n  throw new Error('Sin destino para las alertas: agrega en la tabla destinos_prueba una fila con tipo = telegram o tipo = correo');\n}\n\nconst flujo = falla.workflow?.name ?? 'desconocido';\nconst paso = falla.execution?.lastNodeExecuted ?? 'el disparador';\nconst error = (falla.execution?.error?.message ?? falla.trigger?.error?.message ?? 'sin mensaje').slice(0, 500);\nconst enlace = falla.execution?.url ?? 'no hay (falló al arrancar)';\nconst hora = DateTime.now().setZone('America/Bogota').toFormat('dd/MM/yyyy HH:mm');\n\nconst texto = `⚠️ Falló un flujo de SolarAndes\\n\\nFlujo: ${flujo}\\nPaso: ${paso}\\nError: ${error}\\nHora: ${hora}\\n\\nVer la ejecución: ${enlace}`;\nreturn [{ json: { flujo, texto, asunto: `⚠️ Falló un flujo de SolarAndes: ${flujo}`, telegram, correos, remitente } }];"
       }
     },
     {
@@ -86,15 +55,16 @@
       "retryOnFail": true,
       "maxTries": 3,
       "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
       "position": [
-        720,
-        -100
+        660,
+        0
       ],
       "parameters": {
         "resource": "message",
         "operation": "sendMessage",
-        "chatId": "={{ $json.valor }}",
-        "text": "=⚠️ Falló un flujo de SolarAndes\n\nFlujo: {{ $('Cuando un flujo falla').item.json.workflow.name }}\nPaso: {{ $('Cuando un flujo falla').item.json.execution?.lastNodeExecuted ?? 'el disparador' }}\nError: {{ ($('Cuando un flujo falla').item.json.execution?.error?.message ?? $('Cuando un flujo falla').item.json.trigger?.error?.message ?? 'sin mensaje').slice(0, 500) }}\nHora: {{ $now.setZone('America/Bogota').toFormat('dd/MM/yyyy HH:mm') }}\n\nVer la ejecución: {{ $('Cuando un flujo falla').item.json.execution?.url ?? 'no hay (falló al arrancar)' }}",
+        "chatId": "={{ $json.telegram[0] }}",
+        "text": "={{ $json.texto }}",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -107,16 +77,49 @@
       }
     },
     {
-      "id": "6f1d2c3a-0000-4000-8000-000000000005",
-      "name": "Sin destino: fallar a la vista",
-      "type": "n8n-nodes-base.stopAndError",
-      "typeVersion": 1,
+      "id": "6f1d2c3a-0000-4000-8000-000000000007",
+      "name": "Avisar por correo",
+      "webhookId": "2366ed15-1a69-49ec-8f95-83f93ee0862b",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
       "position": [
-        720,
-        100
+        880,
+        0
       ],
       "parameters": {
-        "errorMessage": "Sin destino para las alertas: agrega en la tabla destinos_prueba una fila con tipo = telegram y el chat_id en valor"
+        "operation": "send",
+        "fromEmail": "=SolarAndes Alertas <{{ $('Preparar alerta').first().json.remitente }}>",
+        "toEmail": "={{ $('Preparar alerta').first().json.remitente ? $('Preparar alerta').first().json.correos.join(', ') : '' }}",
+        "subject": "={{ $('Preparar alerta').first().json.asunto }}",
+        "emailFormat": "text",
+        "text": "={{ $('Preparar alerta').first().json.texto }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "yycbNAVIEK8Sqxxm",
+          "name": "Correo SolarAndes"
+        }
+      }
+    },
+    {
+      "id": "6f1d2c3a-0000-4000-8000-000000000008",
+      "name": "Revisar entregas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Verde solo si el aviso llegó por los dos canales. Si uno falló, rojo: alguien se enteró, pero hay algo que arreglar\nconst { flujo, telegram: chats, correos, remitente } = $('Preparar alerta').first().json;\nconst fallo = (nodo) => {\n  const salida = $(nodo).all();\n  return !salida.length || salida.some((i) => i.json.error);\n};\n// El motivo más probable, para saber qué arreglar sin abrir n8n\nconst motivo = {\n  telegram: chats.length ? 'revisa el bot o el chat_id' : 'no hay fila telegram en destinos_prueba',\n  correo: !correos.length\n    ? 'no hay fila correo en destinos_prueba'\n    : !remitente\n      ? 'no hay fila remitente en destinos_prueba'\n      : 'revisa la credencial SMTP Correo SolarAndes',\n};\nconst telegram = fallo('Avisar por Telegram');\nconst correo = fallo('Avisar por correo');\n\nif (telegram && correo) {\n  throw new Error(`No se pudo avisar por ningún canal de la falla de \"${flujo}\". Telegram: ${motivo.telegram}. Correo: ${motivo.correo}`);\n}\nif (telegram) throw new Error(`Telegram falló; el aviso de \"${flujo}\" llegó solo por correo: ${motivo.telegram}`);\nif (correo) throw new Error(`El correo falló; el aviso de \"${flujo}\" llegó solo por Telegram: ${motivo.correo}`);\nreturn [{ json: { entregado: ['telegram', 'correo'] } }];"
       }
     }
   ],
@@ -125,25 +128,25 @@
       "main": [
         [
           {
-            "node": "A quién avisar",
+            "node": "Leer destinos",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "A quién avisar": {
+    "Leer destinos": {
       "main": [
         [
           {
-            "node": "¿Hay a quién avisar?",
+            "node": "Preparar alerta",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "¿Hay a quién avisar?": {
+    "Preparar alerta": {
       "main": [
         [
           {
@@ -151,10 +154,25 @@
             "type": "main",
             "index": 0
           }
-        ],
+        ]
+      ]
+    },
+    "Avisar por Telegram": {
+      "main": [
         [
           {
-            "node": "Sin destino: fallar a la vista",
+            "node": "Avisar por correo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar por correo": {
+      "main": [
+        [
+          {
+            "node": "Revisar entregas",
             "type": "main",
             "index": 0
           }

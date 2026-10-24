@@ -1,6 +1,7 @@
 """Verifica el script que sube y exporta los flujos de n8n, sin necesitar n8n prendido."""
 
 import json
+import re
 from pathlib import Path
 
 import flujos as f
@@ -56,6 +57,16 @@ def test_flujos_del_repo(archivo):
         assert flujo["settings"].get("errorWorkflow") == "00 Alertas de error"
     # Los archivos van al repo público: nunca datos de prueba ni secretos
     assert "pinData" not in flujo and "staticData" not in flujo
+    # Ni correos ni celulares escritos a mano: los destinos viven en la tabla destinos_prueba de n8n
+    texto = archivo.read_text(encoding="utf-8")
+    assert not re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", texto), "hay un correo escrito en el flujo"
+    assert not re.search(r"\+?57\s?3\d{9}|\b3\d{9}\b", texto), "hay un celular escrito en el flujo"
     for nodo in flujo["nodes"]:
         for credencial in nodo.get("credentials", {}).values():
             assert set(credencial) <= {"id", "name"}
+        # Los destinos siempre se leen (expresión, empieza por "="), nunca se escriben a mano:
+        # así no se cuela un chat_id, que es un número cualquiera y ningún patrón lo atrapa
+        for campo in ("chatId", "toEmail", "fromEmail", "ccEmail", "bccEmail"):
+            valor = nodo["parameters"].get(campo)
+            if valor is not None:
+                assert str(valor).startswith("="), f"{nodo['name']}: {campo} está escrito a mano"

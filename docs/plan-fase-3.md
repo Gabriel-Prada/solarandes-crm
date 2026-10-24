@@ -18,7 +18,7 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 
 | # | Flujo | Cuándo se dispara | Qué hace | Necesita |
 |---|---|---|---|---|
-| 0 | **Alertas de error** ✅ | Cuando cualquier otro flujo falla | Avisa por Telegram (y correo) qué falló, cuándo y con enlace a la ejecución. Hecho y probado el 2026-10-23 (el correo se agrega con el Gmail) | Telegram |
+| 0 | **Alertas de error** ✅ | Cuando cualquier otro flujo falla | Avisa por Telegram (y correo) qué falló, cuándo y con enlace a la ejecución. Hecho y probado el 2026-10-23, con Telegram y correo como canales independientes | Telegram + correo (SMTP) |
 | 1 | **Captura de leads por la web** | Alguien llena el formulario | Revisa duplicados, crea el lead en el CRM, lo asigna, da la bienvenida y avisa al asesor | CRM + correo |
 | 2 | **Captura por WhatsApp** | Alguien le escribe al número de la empresa | Lo mismo que el 1, pero desde WhatsApp | Meta (WhatsApp) + n8n visible desde internet |
 | 3 | **Seguimiento** | Todos los días a las 8 a. m. | Lead con 3 días sin actividad → recordatorio al asesor; con 7 → aviso a Laura | CRM + correo |
@@ -56,8 +56,9 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 | Cuenta | Para qué | Cuándo |
 |---|---|---|
 | **Telegram + un bot** (se crea en 2 minutos hablándole a @BotFather) | Las alertas de error en tu celular | Flujo 0 |
-| **Gmail exclusivo de SolarAndes** (ya estaba en el PLAN) | Bienvenida al lead, avisos al asesor, reporte del lunes. Después, el calendario | Flujo 1 |
-| **Proyecto en Google Cloud** con permiso para Gmail y Calendar | Para que n8n pueda usar ese Gmail sin conocer la contraseña (se conecta con OAuth: el botón "Iniciar sesión con Google") | Flujo 1 o 4 |
+| **Gmail exclusivo de SolarAndes** (ya estaba en el PLAN) | Bienvenida al lead, avisos al asesor, reporte del lunes y respaldo de las alertas (✅ creado) | Flujo 0 y 1 |
+| **Contraseña de aplicación de Gmail** (✅ hecha) | Para que n8n envíe correos por SMTP. Se intentó primero un proyecto de Google Cloud con OAuth, pero Google lo marcó como posible infracción al crearlo (cuenta nueva, permisos de Gmail): para enviar correos no hace falta | Flujo 0 y 1 |
+| **Google Calendar** (pendiente de decidir) | Crear los eventos de las visitas. Sin Google Cloud no hay acceso oficial al calendario: se decide al llegar al flujo 4 (apelar en Google Cloud u otra vía) | Flujo 4 |
 | **Meta for Developers** con el número de prueba de WhatsApp | Recibir y enviar WhatsApp. El número de prueba solo le escribe a máximo 5 números que tú verifiques: justo lo que queremos | Flujo 2 |
 
 **C. Los destinos de prueba autorizados**: qué celular(es) y correo(s) tuyos pueden recibir mensajes de verdad. Todo lo demás se desvía (ver la decisión 5).
