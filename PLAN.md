@@ -173,11 +173,13 @@ Aquí entra lo del curso de la API de Claude, aplicado a problemas del negocio.
 
 **Qué se construye**
 1. **Calificación de leads:** Claude lee el mensaje inicial y devuelve tipo (hogar o negocio), urgencia, consumo estimado, intención y prioridad. Usa salida estructurada, y la prioridad se guarda en el CRM.
-2. **Resumen de conversaciones:** el historial de WhatsApp de un lead se resume en la ficha del CRM.
+2. ~~**Resumen de conversaciones**~~: pasa a la fase 6 (decisión del 2026-10-25, ver `docs/plan-fase-4.md`): sin WhatsApp no hay conversaciones reales que resumir.
 3. **Extractor de facturas de proveedores** (el plan original del proyecto 1, convertido en automatización): las facturas llegan al correo de la contadora, n8n las toma, Claude las extrae, las valida y las registra. Las dudosas van a una cola de revisión.
 4. **Eval de cada pieza:** qué tan bien acierta, dónde falla y cuánto cuesta por lead o por factura.
 
 **Qué demuestra:** que sabes poner IA donde aporta, medirla y controlar su costo, en vez de "ponerle IA a todo".
+
+**Listo cuando:** un lead enviado desde `/cotiza` con un mensaje queda con su prioridad en menos de 2 minutos (y si es prioritario, el asesor recibe el aviso); una factura en PDF subida al CRM queda registrada o en la cola de revisión, con el motivo; hay un reporte con acierto y costo por lead y por factura, medido en casos que el prompt nunca vio; y si Claude no responde, el lead igual queda asignado y suena la alarma.
 
 **Explícalo tú**
 - ¿Cómo sabes que la calificación de leads funciona bien? ¿Cuál es su porcentaje de acierto?
@@ -216,7 +218,7 @@ Aquí usas lo último que aprendiste.
   - Responde preguntas frecuentes con la información de SolarAndes (RAG).
   - Da una **pre-cotización** a partir de la factura de luz del cliente.
   - **Agenda la visita técnica** directamente en el CRM, reutilizando el servidor MCP o sus mismas funciones.
-  - Pasa la conversación a un asesor cuando no sabe algo o el cliente lo pide.
+  - Pasa la conversación a un asesor cuando no sabe algo o el cliente lo pide, con un **resumen de la conversación** en la ficha del CRM (viene de la fase 4).
 - Streaming, historial de conversación y prompt caching.
 - **Eval** con preguntas realistas y difíciles, **pruebas de seguridad** (intentos de manipularlo) y costo por conversación.
 
