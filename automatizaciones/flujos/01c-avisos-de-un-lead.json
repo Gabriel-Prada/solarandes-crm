@@ -80,27 +80,6 @@
       }
     },
     {
-      "id": "0b1c0c00-0000-4000-8000-000000000002",
-      "name": "Leer destinos",
-      "type": "n8n-nodes-base.dataTable",
-      "typeVersion": 1.1,
-      "executeOnce": true,
-      "position": [
-        660,
-        0
-      ],
-      "parameters": {
-        "resource": "row",
-        "operation": "get",
-        "dataTableId": {
-          "__rl": true,
-          "mode": "name",
-          "value": "destinos_prueba"
-        },
-        "returnAll": true
-      }
-    },
-    {
       "id": "0b1c0c00-0000-4000-8000-000000000003",
       "name": "Armar avisos",
       "type": "n8n-nodes-base.code",
@@ -110,51 +89,43 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Quién recibe qué, según lo que pasó en el CRM. Las direcciones se revisan después, en \"Destino seguro\".\n// Solo se llega aquí si esta ejecución obtuvo la reserva de los avisos en el CRM (salen una sola vez).\n// Se llama con un lead a la vez (lo hacen 01 y 01b)\nconst avisos = [];\n{\n  const lead = $('Cuando lo llamen').first().json;\n  const r = lead.respuesta;\n  const { cuerpo, correo_gerente } = lead;\n  if (!r?.resultado || !r.asesor) return [];\n  // \"Ya procesado\": el CRM lo guardó en un intento anterior, pero sus avisos no salieron. Se avisa igual\n  const resultado = r.resultado === 'ya_procesado' ? r.resultado_original : r.resultado;\n  if (!['creado', 'existente', 'revision'].includes(resultado)) return [];\n\n  // Los datos ya limpios que devuelve el CRM (nombre con mayúsculas, ciudad bien escrita)\n  const c = { ...cuerpo, ...(r.contacto ?? {}) };\n  // Un negocio sin nombre de persona trae el nombre del negocio en los dos campos: no se repite\n  const soloEmpresa = Boolean(c.empresa) && c.nombre === c.empresa;\n  const nombre = c.empresa && !soloEmpresa ? `${c.nombre} (${c.empresa})` : c.empresa || c.nombre;\n  // En \"revisión\" sin lead nuevo, el código es el del contacto que ya tiene ese celular, no el de esta persona\n  const codigo = resultado === 'revision' && r.nuevo === false\n    ? `Contacto con el mismo celular: ${r.codigo}`\n    : `Código en el CRM: ${r.codigo}`;\n  const ficha = [\n    `Cliente: ${nombre}`,\n    codigo,\n    `Celular: ${c.telefono ?? c.celular}`,\n    `Ciudad: ${c.ciudad}`,\n    `Consumo: ${cuerpo.consumo ? cuerpo.consumo + ' kWh/mes' : 'no lo dijo'}`,\n    `Mensaje: ${cuerpo.mensaje || '(sin mensaje)'}`,\n  ].join('\\n');\n\n  // Lo que la gerente tiene que decidir\n  const motivos = [];\n  if (resultado === 'revision') motivos.push(`Posible duplicado: ${r.duda ?? 'revisa la nota que quedó en el contacto'}`);\n  if (r.asesor_inactivo) motivos.push('El asesor del cliente ya no está activo: hay que reasignarlo');\n  if (r.fuera_de_ciudad) motivos.push(`No hay asesor activo en ${c.ciudad}: se asignó a ${r.asesor.nombre}`);\n  // Si quien atiende es la gerente (el asesor ya no está), los motivos van en su mismo aviso\n  const atiendeLaGerente = Boolean(correo_gerente) && correo_gerente === r.asesor.email;\n\n  // 1. Bienvenida al lead (si dejó correo). Un cliente que vuelve no la recibe otra vez\n  if (resultado !== 'existente' && cuerpo.correo) {\n    avisos.push({\n      para: cuerpo.correo,\n      quien: nombre,\n      asunto: 'Recibimos tu solicitud - SolarAndes',\n      texto: `${soloEmpresa ? 'Hola:' : `Hola, ${c.nombre.split(' ')[0]}:`}\\n\\nGracias por escribirnos. ${r.asesor.nombre} te contactará pronto para hablar de tu sistema solar.\\n\\nSolarAndes S.A.S.`,\n    });\n  }\n\n  // 2. Aviso a quien atiende (el asesor, o la gerente si el asesor ya no está activo)\n  const titulo = {\n    creado: `Nuevo lead para ti: ${nombre}`,\n    revision: `Nuevo lead (revisa si es un duplicado): ${nombre}`,\n    existente: `Tu cliente ${nombre} volvió a escribir`,\n  }[resultado];\n  const decidir = atiendeLaGerente && motivos.length ? `${motivos.join('\\n')}\\n\\n` : '';\n  avisos.push({\n    para: r.asesor.email,\n    quien: r.asesor.nombre,\n    asunto: titulo,\n    texto: `${titulo}\\n\\n${decidir}${ficha}\\n\\nTienes una tarea en el CRM para contactarlo.`,\n  });\n\n  // 3. Aviso aparte a la gerente cuando hay algo que decidir y no es ella quien atiende\n  if (motivos.length && correo_gerente && !atiendeLaGerente) {\n    avisos.push({\n      para: correo_gerente,\n      quien: 'Laura Méndez',\n      asunto: `Revisar lead ${r.codigo}: ${nombre}`,\n      texto: `${motivos.join('\\n')}\\n\\n${ficha}`,\n    });\n  }\n}\nreturn avisos.map((a) => ({ json: a }));"
+        "jsCode": "// Quién recibe qué, según lo que pasó en el CRM. Las direcciones se revisan después, en \"Destino seguro\" (subflujo 00b).\n// Solo se llega aquí si esta ejecución obtuvo la reserva de los avisos en el CRM (salen una sola vez).\n// Se llama con un lead a la vez (lo hacen 01 y 01b)\nconst avisos = [];\n{\n  const lead = $('Cuando lo llamen').first().json;\n  const r = lead.respuesta;\n  const { cuerpo, correo_gerente } = lead;\n  if (!r?.resultado || !r.asesor) return [];\n  // \"Ya procesado\": el CRM lo guardó en un intento anterior, pero sus avisos no salieron. Se avisa igual\n  const resultado = r.resultado === 'ya_procesado' ? r.resultado_original : r.resultado;\n  if (!['creado', 'existente', 'revision'].includes(resultado)) return [];\n\n  // Los datos ya limpios que devuelve el CRM (nombre con mayúsculas, ciudad bien escrita)\n  const c = { ...cuerpo, ...(r.contacto ?? {}) };\n  // Un negocio sin nombre de persona trae el nombre del negocio en los dos campos: no se repite\n  const soloEmpresa = Boolean(c.empresa) && c.nombre === c.empresa;\n  const nombre = c.empresa && !soloEmpresa ? `${c.nombre} (${c.empresa})` : c.empresa || c.nombre;\n  // En \"revisión\" sin lead nuevo, el código es el del contacto que ya tiene ese celular, no el de esta persona\n  const codigo = resultado === 'revision' && r.nuevo === false\n    ? `Contacto con el mismo celular: ${r.codigo}`\n    : `Código en el CRM: ${r.codigo}`;\n  const ficha = [\n    `Cliente: ${nombre}`,\n    codigo,\n    `Celular: ${c.telefono ?? c.celular}`,\n    `Ciudad: ${c.ciudad}`,\n    `Consumo: ${cuerpo.consumo ? cuerpo.consumo + ' kWh/mes' : 'no lo dijo'}`,\n    `Mensaje: ${cuerpo.mensaje || '(sin mensaje)'}`,\n  ].join('\\n');\n\n  // Lo que la gerente tiene que decidir\n  const motivos = [];\n  if (resultado === 'revision') motivos.push(`Posible duplicado: ${r.duda ?? 'revisa la nota que quedó en el contacto'}`);\n  if (r.asesor_inactivo) motivos.push('El asesor del cliente ya no está activo: hay que reasignarlo');\n  if (r.fuera_de_ciudad) motivos.push(`No hay asesor activo en ${c.ciudad}: se asignó a ${r.asesor.nombre}`);\n  // Si quien atiende es la gerente (el asesor ya no está), los motivos van en su mismo aviso\n  const atiendeLaGerente = Boolean(correo_gerente) && correo_gerente === r.asesor.email;\n\n  // 1. Bienvenida al lead (si dejó correo). Un cliente que vuelve no la recibe otra vez\n  if (resultado !== 'existente' && cuerpo.correo) {\n    avisos.push({\n      para: cuerpo.correo,\n      quien: nombre,\n      asunto: 'Recibimos tu solicitud - SolarAndes',\n      texto: `${soloEmpresa ? 'Hola:' : `Hola, ${c.nombre.split(' ')[0]}:`}\\n\\nGracias por escribirnos. ${r.asesor.nombre} te contactará pronto para hablar de tu sistema solar.\\n\\nSolarAndes S.A.S.`,\n    });\n  }\n\n  // 2. Aviso a quien atiende (el asesor, o la gerente si el asesor ya no está activo)\n  const titulo = {\n    creado: `Nuevo lead para ti: ${nombre}`,\n    revision: `Nuevo lead (revisa si es un duplicado): ${nombre}`,\n    existente: `Tu cliente ${nombre} volvió a escribir`,\n  }[resultado];\n  const decidir = atiendeLaGerente && motivos.length ? `${motivos.join('\\n')}\\n\\n` : '';\n  avisos.push({\n    para: r.asesor.email,\n    quien: r.asesor.nombre,\n    asunto: titulo,\n    texto: `${titulo}\\n\\n${decidir}${ficha}\\n\\nTienes una tarea en el CRM para contactarlo.`,\n  });\n\n  // 3. Aviso aparte a la gerente cuando hay algo que decidir y no es ella quien atiende\n  if (motivos.length && correo_gerente && !atiendeLaGerente) {\n    avisos.push({\n      para: correo_gerente,\n      quien: 'Laura Méndez',\n      asunto: `Revisar lead ${r.codigo}: ${nombre}`,\n      texto: `${motivos.join('\\n')}\\n\\n${ficha}`,\n    });\n  }\n}\nreturn avisos.map((a) => ({ json: a }));"
       }
     },
     {
-      "id": "0b1c0c00-0000-4000-8000-000000000004",
-      "name": "Destino seguro",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "id": "0b1c0c00-0000-4000-8000-000000000011",
+      "name": "Enviar con destino seguro (00b)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
       "position": [
         1100,
         0
       ],
       "parameters": {
-        "jsCode": "// Ningún mensaje real sale hacia el set de datos: solo a los correos de la tabla destinos_prueba.\n// Lo demás (por ejemplo, los correos @solarandes.test del equipo) se desvía al correo de prueba.\nconst filas = $('Leer destinos').all().map((i) => i.json);\nconst correos = filas.filter((f) => f.tipo === 'correo' && f.valor).map((f) => String(f.valor).trim().toLowerCase());\nconst remitente = filas.find((f) => f.tipo === 'remitente' && f.valor)?.valor;\nif (!correos.length || !remitente) throw new Error('Destino seguro: faltan las filas correo y remitente en destinos_prueba');\n\nreturn $input.all().map(({ json: a }) => {\n  const para = String(a.para ?? '').trim().toLowerCase();\n  const permitido = correos.includes(para);\n  return {\n    json: {\n      remitente,\n      para: permitido ? para : correos[0],\n      asunto: permitido ? a.asunto : `[Prueba: era para ${a.quien} <${para}>] ${a.asunto}`,\n      texto: a.texto,\n      desviado: !permitido,\n    },\n  };\n});"
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "00b Enviar correo seguro",
+          "cachedResultName": "00b Enviar correo seguro"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
       }
     },
     {
-      "id": "0b1c0c00-0000-4000-8000-000000000005",
-      "name": "Enviar avisos",
-      "webhookId": "2bc23f04-d2ce-414b-90a8-e269bc726883",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "retryOnFail": true,
-      "maxTries": 3,
-      "waitBetweenTries": 5000,
+      "id": "0b1c0c00-0000-4000-8000-000000000012",
+      "name": "¿Salieron todos?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         1320,
         0
       ],
       "parameters": {
-        "operation": "send",
-        "fromEmail": "=SolarAndes <{{ $json.remitente }}>",
-        "toEmail": "={{ $json.para }}",
-        "subject": "={{ $json.asunto }}",
-        "emailFormat": "text",
-        "text": "={{ $json.texto }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "credentials": {
-        "smtp": {
-          "id": "yycbNAVIEK8Sqxxm",
-          "name": "Correo SolarAndes"
-        }
+        "jsCode": "// Si un aviso no salió, el flujo falla y llega la alerta: la reserva ya quedó tomada y no se\n// reintenta sola (se reenvía a mano). Si todos salieron, se confirma en el CRM\nconst fallidos = $input.all().filter((i) => !i.json.ok);\nif (fallidos.length) throw new Error(`No salieron ${fallidos.length} aviso(s): ${fallidos.map((i) => i.json.error).join(' | ').slice(0, 300)}`);\nreturn $input.all();"
       }
     },
     {
@@ -217,17 +188,6 @@
       "main": [
         [
           {
-            "node": "Leer destinos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Leer destinos": {
-      "main": [
-        [
-          {
             "node": "Armar avisos",
             "type": "main",
             "index": 0
@@ -239,25 +199,25 @@
       "main": [
         [
           {
-            "node": "Destino seguro",
+            "node": "Enviar con destino seguro (00b)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Destino seguro": {
+    "Enviar con destino seguro (00b)": {
       "main": [
         [
           {
-            "node": "Enviar avisos",
+            "node": "¿Salieron todos?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Enviar avisos": {
+    "¿Salieron todos?": {
       "main": [
         [
           {

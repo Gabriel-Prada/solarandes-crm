@@ -77,8 +77,11 @@ def test_flujos_del_repo(archivo):
     flujo = json.loads(archivo.read_text(encoding="utf-8"))
     assert f.es_del_proyecto(flujo["name"])
     assert archivo.name == f.nombre_de_archivo(flujo["name"])
-    # Todo flujo, salvo el de alertas, avisa cuando falla
-    if not flujo["name"].startswith("00 "):
+    # Todo flujo avisa cuando falla, salvo el de alertas y 00b (el subflujo de correo): el error de 00b
+    # le llega a quien lo llamó, y si 00b también avisara, una sola falla mandaría dos alertas
+    if flujo["name"].startswith("00b "):
+        assert "errorWorkflow" not in flujo["settings"]
+    elif not flujo["name"].startswith("00 "):
         assert flujo["settings"].get("errorWorkflow") == "00 Alertas de error"
     # Los subflujos se nombran (no por código interno), y el flujo nombrado existe en el repo
     nombres = {json.loads(a.read_text(encoding="utf-8"))["name"] for a in CARPETA.glob("*.json")}
@@ -98,3 +101,10 @@ def test_flujos_del_repo(archivo):
             valor = nodo["parameters"].get(campo)
             if valor is not None:
                 assert str(valor).startswith("="), f"{nodo['name']}: {campo} está escrito a mano"
+
+
+def test_00b_solo_da_por_enviado_lo_que_gmail_acepto():
+    """Si el paso de correo falla entero, n8n deja pasar los correos sin error: "salió" se comprueba en positivo."""
+    flujo = json.loads((CARPETA / "00b-enviar-correo-seguro.json").read_text(encoding="utf-8"))
+    codigo = next(n for n in flujo["nodes"] if n["name"] == "Resultado")["parameters"]["jsCode"]
+    assert "accepted" in codigo and "!item.json.error" not in codigo

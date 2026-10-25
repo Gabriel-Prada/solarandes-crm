@@ -1,0 +1,145 @@
+{
+  "name": "00b Enviar correo seguro",
+  "nodes": [
+    {
+      "id": "0b0b0000-0000-4000-8000-000000000001",
+      "name": "Cuando lo llamen",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "0b0b0000-0000-4000-8000-000000000002",
+      "name": "Leer destinos",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "executeOnce": true,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "returnAll": true,
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "destinos_prueba"
+        }
+      }
+    },
+    {
+      "id": "0b0b0000-0000-4000-8000-000000000003",
+      "name": "Destino seguro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "executeOnce": true,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Ningún mensaje real sale hacia el set de datos: solo a los correos de la tabla destinos_prueba.\n// Lo demás (por ejemplo, los correos @solarandes.test del equipo) se desvía al correo de prueba.\n// Cada correo trae { para, quien, asunto, texto } y, si quien llama lo necesita, una referencia (ref)\nconst filas = $('Leer destinos').all().map((i) => i.json);\nconst correos = filas.filter((f) => f.tipo === 'correo' && f.valor).map((f) => String(f.valor).trim().toLowerCase());\nconst remitente = filas.find((f) => f.tipo === 'remitente' && f.valor)?.valor;\nif (!correos.length || !remitente) throw new Error('Destino seguro: faltan las filas correo y remitente en destinos_prueba');\n\nreturn $('Cuando lo llamen').all().map(({ json: c }) => {\n  const para = String(c.para ?? '').trim().toLowerCase();\n  const permitido = correos.includes(para);\n  return {\n    json: {\n      ref: c.ref ?? null,\n      remitente,\n      para: permitido ? para : correos[0],\n      asunto: permitido ? c.asunto : `[Prueba: era para ${c.quien} <${para}>] ${c.asunto}`,\n      texto: c.texto,\n      desviado: !permitido,\n    },\n  };\n});"
+      }
+    },
+    {
+      "id": "0b0b0000-0000-4000-8000-000000000004",
+      "name": "Enviar",
+      "webhookId": "5d2f6a1e-3b8c-4e0f-9a17-6c4d2b8e0f31",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "onError": "continueRegularOutput",
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "operation": "send",
+        "fromEmail": "=SolarAndes <{{ $json.remitente }}>",
+        "toEmail": "={{ $json.para }}",
+        "subject": "={{ $json.asunto }}",
+        "emailFormat": "text",
+        "text": "={{ $json.texto }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "yycbNAVIEK8Sqxxm",
+          "name": "Correo SolarAndes"
+        }
+      }
+    },
+    {
+      "id": "0b0b0000-0000-4000-8000-000000000005",
+      "name": "Resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Qué pasó con cada correo, en el mismo orden en que llegaron. Un correo que falla no detiene a los\n// demás: quien llamó decide (01c falla y avisa; 03 suelta ese resumen para la hora siguiente).\n// \"Salió\" se comprueba en positivo (Gmail lo aceptó): si el paso de correo falla entero (por ejemplo,\n// sin credencial), n8n deja pasar los correos tal como entraron, sin error y sin haberlos enviado\nreturn $input.all().map((item, i) => {\n  const enviado = $('Destino seguro').itemMatching(i).json;\n  const r = item.json;\n  const ok = Array.isArray(r.accepted) && r.accepted.length > 0 && !(r.rejected?.length);\n  const error = ok ? null : (r.error?.message ?? r.error ?? 'Gmail no confirmó que aceptara el correo');\n  return { json: { ref: enviado.ref, desviado: enviado.desviado, ok, error } };\n});"
+      }
+    }
+  ],
+  "connections": {
+    "Cuando lo llamen": {
+      "main": [
+        [
+          {
+            "node": "Leer destinos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer destinos": {
+      "main": [
+        [
+          {
+            "node": "Destino seguro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Destino seguro": {
+      "main": [
+        [
+          {
+            "node": "Enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar": {
+      "main": [
+        [
+          {
+            "node": "Resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/Bogota",
+    "executionOrder": "v1"
+  }
+}
