@@ -21,7 +21,7 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 | 0 | **Alertas de error** ✅ | Cuando cualquier otro flujo falla | Avisa por Telegram (y correo) qué falló, cuándo y con enlace a la ejecución. Hecho y probado el 2026-10-23, con Telegram y correo como canales independientes | Telegram + correo (SMTP) |
 | 1 | **Captura de leads por la web** | Alguien llena el formulario | Revisa duplicados, crea el lead en el CRM, lo asigna, da la bienvenida y avisa al asesor | CRM + correo |
 | 2 | **Captura por WhatsApp** ⏸️ pospuesto | Alguien le escribe al número de la empresa | Lo mismo que el 1, pero desde WhatsApp | Meta (WhatsApp) + n8n visible desde internet |
-| 3 | **Seguimiento** | Todos los días a las 8 a. m. | Lead con 3 días sin actividad → recordatorio al asesor; con 7 → aviso a Laura | CRM + correo |
+| 3 | **Seguimiento** ✅ | Cada hora de 8 a. m. a 6 p. m., de lunes a viernes (un resumen por persona al día) | Lead con 3 días sin actividad → recordatorio al asesor; con 7 → aviso a Laura | CRM + correo |
 | 4 | **Visitas técnicas** ⏸️ pospuesto | Un asesor agenda una visita en el CRM | Crea el evento en el calendario, avisa al técnico y le recuerda al cliente el día antes | Google Calendar |
 | 5 | **Reporte semanal** | Cada lunes a las 7 a. m. | Correo a Laura con las métricas de la semana | CRM + correo |
 | 6 | **Posventa** | Todos los días | Instalación cumple 6 meses → recordatorio de mantenimiento | CRM + correo o WhatsApp |
@@ -208,6 +208,83 @@ La revisión encontró 14 puntos. El diseño queda así (cambia lo de arriba don
 - **n8n:** 01d "Revisar el buzón del CRM" (cada minuto: avisos primero, alarmas al final y sin repetirse) y la confirmación en 01c.
 - **Probado en vivo en local:** el formulario registra al instante, 01d manda los avisos en menos de un minuto y confirma, los datos copiados se borran (queda la autorización), un dato inválido muestra el motivo y conserva lo escrito.
 - **Aceptado:** la casilla de autorización hay que marcarla de nuevo después de un error (la autorización la da la persona cada vez), y cada intento con un dato mal escrito cuenta para el límite de 5 cada 10 minutos.
+
+## 4c. El flujo 3: seguimiento (diseño, 2026-10-24, antes de construir)
+
+**La regla del cliente** ([requisitos.md](requisitos.md), sección 6): un lead sin actividad en 3 días es "sin seguimiento" y se le recuerda al asesor; a los 7 días se avisa a la gerente. "Lead" es toda venta abierta (ni ganada ni perdida), como en el panel de Laura.
+
+**Cómo está hoy la base (2026-10-24):** 114 ventas abiertas; 110 llevan más de 3 días sin actividad y 69 más de 7 (los datos ficticios son viejos). El panel de Laura ya cuenta los "sin seguimiento" con su propia regla (migración 004): la última actividad **hecha** de la venta o, si no tiene, el día en que se creó.
+
+**Ojo: ya hay tres copias de la regla.** El panel (migración 004, en SQL), el tablero de ventas (`apps/crm/src/lib/seguimiento.ts`, en TypeScript: el borde ámbar a los 3 días y rojo a los 7) y, si no se tiene cuidado, el flujo. Las tres deben ser una sola.
+
+**Cómo funciona:**
+1. **Una sola regla, en la base de datos:** una vista `seguimiento_ventas` (una consulta guardada con nombre) que dice, por cada venta abierta, su última actividad, los días sin actividad y el nivel (al día, 3+ o 7+). Corre con los permisos de quien la mira (un asesor solo ve lo suyo). La usan el panel de Laura (migración nueva que reescribe `panel_gerente()`), el tablero de ventas (lee los días de la vista y se borra la copia en TypeScript) y el flujo.
+2. **Un registro de qué se avisó:** una tabla `avisos_seguimiento` con una fila por venta avisada: nivel (3 o 7), a quién y la fecha de la última actividad que tenía. Una venta entra al resumen si ya llegó al nivel y no tiene su fila. Es como la lista de "ya le avisé" de una secretaria, pero anotada con la fecha: si la venta revive y se vuelve a enfriar, la fecha es otra y se avisa de nuevo.
+3. **Ventanilla del CRM** `/api/automatizaciones/seguimiento` (con la llave de las automatizaciones): **reserva** el resumen de hoy de cada destinatario que tenga algo nuevo y lo devuelve armado. n8n confirma cada uno al enviarlo (y ahí se anotan sus filas en `avisos_seguimiento`) o lo suelta si falló.
+4. **Flujo 03 en n8n:** cada hora de 8 a. m. a 6 p. m. Pide los resúmenes, los pasa por "destino seguro", los manda y confirma.
+
+**Qué cuenta como actividad** (decisiones, cambian los números de hoy: el 110 y el 69 van a bajar):
+- Las actividades **hechas** de la venta y las del contacto que no están ligadas a ninguna venta (el CRM deja anotar una llamada sin elegir la venta). Nunca nada anterior a la creación de la venta: la fecha que vale es la más reciente entre "se creó la venta" y "su última actividad".
+- Una tarea cuenta el día en que **se completó**, no el día en que estaba agendada (columna nueva `completada_en`, que llena la base sola).
+- Una **visita agendada** de esa venta que todavía no llega cuenta como "hoy" (la venta espera la visita, no está olvidada), con un tope de 30 días. Si pasó y nadie la marcó, cuenta su fecha: hay 3 días de margen antes del recordatorio.
+- "3 días" son 72 horas, como hoy en el panel y el tablero.
+
+**Qué recibe cada uno:**
+- **El asesor:** sus ventas que llegaron a 3+ días y no se le habían avisado (código, nombre, etapa, días y enlace a la ficha), y sus **tareas pendientes vencidas hace 3+ días que no tienen venta** (por ejemplo, "el cliente volvió a escribir", que crea la captura del flujo 1). Si no hay nada nuevo, no recibe correo.
+- **Laura:** un solo correo con las ventas que llegaron a 7+ días, agrupadas por asesor, y aparte las de asesores que ya no están activos (cada venta una sola vez).
+- Los textos siempre dicen "3+ días" o "7+ días", nunca "sin seguimiento" a secas (hoy el tablero lo usa para 3 y el panel para 7).
+
+### Qué puede fallar
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | El correo, el panel y el tablero dan números distintos | Una sola regla, la vista `seguimiento_ventas`, que usan los tres; se borra la copia en TypeScript |
+| 2 | El asesor anota la llamada en el contacto sin elegir la venta y la venta sigue "sin seguimiento" | Cuenta también la actividad del contacto que no está ligada a ninguna venta |
+| 3 | Por la regla 2, una venta nueva de un cliente antiguo nace con 300 días "sin actividad" (cuentan sus notas de 2025) | Nada anterior a la creación de la venta cuenta: vale la fecha más reciente entre la creación y la última actividad. Con prueba de este caso exacto |
+| 4 | El asesor completa hoy una tarea agendada hace 5 días y la venta sigue "sin seguimiento" | `completada_en`: al pasar de pendiente a hecha, la hora del momento; al desmarcarla, vacía |
+| 5 | La migración del Excel (fase 2) inserta 92 notas viejas ya hechas: si contaran como de hoy, esconderían esas ventas 3 días | Al insertar algo ya hecho, `completada_en` es su propia fecha (o hoy, si la fecha es futura); las filas que ya existen se llenan igual. La regla lee la fecha de la actividad si la columna quedó vacía |
+| 6 | Una visita agendada a futuro hace ver la venta como olvidada; o una visita que pasó sin marcarse la esconde para siempre | Visita futura de esa venta = "hoy" (máximo 30 días adelante); visita pasada sin marcar = su fecha |
+| 7 | El PC está apagado a las 8 a. m. (n8n no recupera las horas perdidas) | Corre cada hora de 8 a 6; y como lo avisado se anota por venta, lo de un día perdido sale al siguiente |
+| 8 | El resumen sale dos veces el mismo día (dos ejecuciones a la vez, o una corrida a mano) | La reserva por día y destinatario, en la base de datos y en un solo paso (lo aprendido en el flujo 1: nunca "revisar y después actuar" en n8n) |
+| 9 | A Bruno le pasan una venta que ya se le había avisado a Ana | La fila de "ya avisé" lleva el destinatario: a Bruno se le avisa |
+| 10 | Una venta revive (el asesor llama) y a la semana se vuelve a enfriar | La fila lleva la fecha de la última actividad: es otra, se avisa de nuevo |
+| 11 | Gmail falla con un correo | Ese resumen se suelta y lo intenta la hora siguiente |
+| 12 | n8n se detiene después de enviar y antes de confirmar | A los 30 minutos la reserva se da por abandonada y se reintenta: puede llegar repetido. Riesgo aceptado: un resumen repetido molesta poco; uno perdido es un lead olvidado |
+| 13 | A las 12 m. un resumen todavía no ha salido (Gmail sigue fallando, o el PC se prendió tarde) | Una sola alarma por día, desde las 12 m., que dice quién no recibió su resumen (sin nombres de clientes). Un día sin nada nuevo no suena |
+| 14 | El primer día salen 110 recordatorios y 69 avisos (los datos son viejos) | Un correo por persona, no por venta (4 correos), con todas las ventas en una lista ordenada por días; todas quedan anotadas |
+| 15 | El cliente que ya compró vuelve a escribir: la tarea "Contactar" no tiene venta abierta y nadie la vigila | Las tareas pendientes sin venta, vencidas hace 3+ días, van en el resumen del asesor |
+| 16 | El asesor de una venta ya no está activo (renunció) | Su lista va a Laura (la primera gerente activa, la misma regla de la captura), una sola vez y en su propia sección |
+| 17 | Un nombre que llegó por el formulario trae un enlace o código malicioso | Correo en texto plano (como los avisos del flujo 1): nada se interpreta como HTML. Los nombres ya vienen limpios y con máximo 120 caracteres |
+| 18 | El correo le llega a alguien del set de datos | Solo destinatarios internos, y todo pasa por "destino seguro": los `@solarandes.test` se desvían al correo de prueba |
+| 19 | Datos personales de más | En el correo, solo código, nombre, etapa, días y enlace (nunca celular ni correo del cliente); en la alarma, ningún cliente. n8n guarda el historial de ejecuciones con nombres: con datos ficticios está bien; en producción se acorta |
+| 20 | Un asesor ve las ventas de otros con la vista o llama a la reserva desde el navegador | La vista corre con los permisos de quien la mira; reservar, confirmar y soltar solo los puede llamar la llave de servicio, como en la migración 012 |
+| 21 | El CRM está caído | El flujo reintenta la hora siguiente; la alarma de "CRM caído" ya la da el 01d cada 30 minutos |
+| 22 | El "día" del resumen cambia a las 7 p. m. (el servidor está en hora UTC) | El día se calcula en hora de Bogotá, en la base de datos |
+
+**Decisión técnica:** "destino seguro" hoy vive dentro de 01c. Para no tener dos copias, se saca a un subflujo propio que usan 01c y 03 (es la misma idea de la fase 2: una regla, un lugar). Como toca algo que ya funciona, se vuelve a probar 01c.
+
+**Decisión de Gabriel (2026-10-24):** el resumen sale solo de lunes a viernes; lo del fin de semana sale el lunes.
+
+### Lo que quedó construido (2026-10-24)
+
+- **Base de datos:** migración 016 (`completada_en`, la vista `seguimiento_ventas`, `panel_gerente` reescrito con ella, `resumenes_seguimiento`, `avisos_seguimiento` y las funciones `tomar_resumenes_seguimiento`, `confirmar_resumen` y `soltar_resumen`) y 017 (ajustes de la revisión del código). Pruebas: `tests/test_seguimiento_supabase.py` (26).
+- **CRM:** el tablero de ventas lee los días de la vista (se borró `src/lib/seguimiento.ts`); la ventanilla `/api/automatizaciones/seguimiento` (tomar, confirmar, soltar) y el texto de los correos en `src/lib/automatizaciones/seguimiento.ts`, con pruebas.
+- **n8n:** el subflujo 00b "Enviar correo seguro" (destino seguro, sacado de 01c, que ahora lo usa) y el flujo 03 "Seguimiento de ventas".
+- **Probado en vivo en local:** salieron los 4 resúmenes (Laura 69 ventas con 7+ días, Andrés 43, Valentina 39 y Camilo 22 con 3+), desviados al correo de prueba y anotados; una segunda corrida no mandó nada; con el CRM apagado la alarma sale en español. El panel, el tablero y el correo dan los mismos números. 01c sigue funcionando con 00b.
+
+**Ajustes después de la revisión del código:**
+- 00b solo da un correo por enviado si Gmail lo aceptó: si el paso de correo falla entero (por ejemplo, sin credencial), n8n deja pasar los correos sin error y se habrían confirmado sin haber salido.
+- 00b no tiene flujo de errores propio: su error le llega a quien lo llamó, así una falla avisa una vez y no dos. En 03, si 00b falla, se sueltan todos los resúmenes y entra en la alarma de una vez al día.
+- Sin gerente activa, lo que le toca a ella (7+ días, asesores inactivos) se informa con la alarma en vez de perderse en silencio (017).
+- Una tarea sin venta del técnico o la contadora va al asesor del contacto: ellos no pueden abrir la ficha (017).
+- Los resúmenes de días anteriores que nunca salieron se borran: guardaban nombres de clientes (017).
+- Una confirmación que el CRM rechaza (otra ejecución retomó la reserva) también hace sonar la alarma.
+- En el tablero, una venta que se acaba de mover a ganada o perdida deja de verse en rojo.
+
+**Aceptado:**
+- 00b no reintenta solo: reintentar el paso completo reenviaría también los correos que sí salieron. Si Gmail falla, 01c avisa (los avisos se reenvían a mano) y 03 lo intenta la hora siguiente.
+- Si una venta queda con un asesor distinto al del contacto, el tablero de ese asesor no ve las actividades de otros en ese contacto y puede mostrar más días que el correo. Hoy no pasa (el CRM no tiene cómo reasignar una venta sola); cuando exista, venta y contacto deben moverse juntos.
+- Una falla en 01c que llama 01 o 01d avisa dos veces (la de 01c y la de quien lo llamó). Ya pasaba antes del flujo 3.
 
 ## 5. Antes de construir
 
