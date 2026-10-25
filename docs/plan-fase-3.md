@@ -156,6 +156,59 @@ Los pasos 3 a 6 ocurren **en una sola operación** de la base de datos: o se gua
 
 ---
 
+## 4b. El formulario web: un buzón en el CRM (sin túnel)
+
+**Decisión de Gabriel (2026-10-24):** el formulario no le habla a n8n por un túnel, sino al CRM. Motivos: el túnel abre todo n8n a internet (su pantalla y su API), cambia de dirección al reiniciarse, y con el PC apagado el lead se pierde. El túnel queda para WhatsApp (pospuesto), que sí lo necesita.
+
+**Cómo funciona:**
+1. **Página pública `/cotiza` en el CRM** (sin login: el proxy la deja pasar). Campos: nombre, empresa (opcional), celular, ciudad (lista), correo (opcional), consumo (opcional), mensaje, la casilla de autorización de datos (Ley 1581), un campo trampa invisible y el número del envío (uno por cada vez que se abre la página).
+2. **Ventanilla del formulario** (`POST`, en el servidor del CRM): campo trampa → "gracias" sin guardar; límite de envíos → "intenta más tarde"; luego la misma lógica de la puerta de n8n (limpiar con las reglas de la fase 2, `buscarEnCrm`, `capturar_lead`), compartida en una sola función, sin copias. Guarda también los datos del envío (mensaje, correo, consumo) para que los avisos los usen.
+3. **Ventanilla "pendientes de aviso"** (con la llave de las automatizaciones): devuelve los envíos de los últimos 7 días que ya quedaron registrados y todavía no tienen la reserva de avisos, con su respuesta y sus datos.
+4. **Flujo 01d "Revisar el buzón"** en n8n: cada minuto pregunta por los pendientes y llama a 01c por cada uno. 01c pide la reserva, así que los avisos salen una sola vez aunque dos ejecuciones vean el mismo lead.
+
+**Base de datos (migración nueva):** guardar los datos del envío en `envios_recibidos`; una tabla de intentos del formulario con la huella (sha256 con sal) de la IP, nunca la IP; una función que dice si un envío está dentro del límite (5 cada 10 minutos por huella, 60 por hora en total) y anota el intento; y la consulta de pendientes de aviso.
+
+### Qué puede fallar
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | Doble clic o reenvío del formulario | El botón se desactiva al enviar; cada página abierta tiene su número de envío: la segunda vez es "ya procesado" |
+| 2 | Un robot llena el formulario | Campo trampa invisible: si viene lleno, "gracias" sin guardar. Límite: 5 envíos cada 10 minutos por conexión y 60 por hora en total; pasado eso, "intenta más tarde" |
+| 3 | Un robot pasa los filtros | Leads basura en el CRM, topados en 60 por hora; Laura los borra. Riesgo aceptado |
+| 4 | Datos inválidos | El formulario muestra el motivo; no se guarda nada |
+| 5 | n8n apagado | El lead igual queda en el CRM, asignado y con la tarea del asesor. Los avisos salen cuando n8n vuelve (pendientes de los últimos 7 días) |
+| 6 | El CRM caído | El formulario no carga o dice "intenta más tarde": ese lead no se puede guardar (la página muestra un correo de contacto). n8n no puede preguntar y suena la alarma |
+| 7 | La alarma del 6 sonaría cada minuto | Avisa la primera vez y luego cada 30 minutos mientras dure la caída |
+| 8 | El mismo lead lo ven dos ejecuciones a la vez | La reserva de avisos (migraciones 012 y 013): una sola vez |
+| 9 | Gmail falla al mandar un aviso | Suena la alarma; la reserva ya quedó tomada y no se reintenta sola (se reenvía a mano) |
+| 10 | Una persona real deja sus datos | La página dice que es una demostración y pide autorización de datos (Ley 1581). Los correos fuera de la lista blanca se desvían al correo de prueba: nunca se le escribe a un desconocido |
+| 11 | Guardar la IP para el límite | Solo una huella irreversible (sha256 con sal secreta), nunca la IP |
+| 12 | Muchos envíos agotan el cupo diario de Gmail y las alertas dejan de salir por correo | El tope de 60 por hora; las alertas también salen por Telegram |
+
+### Ajustes después de la revisión del diseño (2026-10-24, antes de escribir código)
+
+La revisión encontró 14 puntos. El diseño queda así (cambia lo de arriba donde se contradiga):
+- **Número de envío:** se crea en el navegador al enviar (`crypto.randomUUID()`), no en el servidor: Next 16 guarda la página como fija y todos los visitantes recibirían el mismo. El servidor exige formato UUID y la clave queda `form:<uuid>`.
+- **Respuesta de la página pública:** solo "gracias", el motivo de validación de `prepararLead` o "intenta más tarde"; igual para nuevo, existente, revisión o ya procesado (si no, revelaría si un celular es cliente y quién lo atiende). Nunca el mensaje crudo de la base.
+- **Límite de envíos:** en una función de la base con candados (`pg_advisory_xact_lock`) por huella y total, que cuenta e inserta en la misma operación; prueba con conexiones simultáneas. Topes: 5 cada 10 minutos por huella, 60 por hora y **100 por día** en total (cuidar el cupo de Gmail). Al llegar a un tope, la ventanilla de pendientes lo informa y 01d hace sonar la alarma. Los intentos se borran a las 24 horas.
+- **Huella de la IP:** HMAC con una llave secreta (`HUELLA_SECRETA`), del bloque /64 si es IPv6; la IP se lee de `x-real-ip` o la primera de `x-forwarded-for` (las pone Vercel); en local, "local".
+- **Envío del formulario por Server Action** (Next revisa que venga del mismo sitio): una página ajena no puede mandar envíos a nombre de sus visitantes.
+- **Datos del envío guardados en `capturar_lead`** para todas las entradas (formulario, webhook, más adelante WhatsApp): la ventanilla de pendientes devuelve `{cuerpo, respuesta}`, lo mismo que necesita 01c, gane quien gane la reserva.
+- **Confirmación de avisos:** 01c confirma al terminar (`avisos_enviados_en`); los reservados hace más de 15 minutos sin confirmar se informan y 01d hace sonar la alarma con la clave (no se reenvían solos, para no duplicar).
+- **Radicados viejos:** la migración los marca como ya avisados; la consulta de pendientes exige `contacto_id` y `respuesta`, y devuelve como máximo 20, los más viejos primero.
+- **Ley 1581:** la casilla de autorización se revisa en el servidor y se guarda con fecha y versión del texto; los datos copiados en el radicado se borran tras confirmar los avisos o a los 30 días.
+- **Portero:** la excepción es `cotiza(?:/|$)` y la página va fuera de la carpeta `(crm)`.
+- **Llaves:** cambiar `AUTOMATIZACIONES_TOKEN` antes de abrir el formulario (con el buzón también abre datos de leads). La llave secreta de Supabase: decisión de Gabriel.
+- **Riesgos aceptados (demostración):** alguien puede gastar el tope diario a propósito (la alarma lo muestra; Cloudflare Turnstile sería el siguiente paso); la basura que pase los filtros se limpia desde Supabase (el CRM no tiene botón de borrar, y un robot con el celular de un cliente deja notas en su ficha); con el PC apagado los avisos esperan, aunque la tarea del asesor queda en el CRM al instante.
+
+### Lo que quedó construido (2026-10-24)
+
+- **Base de datos:** migraciones 014 (datos del envío en `capturar_lead`, `intentos_formulario` y `permitir_envio_formulario` con turno, `avisos_pendientes`, `confirmar_avisos`, radicados viejos marcados) y 015 (las reservas atascadas traen la ejecución que las tomó; la limpieza de 30 días también corre en cada envío). Pruebas: `tests/test_buzon_formulario_supabase.py`, entre ellas 10 envíos simultáneos desde la misma conexión: pasan exactamente 5.
+- **CRM:** la página `/cotiza` (`apps/crm/src/app/cotiza/`, Server Action con pruebas que simulan la base), la huella y la lectura del formulario (`src/lib/formulario/`), el registro compartido (`src/lib/automatizaciones/registrar.ts`) y la ventanilla `/api/automatizaciones/pendientes` (dice además si falta `HUELLA_SECRETA`).
+- **n8n:** 01d "Revisar el buzón del CRM" (cada minuto: avisos primero, alarmas al final y sin repetirse) y la confirmación en 01c.
+- **Probado en vivo en local:** el formulario registra al instante, 01d manda los avisos en menos de un minuto y confirma, los datos copiados se borran (queda la autorización), un dato inválido muestra el motivo y conserva lo escrito.
+- **Aceptado:** la casilla de autorización hay que marcarla de nuevo después de un error (la autorización la da la persona cada vez), y cada intento con un dato mal escrito cuenta para el límite de 5 cada 10 minutos.
+
 ## 5. Antes de construir
 
 1. Lee este plan y pregunta lo que no quede claro.

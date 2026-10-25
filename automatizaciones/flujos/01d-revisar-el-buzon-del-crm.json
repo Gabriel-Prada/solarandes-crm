@@ -1,0 +1,357 @@
+{
+  "name": "01d Revisar el buzón del CRM",
+  "nodes": [
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000001",
+      "name": "Cada minuto",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000002",
+      "name": "Leer configuración",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "returnAll": true,
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "configuracion"
+        }
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000003",
+      "name": "Preparar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// La dirección del CRM y el correo de la gerente, de la tabla configuracion\nconst config = Object.fromEntries($input.all().map((i) => [i.json.clave, i.json.valor]));\nif (!config.crm_url) throw new Error('Falta la fila crm_url en la tabla configuracion');\nreturn [{ json: { crm_url: config.crm_url.replace(/\\/$/, ''), correo_gerente: config.correo_gerente ?? '' } }];"
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000004",
+      "name": "Preguntar al CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.crm_url }}/api/automatizaciones/pendientes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000005",
+      "name": "Revisar la respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Revisa lo que contestó el CRM. Las alarmas suenan una vez (no cada minuto): n8n guarda en la\n// memoria del flujo qué ya avisó. Esa memoria solo existe cuando el flujo corre activo, no a mano.\nconst memoria = $getWorkflowStaticData('global');\nconst r = $input.first().json;\nconst { crm_url, correo_gerente } = $('Preparar').first().json;\nconst ahora = Date.now();\nconst MEDIA_HORA = 30 * 60 * 1000;\nconst alarmas = [];\n\n// n8n reescribe los mensajes con códigos de red (ECONNREFUSED...): se traducen antes\nconst traducir = (m) =>\n  /ECONNREFUSED|ECONNRESET/.test(m) ? 'el CRM no contesta: está apagado o sin conexión'\n  : /ETIMEDOUT|ESOCKETTIMEDOUT|timeout/i.test(m) ? 'el CRM tardó demasiado en contestar'\n  : /ENOTFOUND|EAI_AGAIN/.test(m) ? 'no se encontró la dirección del CRM'\n  : /401|authoriz/i.test(m) ? 'la llave no coincide (AUTOMATIZACIONES_TOKEN en n8n y en el CRM)'\n  : m;\n\nif (r.error || !Array.isArray(r.pendientes)) {\n  // El CRM no contestó bien: alarma la primera vez y después cada media hora mientras dure\n  memoria.caidoDesde ??= ahora;\n  if (!memoria.ultimaAlarmaCaida || ahora - memoria.ultimaAlarmaCaida >= MEDIA_HORA) {\n    memoria.ultimaAlarmaCaida = ahora;\n    const minutos = Math.round((ahora - memoria.caidoDesde) / 60000);\n    const desde = minutos ? ` (desde hace ${minutos} minutos)` : '';\n    const motivo = traducir(r.error?.message ?? String(r.error ?? 'respuesta inesperada'));\n    alarmas.push(`No se pudo revisar el buzón del CRM${desde}: ${motivo}. Mientras tanto, los leads del formulario quedan en el CRM pero no reciben avisos.`);\n  }\n  return [{ json: { alarma: alarmas.join(' ') || null, leads: [] } }];\n}\ndelete memoria.caidoDesde;\ndelete memoria.ultimaAlarmaCaida;\n\n// Avisos sin confirmar (n8n se detuvo, o falló la confirmación): una alarma por lead. No se reenvían\n// solos: a veces los correos sí salieron y solo falló la confirmación\nmemoria.atascadosAvisados ??= [];\nconst atascados = (r.atascados ?? []).filter((x) => !memoria.atascadosAvisados.includes(x.clave));\nif (atascados.length) {\n  memoria.atascadosAvisados = [...memoria.atascadosAvisados, ...atascados.map((x) => x.clave)].slice(-200);\n  const detalle = atascados.map((x) => `${x.clave} (ejecución ${x.ejecucion} de 01c)`).join(', ');\n  alarmas.push(`Los avisos de ${atascados.length} lead(s) no quedaron confirmados: ${detalle}. Revisa esa ejecución en n8n antes de reenviar: puede que los correos sí hayan salido.`);\n}\n\n// Sin la llave de las huellas, el formulario responde \"intenta más tarde\" a todos\nif (r.formulario && r.formulario.huella_configurada === false) {\n  if (!memoria.ultimaAlarmaHuella || ahora - memoria.ultimaAlarmaHuella >= MEDIA_HORA) {\n    memoria.ultimaAlarmaHuella = ahora;\n    alarmas.push('Falta HUELLA_SECRETA en el servidor del CRM: el formulario /cotiza responde \"intenta más tarde\" a todos.');\n  }\n}\n\n// Los topes del formulario: una alarma por hora o por día\nconst f = r.formulario ?? {};\nconst hora = new Date().toISOString().slice(0, 13);\nconst dia = hora.slice(0, 10);\nif (f.ultima_hora >= f.tope_hora && memoria.topeHora !== hora) {\n  memoria.topeHora = hora;\n  alarmas.push(`El formulario llegó al tope de ${f.tope_hora} envíos en una hora: los visitantes ven \"intenta más tarde\". ¿Un ataque?`);\n}\nif (f.ultimo_dia >= f.tope_dia && memoria.topeDia !== dia) {\n  memoria.topeDia = dia;\n  alarmas.push(`El formulario llegó al tope de ${f.tope_dia} envíos en 24 horas: los visitantes ven \"intenta más tarde\". ¿Un ataque?`);\n}\n\n// Lo que necesita 01c por cada lead\nconst leads = r.pendientes.map((p) => ({\n  respuesta: p.respuesta,\n  cuerpo: { ...(p.cuerpo ?? {}), clave: p.clave },\n  correo_gerente,\n  crm_url,\n}));\nreturn [{ json: { alarma: alarmas.length ? alarmas.join(' ') : null, leads } }];"
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000008",
+      "name": "Un lead por aviso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "alwaysOutputData": true,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Un ítem por lead: 01c se llama una vez por cada uno\nreturn $input.first().json.leads.map((lead) => ({ json: lead }));"
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000010",
+      "name": "¿Hay leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b1c0d00-0000-4000-8000-000000000097",
+              "leftValue": "={{ $json.cuerpo?.clave }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000009",
+      "name": "Avisos del lead (01c)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1760,
+        -120
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "01c Avisos de un lead",
+          "cachedResultName": "01c Avisos de un lead"
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000011",
+      "name": "Juntar alarmas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "executeOnce": true,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Todas las alarmas de esta vuelta en un solo aviso, después de mandar los avisos de los leads\nconst alarmas = [];\nconst revision = $('Revisar la respuesta').first().json.alarma;\nif (revision) alarmas.push(revision);\nif ($('Avisos del lead (01c)').isExecuted) {\n  const fallidos = $('Avisos del lead (01c)').all().filter((i) => i.json.error);\n  if (fallidos.length) {\n    alarmas.push(`Fallaron los avisos de ${fallidos.length} lead(s): ${fallidos.map((i) => i.json.error?.message ?? i.json.error).join(' | ').slice(0, 300)}. Revisa las ejecuciones de 01c.`);\n  }\n}\nreturn [{ json: { alarma: alarmas.length ? alarmas.join(' ') : null } }];"
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000006",
+      "name": "¿Hay alarma?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b1c0d00-0000-4000-8000-000000000096",
+              "leftValue": "={{ $json.alarma }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b1c0d00-0000-4000-8000-000000000007",
+      "name": "Alarma del buzón",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2420,
+        0
+      ],
+      "parameters": {
+        "errorMessage": "={{ $json.alarma }}"
+      }
+    }
+  ],
+  "connections": {
+    "Cada minuto": {
+      "main": [
+        [
+          {
+            "node": "Leer configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer configuración": {
+      "main": [
+        [
+          {
+            "node": "Preparar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar": {
+      "main": [
+        [
+          {
+            "node": "Preguntar al CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preguntar al CRM": {
+      "main": [
+        [
+          {
+            "node": "Revisar la respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revisar la respuesta": {
+      "main": [
+        [
+          {
+            "node": "Un lead por aviso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Un lead por aviso": {
+      "main": [
+        [
+          {
+            "node": "¿Hay leads?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay leads?": {
+      "main": [
+        [
+          {
+            "node": "Avisos del lead (01c)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Juntar alarmas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisos del lead (01c)": {
+      "main": [
+        [
+          {
+            "node": "Juntar alarmas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar alarmas": {
+      "main": [
+        [
+          {
+            "node": "¿Hay alarma?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay alarma?": {
+      "main": [
+        [
+          {
+            "node": "Alarma del buzón",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "errorWorkflow": "00 Alertas de error",
+    "timezone": "America/Bogota",
+    "executionOrder": "v1"
+  }
+}

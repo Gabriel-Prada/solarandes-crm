@@ -156,6 +156,38 @@
           "name": "Correo SolarAndes"
         }
       }
+    },
+    {
+      "id": "0b1c0c00-0000-4000-8000-000000000010",
+      "name": "Confirmar avisos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Cuando lo llamen').first().json.crm_url }}/api/automatizaciones/avisos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ clave: $('Cuando lo llamen').first().json.cuerpo.clave, ejecucion: $execution.id, accion: 'confirmar' }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      }
     }
   ],
   "connections": {
@@ -219,6 +251,17 @@
         [
           {
             "node": "Enviar avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar avisos": {
+      "main": [
+        [
+          {
+            "node": "Confirmar avisos",
             "type": "main",
             "index": 0
           }
