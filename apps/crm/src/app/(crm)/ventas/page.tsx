@@ -5,6 +5,8 @@ import { crearClienteSupabase } from "@/lib/supabase/servidor";
 
 import { TableroVentas, type TarjetaVenta } from "./tablero";
 
+type FilaVenta = Omit<TarjetaVenta, "seguimiento">;
+
 export const metadata: Metadata = { title: "Ventas" };
 
 const DIAS_CERRADAS = 30; // las ganadas y perdidas se muestran solo si se cerraron hace poco
@@ -19,27 +21,37 @@ export default async function PaginaVentas() {
 
   const desde = haceDias(DIAS_CERRADAS);
   const seleccion =
-    "id, codigo, nombre, etapa, valor_cop, potencia_kwp, creada_en, actualizada_en, contacto:contactos(codigo, nombre, empresa, ciudad), asesor:perfiles(nombre), actividades(fecha, completada)";
+    "id, codigo, nombre, etapa, valor_cop, potencia_kwp, creada_en, actualizada_en, contacto:contactos(codigo, nombre, empresa, ciudad), asesor:perfiles(nombre)";
 
-  // Dos consultas: todas las abiertas, y las cerradas de los últimos 30 días.
+  // Tres consultas: todas las abiertas, las cerradas de los últimos 30 días y los días sin actividad
+  // de las abiertas (la regla de seguimiento vive en la base de datos, vista seguimiento_ventas).
   // Los permisos de la base de datos ya limitan cada asesor a sus propias ventas.
-  const [abiertas, cerradas] = await Promise.all([
+  const [abiertas, cerradas, seguimiento] = await Promise.all([
     supabase
       .from("oportunidades")
       .select(seleccion)
       .not("etapa", "in", "(ganado,perdido)")
       .order("actualizada_en", { ascending: false })
-      .returns<TarjetaVenta[]>(),
+      .returns<FilaVenta[]>(),
     supabase
       .from("oportunidades")
       .select(seleccion)
       .in("etapa", ["ganado", "perdido"])
       .gte("fecha_cierre", desde)
       .order("actualizada_en", { ascending: false })
-      .returns<TarjetaVenta[]>(),
+      .returns<FilaVenta[]>(),
+    supabase
+      .from("seguimiento_ventas")
+      .select("oportunidad_id, dias, nivel")
+      .returns<{ oportunidad_id: string; dias: number; nivel: NonNullable<TarjetaVenta["seguimiento"]>["nivel"] }[]>(),
   ]);
 
-  const error = abiertas.error ?? cerradas.error;
+  const error = abiertas.error ?? cerradas.error ?? seguimiento.error;
+  const diasDe = new Map((seguimiento.data ?? []).map((s) => [s.oportunidad_id, { dias: s.dias, nivel: s.nivel }]));
+  const tarjetas: TarjetaVenta[] = [...(abiertas.data ?? []), ...(cerradas.data ?? [])].map((o) => ({
+    ...o,
+    seguimiento: diasDe.get(o.id) ?? null,
+  }));
 
   return (
     <div className="space-y-4">
@@ -55,7 +67,7 @@ export default async function PaginaVentas() {
         </p>
       ) : (
         <TableroVentas
-          oportunidades={[...(abiertas.data ?? []), ...(cerradas.data ?? [])]}
+          oportunidades={tarjetas}
           mostrarAsesor={perfil.rol === "gerente"}
         />
       )}

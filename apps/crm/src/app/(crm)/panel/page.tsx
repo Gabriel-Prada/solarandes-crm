@@ -198,7 +198,7 @@ export default async function PaginaPanel() {
 
       <Seccion titulo="Asesores" subtitulo="Resultados de cada asesor desde que hay registros">
         <Tabla
-          columnas={["Asesor", "Ciudad", "Abiertas", "Ganadas", "Cierre", "Vendido", "Sin seguimiento"]}
+          columnas={["Asesor", "Ciudad", "Abiertas", "Ganadas", "Cierre", "Vendido", "7+ días sin actividad"]}
           filas={panel.asesores.map((a) => [
             a.nombre,
             a.ciudad,

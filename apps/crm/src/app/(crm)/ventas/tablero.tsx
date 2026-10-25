@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useOptimistic, useState, useTransition } from "react";
 
 import { formatoPesosCorto } from "@/lib/formato";
-import { diasDesde, nivelSeguimiento, ultimaActividad, type NivelSeguimiento } from "@/lib/seguimiento";
 import { ETAPAS, NOMBRE_ETAPA, NOMBRE_MOTIVO, type Etapa, type MotivoPerdida } from "@/lib/tipos";
 
 import { moverOportunidad } from "./acciones";
@@ -20,10 +19,14 @@ export type TarjetaVenta = {
   actualizada_en: string;
   contacto: { codigo: string; nombre: string; empresa: string | null; ciudad: string } | null;
   asesor: { nombre: string } | null;
-  actividades: { fecha: string; completada: boolean }[];
+  // Días sin actividad y nivel: los calcula la base de datos (vista seguimiento_ventas), la misma regla
+  // del panel de la gerente y del correo de seguimiento. Solo las ventas abiertas lo tienen
+  seguimiento: { dias: number; nivel: NivelSeguimiento } | null;
 };
 
-// Ámbar: sin seguimiento (3+ días sin actividad). Rojo: ya hay que avisarle a la gerente (7+).
+type NivelSeguimiento = "al_dia" | "sin_seguimiento" | "aviso_gerente";
+
+// Ámbar: 3+ días sin actividad (se le recuerda al asesor). Rojo: 7+ (se le avisa a la gerente).
 const BORDE: Record<NivelSeguimiento, string> = {
   al_dia: "border-stone-200",
   sin_seguimiento: "border-amber-300",
@@ -48,7 +51,6 @@ export function TableroVentas({
   const [error, setError] = useState<string | null>(null);
   const [porPerder, setPorPerder] = useState<TarjetaVenta | null>(null);
   const [columnaResaltada, setColumnaResaltada] = useState<Etapa | null>(null);
-  const [ahora] = useState(() => Date.now());
 
   function mover(tarjeta: TarjetaVenta, etapa: Etapa, motivo?: MotivoPerdida) {
     if (tarjeta.etapa === etapa) return;
@@ -103,9 +105,9 @@ export function TableroVentas({
               </header>
 
               {enColumna.map((t) => {
+                // Una venta que se acaba de mover a ganada o perdida ya no necesita seguimiento
                 const abierta = t.etapa !== "ganado" && t.etapa !== "perdido";
-                const dias = diasDesde(ultimaActividad(t.actividades, t.creada_en), ahora);
-                const nivel = abierta ? nivelSeguimiento(dias) : "al_dia";
+                const nivel = abierta ? (t.seguimiento?.nivel ?? "al_dia") : "al_dia";
                 return (
                   <article
                     key={t.id}
@@ -129,7 +131,7 @@ export function TableroVentas({
                     </p>
                     {nivel !== "al_dia" && (
                       <p className={`mt-1 text-xs ${nivel === "aviso_gerente" ? "text-red-700" : "text-amber-800"}`}>
-                        Sin actividad hace {dias} días
+                        Sin actividad hace {t.seguimiento?.dias} días
                       </p>
                     )}
 
