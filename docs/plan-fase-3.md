@@ -23,9 +23,9 @@ Resuelve dos problemas de [requisitos.md](requisitos.md): **P4** (los leads tard
 | 2 | **Captura por WhatsApp** ⏸️ pospuesto | Alguien le escribe al número de la empresa | Lo mismo que el 1, pero desde WhatsApp | Meta (WhatsApp) + n8n visible desde internet |
 | 3 | **Seguimiento** ✅ | Cada hora de 8 a. m. a 6 p. m., de lunes a viernes (un resumen por persona al día) | Lead con 3 días sin actividad → recordatorio al asesor; con 7 → aviso a Laura | CRM + correo |
 | 4 | **Visitas técnicas** ⏸️ pospuesto | Un asesor agenda una visita en el CRM | Crea el evento en el calendario, avisa al técnico y le recuerda al cliente el día antes | Google Calendar |
-| 5 | **Reporte semanal** | Cada lunes a las 7 a. m. | Correo a Laura con las métricas de la semana | CRM + correo |
-| 6 | **Posventa** | Todos los días | Instalación cumple 6 meses → recordatorio de mantenimiento | CRM + correo o WhatsApp |
-| 7 | **Entrega** | Al final | Flujos exportados al repo, documentación, diagrama y guía de estudio | — |
+| 5 | **Reporte semanal** ✅ | El lunes a las 7 a. m. (o en la primera hora hábil con el PC prendido) | Correo a Laura con las métricas de la semana | CRM + correo |
+| 6 | **Posventa** ✅ | Cada hora hábil, de lunes a viernes | Cada 6 meses desde la instalación → tarea al asesor y recordatorio al cliente | CRM + correo |
+| 7 | **Entrega** ✅ | Al final | Flujos exportados al repo, documentación, diagrama y guía de estudio ([guia-fase-3.md](guia-fase-3.md)) | — |
 
 **Decisión de Gabriel (2026-10-24): WhatsApp (2) y visitas técnicas con Google Calendar (4) quedan para después.** Son los más engorrosos de configurar (Meta for Developers con su llave que vence y su verificación de números; Google Cloud con su permiso que vence cada 7 días en modo prueba) y no son parte del "Listo cuando". La fase sigue con: terminar la captura web (publicar, formulario y túnel), seguimiento (3), reporte semanal (5), posventa (6) y la entrega (7).
 
@@ -285,6 +285,96 @@ La revisión encontró 14 puntos. El diseño queda así (cambia lo de arriba don
 - 00b no reintenta solo: reintentar el paso completo reenviaría también los correos que sí salieron. Si Gmail falla, 01c avisa (los avisos se reenvían a mano) y 03 lo intenta la hora siguiente.
 - Si una venta queda con un asesor distinto al del contacto, el tablero de ese asesor no ve las actividades de otros en ese contacto y puede mostrar más días que el correo. Hoy no pasa (el CRM no tiene cómo reasignar una venta sola); cuando exista, venta y contacto deben moverse juntos.
 - Una falla en 01c que llama 01 o 01d avisa dos veces (la de 01c y la de quien lo llamó). Ya pasaba antes del flujo 3.
+
+## 4d. Los flujos 5 y 6: reporte semanal y posventa (diseño, 2026-10-24, antes de construir)
+
+Gabriel pidió terminar la fase tomando las decisiones técnicas y de producto sin consultarle (2026-10-24). Las de producto quedan marcadas como **decisión** para que las revise al volver.
+
+Los dos flujos tienen la misma forma que el flujo 3, que ya funciona: n8n pregunta cada hora, el CRM decide qué toca y lo **reserva** en la base de datos, n8n lo manda con el subflujo 00b (destino seguro) y después **confirma** o **suelta**. Las reglas viven en la base de datos; n8n solo es el mensajero.
+
+### Flujo 5: reporte semanal
+
+**Qué recibe Laura:** un correo con la semana pasada (de lunes a domingo, hora de Bogotá) comparada con la anterior:
+- leads nuevos, en total y por canal;
+- ventas ganadas (cuántas y por cuánto) y perdidas (cuántas y por qué motivo);
+- lo que hay abierto hoy: ventas, valor y valor ponderado por la probabilidad de cada etapa;
+- seguimiento: ventas con 7+ días sin actividad (la misma vista del flujo 3);
+- por asesor: leads recibidos, ganadas, valor vendido y ventas con 7+ días;
+- enlace al panel del CRM.
+
+**Cuándo:** el flujo pregunta cada hora de 7 a. m. a 6 p. m., de lunes a viernes. El reporte de una semana sale **una sola vez**: el lunes a las 7 si el PC está prendido; si no, en la primera hora en que lo esté.
+
+**Base de datos:** una tabla `reportes_semanales` (una fila por semana, con la misma reserva del flujo 3) y una función `tomar_reporte_semanal` que calcula las cifras y reserva el reporte. Las cifras salen de las tablas, no de `panel_gerente()`: el panel exige una sesión de gerente y mira meses, no semanas. El seguimiento sale de la vista `seguimiento_ventas`, la regla única.
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | El PC está apagado el lunes a las 7 | El reporte sale en la primera hora con el PC prendido, de lunes a viernes. Si sale después del lunes, el correo lo dice ("llega tarde") |
+| 2 | El reporte sale dos veces (dos ejecuciones, una corrida a mano) | Reserva por semana en la base de datos, en un solo paso |
+| 3 | Gmail falla | El reporte se suelta y lo intenta la hora siguiente; desde las 12 m., una alarma al día si sigue sin salir |
+| 4 | n8n se detiene después de enviar y antes de confirmar | A los 30 minutos se reintenta: puede llegar repetido. Riesgo aceptado, como en el flujo 3 |
+| 5 | El PC estuvo apagado toda la semana | El viernes a las 6 p. m. deja de intentarlo. El lunes siguiente sale el de la semana que acaba de terminar (un reporte viejo no sirve), y la semana perdida aparece en él como "semana anterior" |
+| 6 | Las fechas en UTC hacen que una venta del domingo a las 8 p. m. caiga en la semana siguiente | La semana se calcula en hora de Bogotá, en la base de datos |
+| 7 | El reporte y el panel dan cifras distintas de seguimiento | Las dos usan la vista `seguimiento_ventas` |
+| 8 | No hay gerente activa | No hay a quién mandarlo: la respuesta lo dice y suena la alarma |
+| 9 | Una semana sin movimiento (cero leads, cero ventas) | El reporte sale igual, con ceros: un reporte que no llega no se distingue de uno que falló |
+| 10 | Datos personales de más | Solo cifras y nombres del equipo; ningún nombre de cliente |
+| 11 | La comparación confunde con cifras pequeñas ("de 1 a 3, +200 %") | Se muestran los dos números, nunca porcentajes |
+| 12 | El CRM caído, o solo falla la función del reporte | Se reintenta la hora siguiente; la alarma de CRM caído la da 01d, y la falla de la función la cubre la alarma diaria del flujo |
+
+### Flujo 6: posventa (mantenimiento cada 6 meses)
+
+**Supuesto:** el CRM no guarda la fecha de instalación; se toma la fecha en que se ganó la venta (el cliente firmó y pagó el anticipo; la instalación es poco después). Si algún día se agrega la fecha de instalación, solo cambia la función.
+
+**Decisión:** el mantenimiento se recuerda **cada 6 meses** (a los 6, 12, 18… meses), como dice el proceso del PLAN ("Mantenimiento cada 6 meses").
+
+**Qué pasa en cada aniversario de 6 meses:**
+- **Al cliente,** si dejó correo: un recordatorio corto de que le toca mantenimiento (limpieza de paneles y revisión del inversor) y de que su asesor lo va a contactar. Sin precios. Pasa por destino seguro: como todos los clientes son del set de datos, **siempre se desvía al correo de prueba**.
+- **Al asesor del contacto:** una tarea en el CRM, "Agendar el mantenimiento de los N meses", con fecha de hoy y **sin venta**. Así entra a su agenda y, si no la hace, al seguimiento del flujo 3 (que vigila las tareas sin venta vencidas).
+
+**Cuándo:** cada hora de 9 a. m. a 6 p. m., de lunes a viernes.
+
+**Base de datos:** una tabla `avisos_posventa` (una fila por **cliente** y fecha de aniversario) y las funciones para tomar, confirmar y soltar. La tarea se crea al **tomar** el aniversario, sin esperar al correo: lo importante es que el asesor llame. El correo al cliente tiene su propia reserva.
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | El primer día salen recordatorios por todas las ventas viejas (hay 123 ganadas desde nov. 2025) | Solo los aniversarios de los últimos 30 días: el de hace un año ya no tiene sentido. Lo de más de 30 días no se avisa nunca |
+| 2 | Le llega un correo a un cliente del set de datos | Destino seguro (00b): todos se desvían al correo de prueba |
+| 3 | El mismo aniversario se avisa dos veces | Una fila por cliente y fecha de aniversario (clave única), en un solo paso y con turno, en la base de datos |
+| 4 | El cliente no dejó correo | Sin correo al cliente, pero la tarea del asesor se crea igual |
+| 5 | Gmail falla | La tarea ya existe. El correo se suelta y se reintenta cada hora; a los 7 días se da por vencido y suena una alarma (puede quedar tarea sin correo, nunca correo sin tarea) |
+| 6 | n8n se detiene entre enviar y confirmar | A los 30 minutos se reintenta: el cliente podría recibir el recordatorio dos veces. Riesgo aceptado (y hoy siempre llega al correo de prueba) |
+| 7 | El asesor del cliente ya no está activo | La tarea va a la gerente (el correo la nombra a ella); sin gerente activa, suena la alarma y se reintenta |
+| 8 | Un cliente con dos ventas ganadas (la nueva y una ampliación) | Una ampliación es el mismo sistema: una sola cadena de aniversarios por cliente, desde su primera venta ganada |
+| 9 | Una venta ganada vuelve a abrirse o se pierde | Ya no es una instalación: no se le recuerda nada, y un recordatorio que había quedado pendiente se descarta (migración 019) |
+| 10 | Un 31 de agosto + 6 meses (no existe el 31 de febrero) | La base de datos lo pasa al último día del mes (28 o 29 de febrero) |
+| 11 | El CRM caído | Reintenta la hora siguiente; la alarma de CRM caído ya la da 01d |
+| 12 | El correo trae datos de más o promete algo | Solo el nombre del cliente, el de quien lo llamará y lo que toca hacer, en texto plano; nunca precios ("mantenimiento gratis"): eso lo define el asesor. El correo guardado se borra al confirmar o al vencerse |
+
+**Alarmas de los dos flujos:** como en el flujo 3, antes de las 12 m. nada suena (la hora siguiente lo intenta otra vez); desde las 12 m., una sola alarma al día, sin nombres de clientes.
+
+### Ajustes después de la revisión del diseño (2026-10-24, antes de escribir código)
+
+La revisión encontró 13 puntos. El diseño queda así (cambia lo de arriba donde se contradiga):
+- **Fecha de cierre (error de la fase 1):** una venta que pasa directo de perdida a ganada (el tablero lo permite) conservaba la fecha de cierre vieja: el reporte no la contaba, el panel la sumaba a otro mes y la posventa la recordaría en otra fecha. Una migración nueva corrige el trigger: cada vez que la venta **entra** a ganado o perdido, la fecha de cierre es la de ese momento.
+- **Definiciones del reporte, iguales a las del panel:** lead nuevo = venta de tipo `nueva` creada en la semana (el canal es el del contacto; no se cuentan contactos importados ni clientes que vuelven a escribir); ganadas y perdidas = etapa actual y fecha de cierre en la semana (incluye ampliaciones, que se muestran aparte, y las ventas sin valor se cuentan aparte); abierto, valor y valor ponderado = las fórmulas del panel. Una prueba comprueba que el reporte y el panel dan lo mismo.
+- **La comparación:** leads, ganadas y perdidas se recalculan para la semana anterior; lo que es una foto de hoy (abierto, valor, 7+ días) se guarda en el reporte (al reservarlo) y se compara con el reporte anterior ("sin dato" si no salió). Se muestran los dos números ("esta semana 5, la anterior 3"), nunca porcentajes: con cifras tan pequeñas confunden. Aceptado: si una venta de la semana pasada cambia después, su cifra cambia en el reporte siguiente.
+- **Fin de semana:** la base de datos no entrega el reporte en sábado ni domingo, aunque alguien corra el flujo a mano. Si el PC estuvo apagado toda la semana, el lunes sale el de la semana que acaba de terminar, y la perdida aparece como "semana anterior".
+- **Pruebas con fechas fijas:** las funciones aceptan "hoy" como dato solo para las pruebas (la ventanilla no lo pasa: nadie puede pedir semanas a su gusto). Los datos de ejemplo llegan hasta el 23 de octubre de 2026.
+- **Posventa por cliente, no por venta:** una ampliación es el mismo sistema. Una sola cadena de aniversarios por cliente, contada desde su primera venta ganada que siga ganada. La clave es cliente + fecha del aniversario (no "N meses": si la venta se reabre y se vuelve a ganar, la fecha base cambia).
+- **Cálculo de aniversarios:** la fecha base en hora de Bogotá; siempre base + 6·N meses (nunca sumando sobre el aniversario anterior, que corre el 31 de agosto al 28); solo los de los últimos 30 días.
+- **La tarea del asesor se crea al tomar el aniversario, no al confirmar el correo:** lo importante es que el asesor llame, y no puede depender de Gmail. Va **sin venta** ("Agendar el mantenimiento de los 6 meses"), para que el flujo 3 la vigile si se vence. La recibe el asesor del **contacto**, o la gerente si ya no está activo; sin gerente activa, suena la alarma `sin_gerente`.
+- **El correo al cliente tiene su propia reserva:** se reintenta hasta 7 días; después se da por vencido y suena una alarma. Nombra a quien recibió la tarea. Al confirmarlo se borran el correo y el nombre guardados.
+- **Para la entrevista:** un recordatorio real a clientes debería traer una forma de darse de baja, y la autorización de datos debería cubrir el contacto después de la compra. Hoy no aplica: todo se desvía al correo de prueba.
+- **CRM caído (reporte):** se reintenta la hora siguiente; la alarma de CRM caído la da 01d. Si solo falla la función del reporte (el CRM responde), la cubre la alarma diaria del flujo.
+
+### Lo que quedó construido (2026-10-25)
+
+- **Base de datos:** migraciones 018 (la fecha de cierre corregida; `movimiento_de_semana`, `foto_del_negocio`, `reportes_semanales` y las funciones del reporte; `avisos_posventa` y las de la posventa) y 019 (un recordatorio pendiente se descarta si el cliente ya no tiene una venta ganada). Pruebas: `tests/test_reporte_posventa_supabase.py` (25), entre ellas que la foto del reporte cuadra con el panel, la semana que cruza la medianoche en UTC y el 31 de agosto.
+- **CRM:** las ventanillas `/api/automatizaciones/reporte` y `/api/automatizaciones/posventa`, con una lectura común de los pedidos de n8n (`src/lib/automatizaciones/pedido.ts`, que también usa la del seguimiento) y el texto de los correos (`reporte.ts`, `posventa.ts`), con pruebas.
+- **n8n:** los flujos 05 "Reporte semanal" y 06 "Posventa", con la misma forma del 03.
+- **Probado en vivo en local:** el 06 creó las 9 tareas reales de los aniversarios de los últimos 30 días y mandó sus 9 recordatorios, desviados al correo de prueba; el 05 un sábado no entrega nada; el texto del reporte se revisó con los datos de la semana del 12 de octubre.
+- **Después de la revisión del código:** el paso que junta las alarmas (03, 05 y 06) fallaba con 2 o más correos ("Can't get data"): emparejaba ítem por ítem en un paso que corre una sola vez. Se encontró en la prueba en vivo del 06 y se corrigió en los tres; en el 03 no se había notado porque no había tenido correos que anotar desde el cambio. La alarma de recordatorios vencidos ya no dice "se reintenta".
+- **Aceptado:** si n8n no recibe la respuesta del CRM y repite la llamada, la alarma de "recordatorios vencidos" de esa vez puede perderse (la tarea del asesor sí queda). En el reporte, un asesor que renuncie sigue apareciendo, en ceros (la misma regla del panel).
 
 ## 5. Antes de construir
 

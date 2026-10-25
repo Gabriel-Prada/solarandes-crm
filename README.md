@@ -29,3 +29,5 @@ python -m venv .venv
 
 - [Plan del portafolio](PLAN.md)
 - [Requisitos del cliente](docs/requisitos.md)
+- Guías de estudio: [fase 1](docs/guia-fase-1.md), [fase 2](docs/guia-fase-2.md), [fase 3](docs/guia-fase-3.md)
+- [Automatizaciones en n8n](automatizaciones/README.md) y su [plan](docs/plan-fase-3.md)
