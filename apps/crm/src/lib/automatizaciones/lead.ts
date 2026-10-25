@@ -123,6 +123,28 @@ export function prepararLead(entrada: unknown): { lead: LeadPreparado } | { erro
   };
 }
 
+/**
+ * Lo que mandó la persona, para guardarlo en el radicado: es el "cuerpo" que usan los avisos de n8n
+ * (01c). Solo los campos conocidos, nunca lo demás que traiga el envío. Al guardarlo, registrarLead
+ * cambia nombre, empresa, ciudad y celular por su versión ya limpia; correo, consumo y mensaje quedan
+ * como vinieron.
+ */
+export function datosDelEnvio(entrada: unknown, lead: LeadPreparado): Record<string, string> {
+  const e = (typeof entrada === "object" && entrada !== null ? entrada : {}) as Record<string, unknown>;
+  const campo = (...nombres: string[]) => nombres.map((n) => texto(e[n])).find(Boolean) ?? "";
+  return {
+    clave: lead.clave,
+    canal: lead.canal,
+    nombre: campo("nombre"),
+    empresa: campo("empresa"),
+    celular: campo("celular", "telefono"),
+    ciudad: campo("ciudad"),
+    correo: campo("correo", "email"),
+    consumo: campo("consumo", "consumo_kwh_mes"),
+    mensaje: lead.mensaje ?? "",
+  };
+}
+
 /** ¿Es una persona nueva, un cliente que ya existe o una duda? La misma regla de la fase 2. */
 export function decidir(lead: LeadPreparado, crm: ContactoDelCrm[]): Decision {
   const { empresa, telefono, email, ciudad } = lead.contacto;

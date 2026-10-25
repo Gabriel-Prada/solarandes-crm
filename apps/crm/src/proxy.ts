@@ -58,7 +58,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Todas las rutas menos los archivos estáticos (imágenes, íconos, estilos) y la puerta de las
-  // automatizaciones: n8n no inicia sesión; esa puerta la protege su propia llave (route.ts)
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
+  // Todas las rutas menos los archivos estáticos (imágenes, íconos, estilos), la puerta de las
+  // automatizaciones (n8n no inicia sesión; la protege su propia llave, route.ts) y el formulario
+  // público /cotiza ("cotiza$|cotiza/": exacto, para no abrir sin querer rutas como /cotizaciones)
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|cotiza$|cotiza/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

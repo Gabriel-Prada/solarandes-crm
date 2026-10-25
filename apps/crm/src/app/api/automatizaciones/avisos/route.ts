@@ -6,6 +6,9 @@ import { crearClienteDeServicio } from "@/lib/supabase/servicio";
  * y solo la primera ejecución que la pide recibe { reservado: true }. Así los avisos salen una sola
  * vez aunque el mismo envío llegue dos veces al mismo tiempo (migraciones 012 y 013).
  *
+ * Con { accion: "confirmar" }, la ejecución que reservó avisa que los avisos ya salieron (migración 014):
+ * se borran los datos copiados del envío, y una reserva sin confirmar en 15 minutos hace sonar la alarma.
+ *
  * Como la puerta de leads, no pasa por el portero de sesiones: la protege AUTOMATIZACIONES_TOKEN.
  */
 export async function POST(request: Request) {
@@ -19,12 +22,22 @@ export async function POST(request: Request) {
   } catch {
     return Response.json({ error: "El cuerpo no es JSON válido." }, { status: 400 });
   }
-  const cuerpo = (entrada ?? {}) as { clave?: unknown; ejecucion?: unknown };
+  const cuerpo = (entrada ?? {}) as { clave?: unknown; ejecucion?: unknown; accion?: unknown };
   const clave = leerClave(cuerpo.clave);
   if (!clave) return Response.json({ error: "Falta la clave del envío (entre 8 y 200 caracteres)." }, { status: 400 });
   // El número de la ejecución de n8n: si la misma ejecución vuelve a pedir (porque se perdió la
   // respuesta), la reserva sigue siendo suya (migración 013)
   const ejecucion = typeof cuerpo.ejecucion === "string" && cuerpo.ejecucion.trim() ? cuerpo.ejecucion.trim().slice(0, 100) : null;
+
+  if (cuerpo.accion === "confirmar") {
+    if (!ejecucion) return Response.json({ error: "Para confirmar hace falta la ejecución." }, { status: 400 });
+    const { data, error } = await crearClienteDeServicio().rpc("confirmar_avisos", { p_clave: clave, p_ejecucion: ejecucion });
+    if (error) {
+      console.error("confirmar_avisos falló", error);
+      return Response.json({ error: "El CRM no pudo confirmar los avisos. Intenta de nuevo." }, { status: 500 });
+    }
+    return Response.json({ confirmado: data === true });
+  }
 
   const { data, error } = await crearClienteDeServicio().rpc("reservar_avisos", { p_clave: clave, p_ejecucion: ejecucion });
   if (error) {

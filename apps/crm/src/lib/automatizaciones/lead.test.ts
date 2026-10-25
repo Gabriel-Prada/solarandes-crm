@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import type { ContactoDelCrm } from "../importar/analizar";
-import { decidir, leerClave, llaveValida, prepararLead, tratarErrorDeBase, type LeadPreparado } from "./lead";
+import {
+  datosDelEnvio,
+  decidir,
+  leerClave,
+  llaveValida,
+  prepararLead,
+  tratarErrorDeBase,
+  type LeadPreparado,
+} from "./lead";
 
 const LLAVE = "una-llave-de-prueba-bastante-larga-123456";
 
@@ -142,6 +150,23 @@ describe("decidir", () => {
     const r = decidir(preparado({ nombre: "Pedro Ruiz", celular: "311 555 0000", ciudad: "Cali" }), crm);
     expect(r.existente).toBeNull();
     expect(r.duda).toBeTruthy();
+  });
+});
+
+describe("datosDelEnvio", () => {
+  it("guarda lo que escribió la persona, con su clave, y nada más", () => {
+    const e = entrada({ telefono: "311 555 0000", celular: undefined, campo_extra: "no se guarda" });
+    expect(datosDelEnvio(e, preparado({ telefono: "311 555 0000", celular: undefined }))).toEqual({
+      clave: "envio-web-0001",
+      canal: "web",
+      nombre: "PAOLA  torres",
+      empresa: "",
+      celular: "311 555 0000",
+      ciudad: "medellin",
+      correo: "Paola@Example.com",
+      consumo: "300",
+      mensaje: "Quiero paneles para mi casa",
+    });
   });
 });
 
