@@ -358,8 +358,10 @@ def test_los_leads_que_esperan_mas_de_30_minutos_cuentan_para_la_alarma(con):
     capturar(con, "form:calif-0017", mensaje="Quiero paneles")
     antes = tomar(con)["atrasadas"]
     con.execute("update calificaciones_lead set proximo_intento_en = now() where clave = 'form:calif-0017'")
+    # Migración 022: el atraso se mide desde el primer intento
     con.execute(
-        "update calificaciones_lead set creada_en = now() - interval '31 minutes' where clave = 'form:calif-0017'"
+        "update calificaciones_lead set primer_intento_en = now() - interval '31 minutes'"
+        " where clave = 'form:calif-0017'"
     )
     # (la tomó la llamada de arriba; ahora está en curso y atrasada)
     assert tomar(con)["atrasadas"] == antes + 1
@@ -597,6 +599,9 @@ PERMISOS = {
     "vencer_calificaciones()": (False, False, False),
     "crear_calificacion('x', '{}'::jsonb, '{}'::jsonb, null, '{}')": (False, False, False),
     f"cambiar_prioridad({UUID}, 'alta')": (False, None, False),  # con sesión: lo decide la función
+    # Migración 021
+    "calificaciones_terminadas_mal()": (False, False, True),
+    f"soltar_aviso_prioritario({UUID}, 'x')": (False, False, True),
 }
 
 
@@ -616,6 +621,139 @@ def test_cada_funcion_solo_la_ejecuta_quien_debe(con):
                 pudo = True  # la ejecutó (y falló por los datos de mentira): el permiso sí lo tenía
             con.execute("reset role")
             assert pudo is puede, f"{rol} {'debería' if puede else 'no debería'} poder: {llamada}"
+
+
+# --- Migración 021: ajustes para el flujo 08 ------------------------------------------------
+
+
+def atrasadas(con):
+    return como_servicio(con, "select calificaciones_atrasadas()")
+
+
+def test_un_lead_que_nadie_ha_intentado_no_cuenta_como_atrasado(con):
+    # Llegó de noche con el PC apagado: al prender, la primera vuelta no es una falla
+    antes = atrasadas(con)
+    capturar(con, "form:calif-0040", mensaje="Quiero paneles")
+    con.execute("update calificaciones_lead set creada_en = now() - interval '9 hours' where clave = 'form:calif-0040'")
+    assert atrasadas(con) == antes
+    # Ya se intentó y Claude no respondió: ahí sí cuenta
+    con.execute("update calificaciones_lead set proximo_intento_en = now() where clave = 'form:calif-0040'")
+    pedido = uuid.uuid4()
+    t = tomar(con, pedido)
+    assert t["calificacion_id"] == str(calificacion(con, "form:calif-0040")["id"])
+    guardar(con, t, pedido, resultado="error")
+    # Un tropiezo recién ocurrido todavía no es un atraso (migración 022: se mide desde el primer intento)
+    assert atrasadas(con) == antes
+    con.execute(
+        "update calificaciones_lead set primer_intento_en = now() - interval '31 minutes'"
+        " where clave = 'form:calif-0040'"
+    )
+    assert atrasadas(con) == antes + 1
+
+
+def terminadas_mal(con):
+    return {t["calificacion_id"]: t for t in como_servicio(con, "select calificaciones_terminadas_mal()")}
+
+
+def test_los_que_terminan_mal_se_listan_una_vez_con_su_codigo_de_error(con):
+    capturar(con, "form:calif-0041", mensaje="Quiero paneles")
+    pedido = uuid.uuid4()
+    t = tomar(con, pedido)
+    como_servicio(
+        con,
+        "select guardar_calificacion(%s, %s, %s, 'rechazo', null, 'v1', 900, 0, 0.0001, 900, 'cyber')",
+        t["calificacion_id"],
+        pedido,
+        t["llamada_id"],
+    )
+    lista = terminadas_mal(con)
+    assert lista[t["calificacion_id"]]["estado"] == "rechazada"
+    assert lista[t["calificacion_id"]]["error"] == "cyber"
+    # Una vencida también aparece; una que se cerró hace más de 24 horas, ya no
+    capturar(con, "form:calif-0042", mensaje="Quiero paneles", telefono=OTRO_CELULAR, nombre="Otra Prueba")
+    con.execute("update calificaciones_lead set creada_en = now() - interval '8 days' where clave = 'form:calif-0042'")
+    con.execute("select vencer_calificaciones()")
+    vencida = str(calificacion(con, "form:calif-0042")["id"])
+    assert terminadas_mal(con)[vencida]["estado"] == "vencida"
+    con.execute("update calificaciones_lead set cerrada_en = now() - interval '25 hours' where id = %s", (vencida,))
+    assert vencida not in terminadas_mal(con)
+
+
+def test_un_aviso_que_no_salio_se_suelta_y_vuelve_a_la_fila(con):
+    capturar(con, "form:calif-0043", mensaje="Quiero paneles ya", consumo_kwh_mes=600)
+    cid = calificar_rapido(con, "form:calif-0043", {**FICHA, "urgencia": "alta"})
+    assert como_servicio(con, "select reservar_aviso_prioritario(%s, 'ejecucion-1')", cid) is True
+    assert all(a["calificacion_id"] != cid for a in avisos(con)["pendientes"])
+    # Otra ejecución no puede soltar lo que no reservó
+    assert como_servicio(con, "select soltar_aviso_prioritario(%s, 'ejecucion-2')", cid) is False
+    assert como_servicio(con, "select soltar_aviso_prioritario(%s, 'ejecucion-1')", cid) is True
+    assert any(a["calificacion_id"] == cid for a in avisos(con)["pendientes"])
+    # Ya enviado, no se puede soltar
+    assert como_servicio(con, "select reservar_aviso_prioritario(%s, 'ejecucion-3')", cid) is True
+    assert como_servicio(con, "select confirmar_aviso_prioritario(%s, 'ejecucion-3')", cid) is True
+    assert como_servicio(con, "select soltar_aviso_prioritario(%s, 'ejecucion-3')", cid) is False
+
+
+def test_confirmar_dos_veces_desde_la_misma_ejecucion_responde_si(con):
+    capturar(con, "form:calif-0044", mensaje="Quiero paneles ya", consumo_kwh_mes=600)
+    cid = calificar_rapido(con, "form:calif-0044", {**FICHA, "urgencia": "alta"})
+    como_servicio(con, "select reservar_aviso_prioritario(%s, 'ejecucion-1')", cid)
+    assert como_servicio(con, "select confirmar_aviso_prioritario(%s, 'ejecucion-1')", cid) is True
+    assert como_servicio(con, "select confirmar_aviso_prioritario(%s, 'ejecucion-1')", cid) is True
+    assert como_servicio(con, "select confirmar_aviso_prioritario(%s, 'ejecucion-2')", cid) is False
+
+
+# --- Migración 022: rechazos de configuración y primer intento -----------------------------
+
+
+def guardar_con_error(con, tomada, pedido, codigo):
+    return como_servicio(
+        con,
+        "select guardar_calificacion(%s, %s, %s, 'error', null, 'v1', 0, 0, 0, 300, %s)",
+        tomada["calificacion_id"],
+        pedido,
+        tomada["llamada_id"],
+        codigo,
+    )
+
+
+def test_un_rechazo_de_configuracion_no_gasta_los_intentos_del_lead(con):
+    # Se acabó el saldo (o la llave está mala): esperar no lo arregla, lo arregla una persona
+    capturar(con, "form:calif-0050", mensaje="Quiero paneles")
+    for _ in range(12):  # más que los 8 intentos máximos
+        con.execute("update calificaciones_lead set proximo_intento_en = now() where clave = 'form:calif-0050'")
+        pedido = uuid.uuid4()
+        r = guardar_con_error(con, tomar(con, pedido), pedido, "http_400")
+        assert r["estado"] == "por_calificar"
+    c = calificacion(con, "form:calif-0050")
+    assert c["estado"] == "por_calificar" and c["intentos"] == 0 and "mensaje" in c["entrada"]
+    # Espera media hora antes del siguiente intento
+    assert tomar(con)["estado"] == "nada"
+    # Un 429 (demasiadas solicitudes) sí se arregla solo: cuenta como intento normal
+    con.execute("update calificaciones_lead set proximo_intento_en = now() where clave = 'form:calif-0050'")
+    pedido = uuid.uuid4()
+    guardar_con_error(con, tomar(con, pedido), pedido, "http_429")
+    assert calificacion(con, "form:calif-0050")["intentos"] == 1
+
+
+def test_el_primer_intento_se_anota_una_sola_vez(con):
+    capturar(con, "form:calif-0051", mensaje="Quiero paneles")
+    pedido = uuid.uuid4()
+    guardar(con, tomar(con, pedido), pedido, resultado="error")
+    primero = con.execute(
+        "select primer_intento_en from calificaciones_lead where clave = 'form:calif-0051'"
+    ).fetchone()[0]
+    assert primero is not None
+    con.execute(
+        "update calificaciones_lead set proximo_intento_en = now(), primer_intento_en = primer_intento_en"
+        " - interval '1 hour' where clave = 'form:calif-0051'"
+    )
+    pedido = uuid.uuid4()
+    guardar(con, tomar(con, pedido), pedido, resultado="error")
+    segundo = con.execute(
+        "select primer_intento_en from calificaciones_lead where clave = 'form:calif-0051'"
+    ).fetchone()[0]
+    assert segundo < primero  # no se movió con el segundo intento
 
 
 # --- Dos pedidos a la vez --------------------------------------------------------------------
