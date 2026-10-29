@@ -332,10 +332,9 @@ def test_un_pedido_que_ya_no_es_el_dueno_no_pisa_pero_su_llamada_si_se_anota(con
 
 def test_el_tope_diario_frena_las_llamadas(con):
     capturar(con, "form:calif-0015", mensaje="Quiero paneles")
-    usadas = con.execute(
-        "select count(*) from llamadas_ia where iniciada_en >= "
-        "date_trunc('day', now() at time zone 'America/Bogota') at time zone 'America/Bogota'"
-    ).fetchone()[0]
+    # Se cuenta con la misma función del tope: los rechazos de la API (no cobrados) no cuentan, y un día
+    # con rechazos reales (como el http_401 del 2026-10-29) hacía que la prueba llenara una de menos
+    usadas = con.execute("select llamadas_ia_de_hoy()").fetchone()[0]
     faltan = max(0, 300 - usadas)
     con.execute(
         "insert into llamadas_ia (pieza, modelo, estado) select 'calificacion', %s, 'ok' from generate_series(1, %s)",
