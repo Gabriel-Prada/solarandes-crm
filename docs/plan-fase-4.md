@@ -202,6 +202,16 @@ La revisión encontró 15 puntos. El diseño queda así (cambia lo de arriba don
 - **`llamadas_ia` solo guarda números** (tokens, costo, tiempo, cómo terminó), nunca lo que se envió ni lo que respondió Claude.
 - **Cuándo no se llama a Claude:** si el mensaje está vacío, es solo un saludo de una lista fija ("hola", "buenas", "info") o tiene menos de 15 letras y ningún número. "Urgente, empresa, 3000 kWh" sí se manda. La regla va al examen.
 - **El aviso de "prioritario":** tiene su propia reserva (sale una sola vez aunque n8n dé dos vueltas o se recalcule la regla); si el asesor ya no está activo va a la gerente (la regla de `capturar_lead`); en `revision` no hay aviso; y sale por el destino seguro (00b), con una prueba de que solo va al equipo, nunca a un contacto. **Aceptado:** el asesor recibe dos correos por un lead prioritario (el aviso normal de 01c y, un minuto después, el de prioritario).
+- **Ajustes al escribir y revisar la migración 020 (2026-10-25):**
+  - **Cuándo no se llama a Claude** (reemplaza lo de arriba): se quitan del mensaje los saludos de una lista fija ("hola", "buenas", "info", "gracias"…) y deben quedar al menos 3 letras o números. "Quiero paneles" sí se manda (con la regla de 15 letras no pasaba, y de una empresa puede ser alta).
+  - **Sin mensaje, la prioridad sale del formulario:** quien llena "cotiza" quiere un sistema, así que una empresa o un consumo de 500 kWh o más es alta; lo demás, media.
+  - **Máximo 8 intentos por lead, por cualquier motivo** (con la espera creciente son unas 3 horas), y la espera también aplica cuando vence una reserva. Después queda "fallida". Así ningún lead se queda pagando en un ciclo sin fin, aunque el CRM falle siempre con un mensaje raro.
+  - **El tope no cuenta las llamadas que la API rechazó sin procesar** (un código de error o sin conexión: no se cobran); un tiempo agotado sí cuenta, porque quizá se cobró. El turno del tope se llama `llamadas_ia` para que el extractor de facturas use el mismo.
+  - **La reserva dura 3 minutos** (no 5): el pedido no pasa de 60 segundos.
+  - **Una llamada que no corresponde** a la calificación (un error del CRM) no guarda nada.
+  - **El aviso de prioritario:** solo si el lead llegó y se calificó en las últimas 24 horas (con el PC apagado días, no salen avisos viejos); va a quien tiene la tarea si sigue activo, si no al asesor del contacto, si no a la gerente; no sale si el alta la puso a mano el mismo que lo recibiría; no sale para un posible duplicado (`revision`, aunque sí se califica); y no se puede reservar otra vez después de enviado.
+  - **La copia del mensaje se borra a los 7 días aunque n8n esté apagado** (la limpieza corre también en cada envío del formulario).
+  - **Permisos:** las reglas puras solo se pueden ejecutar con sesión o con la llave de servicio (Postgres deja por defecto que cualquiera, incluso un visitante anónimo, las llame); una prueba recorre cada función con cada rol.
 - **Los casos del examen salen de un script aparte**, con su propia semilla. Si salieran del generador de datos, cambiarían los contactos que ya están en Supabase y conciliados con la fase 2. Una prueba revisa que `data/generados/` no cambie, y otra que ningún caso de prueba aparezca como ejemplo dentro del prompt.
 
 ### Qué se construye
