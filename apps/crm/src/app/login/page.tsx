@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 
 import { Logo } from "@/components/logo";
+import { rutaDeRegreso } from "@/lib/oauth/regreso";
 
 import { FormularioLogin } from "./formulario-login";
 
 export const metadata: Metadata = { title: "Iniciar sesión" };
 
 export default async function PaginaLogin({ searchParams }: PageProps<"/login">) {
-  const { aviso } = await searchParams;
+  const { aviso, volver } = await searchParams;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-stone-50 px-4">
@@ -23,7 +24,7 @@ export default async function PaginaLogin({ searchParams }: PageProps<"/login">)
           </p>
         )}
         <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-          <FormularioLogin />
+          <FormularioLogin volver={rutaDeRegreso(volver) ?? undefined} />
         </div>
       </div>
     </main>

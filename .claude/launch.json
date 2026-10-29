@@ -9,6 +9,13 @@
       "env": { "NEXT_TELEMETRY_DISABLED": "1" }
     },
     {
+      "name": "mcp-inspector",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "@modelcontextprotocol/inspector@2.13.0"],
+      "port": 6274,
+      "env": { "npm_config_cache": "D:/herramientas/npm-cache", "MCP_AUTO_OPEN_ENABLED": "false" }
+    },
+    {
       "name": "n8n",
       "runtimeExecutable": "node",
       "runtimeArgs": ["D:/herramientas/n8n/node_modules/n8n/bin/n8n", "start"],

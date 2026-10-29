@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 
+import { rutaDeRegreso } from "@/lib/oauth/regreso";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
 
 // Se devuelve el correo para volver a mostrarlo si hubo error (el formulario se limpia al enviarse)
@@ -20,7 +21,8 @@ export async function iniciarSesion(_previo: EstadoLogin, formulario: FormData):
     // Mensaje genérico a propósito: no revela si el correo existe o no
     return { error: "Correo o contraseña incorrectos.", email };
   }
-  redirect("/");
+  // Si venía de autorizar una app (fase 5), vuelve allá; a ninguna otra parte (ver rutaDeRegreso)
+  redirect(rutaDeRegreso(formulario.get("volver")) ?? "/");
 }
 
 export async function cerrarSesion() {

@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { rutaDeRegreso } from "@/lib/oauth/regreso";
+
 /**
  * El "portero" del CRM. Corre antes de cada página:
  * 1. Renueva la sesión de Supabase si está por vencer (y guarda las cookies nuevas).
@@ -48,11 +50,13 @@ export async function proxy(request: NextRequest) {
     return redireccion;
   };
 
+  // La página de autorización de apps (fase 5) vuelve a sí misma después de entrar
+  const volver = rutaDeRegreso(request.nextUrl.pathname + request.nextUrl.search);
   if (!conSesion && !enLogin) {
-    return redirigir("/login");
+    return redirigir(volver ? `/login?volver=${encodeURIComponent(volver)}` : "/login");
   }
   if (conSesion && enLogin) {
-    return redirigir("/");
+    return redirigir(rutaDeRegreso(request.nextUrl.searchParams.get("volver")) ?? "/");
   }
   return respuesta;
 }
@@ -60,8 +64,10 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Todas las rutas menos los archivos estáticos (imágenes, íconos, estilos), la puerta de las
   // automatizaciones (n8n no inicia sesión; la protege su propia llave, route.ts) y el formulario
-  // público /cotiza ("cotiza$|cotiza/": exacto, para no abrir sin querer rutas como /cotizaciones)
+  // público /cotiza ("cotiza$|cotiza/": exacto, para no abrir sin querer rutas como /cotizaciones).
+  // Tampoco el servidor MCP ni la dirección donde Claude pregunta a quién pedirle la llave: Claude no
+  // tiene cookies, trae su propia llave en cada pedido (api/mcp/route.ts)
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|cotiza$|cotiza/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|cotiza$|cotiza/|api/mcp$|api/mcp/|\\.well-known/oauth-protected-resource$|\\.well-known/oauth-protected-resource/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

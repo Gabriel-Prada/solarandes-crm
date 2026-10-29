@@ -6,11 +6,12 @@ import { iniciarSesion, type EstadoLogin } from "./acciones";
 
 const estadoInicial: EstadoLogin = { error: null, email: "" };
 
-export function FormularioLogin() {
+export function FormularioLogin({ volver }: { volver?: string }) {
   const [estado, enviar, enviando] = useActionState(iniciarSesion, estadoInicial);
 
   return (
     <form action={enviar} className="space-y-4">
+      {volver && <input type="hidden" name="volver" value={volver} />}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-stone-700">
           Correo
