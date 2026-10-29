@@ -278,6 +278,8 @@ Tiene la misma forma que el buzón (01d): n8n es el reloj y el mensajero; lo que
 | 6 | La consulta de prioridades falla | El tablero y la ficha cargan igual, sin prioridades: la IA nunca frena el trabajo del asesor |
 | 7 | Alguien manda a mano un valor de prioridad inventado | La acción del servidor solo acepta los cuatro valores (o volver a la regla); la base también los limita |
 
+**Lo que quedó construido y publicado (2026-10-29):** las etiquetas y el orden en el tablero, la sección "Lo que dijo la IA" con el selector en la ficha, y la lógica común en `apps/crm/src/lib/prioridad.ts` (con pruebas). Probado en el navegador como asesora (Valentina): el lead alta quedó arriba con su etiqueta; al bajarlo a "baja" la ficha dice "(la puso el asesor)" y la base anotó que fue ella. Publicado en Vercel con `ANTHROPIC_API_KEY` (Production, secreto) y el flujo 08 activo. **Prueba de punta a punta publicada:** un lead enviado desde el `/cotiza` de Vercel (un hotel que paga casi 3 millones y quiere instalar este mes) quedó como alta en el primer minuto, por USD 0,000244, y su aviso de prioritario salió por el destino seguro y se confirmó. Con eso se cumple la parte de leads del "Listo cuando" de la fase.
+
 ---
 
 ## 5. La pieza 2 a grandes rasgos: el extractor de facturas
