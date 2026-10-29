@@ -108,3 +108,15 @@ def test_00b_solo_da_por_enviado_lo_que_gmail_acepto():
     flujo = json.loads((CARPETA / "00b-enviar-correo-seguro.json").read_text(encoding="utf-8"))
     codigo = next(n for n in flujo["nodes"] if n["name"] == "Resultado")["parameters"]["jsCode"]
     assert "accepted" in codigo and "!item.json.error" not in codigo
+
+
+def test_08_lee_las_respuestas_completas_y_junta_las_alarmas_una_vez():
+    """El 08 decide por el código HTTP de cada respuesta, y lo que debe correr una sola vez corre una vez."""
+    flujo = json.loads((CARPETA / "08-calificar-leads.json").read_text(encoding="utf-8"))
+    nodos = {n["name"]: n for n in flujo["nodes"]}
+    for nombre in ("Calificar", "Pedir avisos"):
+        respuesta = nodos[nombre]["parameters"]["options"]["response"]["response"]
+        assert respuesta == {"fullResponse": True, "neverError": True}, nombre
+    assert nodos["Pedir avisos"].get("executeOnce") and nodos["Juntar alarmas"].get("executeOnce")
+    # Con "continuar ante error", n8n nunca correría un reintento: no se configuran (serían de adorno)
+    assert not [n["name"] for n in flujo["nodes"] if n.get("retryOnFail")]

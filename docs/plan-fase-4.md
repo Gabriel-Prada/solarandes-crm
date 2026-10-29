@@ -218,13 +218,50 @@ La revisión encontró 15 puntos. El diseño queda así (cambia lo de arriba don
 
 | Pieza | Dónde | Prueba |
 |---|---|---|
-| Migración 020: columna `prioridad` en las ventas (con quién la puso: la IA o el asesor), tabla `calificaciones_lead`, tabla `llamadas_ia` (el registro de costos), la reserva, el tope diario y la regla de prioridad | `supabase/migraciones/` | Pytest contra la base real: la regla con cada caso de la tabla, la reserva con dos conexiones a la vez, el tope, que nadie de afuera pueda llamarlas |
-| Los casos del examen | `data/evals/leads/` (y el generador en `scripts/datos/`) | Una prueba revisa que estén completos y que desarrollo y prueba no se mezclen |
-| La lógica de IA: el cliente de Claude, la tabla de precios, el prompt versionado, la ficha y el cálculo del consumo | `apps/crm/src/lib/ia/` | Vitest con un Claude **simulado** (no gasta crédito): respuesta normal, caída, negativa, respuesta incompleta |
-| El examen: un script que corre los casos contra Claude y escribe el reporte | `apps/crm/scripts/` → `docs/evals/` | Se corre a propósito (gasta crédito) |
-| La ventanilla `/api/automatizaciones/calificar` | `apps/crm/src/app/api/automatizaciones/` | Vitest y en vivo: 401 sin llave, lead calificado, sin cupo, Claude caído |
+| ✅ Migración 020 (aplicada el 2026-10-25): tabla `calificaciones_lead` (con la prioridad del asesor aparte), vista `prioridades_leads` (la prioridad que se muestra), tabla `llamadas_ia` (el registro de costos), la reserva, el tope diario, la regla de prioridad y el aviso de prioritario | `supabase/migraciones/` | ✅ 38 pruebas contra la base real (`tests/test_calificacion_leads_supabase.py`): la regla, la reserva y el tope con dos conexiones a la vez, los intentos máximos, el aviso, los permisos de cada función con cada rol |
+| ✅ Los casos del examen | `data/evals/leads/` (generador en `scripts/evals/casos_leads.py`) | ✅ `tests/test_casos_eval_leads.py`: completos, sin mezclar desarrollo y prueba, sin tocar `data/generados/` |
+| ✅ La lógica de IA: el cliente de Claude, la tabla de precios, el prompt versionado, la ficha y el tapado de datos | `apps/crm/src/lib/ia/` | ✅ Vitest con un Claude **simulado** (no gasta crédito): respuesta normal, caída, negativa, incompleta, cada código de error, formatos de teléfono y documento colombianos |
+| ✅ El examen: un script que corre los casos contra Claude y escribe el reporte | `apps/crm/scripts/eval-leads.mts` → `docs/evals/` | Se corre a propósito (gasta crédito); resultados en [docs/evals/README.md](evals/README.md) |
+| ✅ La ventanilla `/api/automatizaciones/calificar` (sin publicar) | `apps/crm/src/app/api/automatizaciones/calificar/` | ✅ Vitest; en vivo con el flujo 08 |
 | Flujo 08 "Calificar leads" y el aviso de prioritario por el destino seguro (00b) | n8n → `automatizaciones/flujos/` | En vivo de punta a punta con `/cotiza` |
 | Prioridad visible en el CRM: etiqueta en las ventas, orden por prioridad y el asesor puede cambiarla | `apps/crm/` | Vitest y en el navegador |
+
+### El flujo 08 en n8n (diseño, 2026-10-29, antes de construir)
+
+Tiene la misma forma que el buzón (01d): n8n es el reloj y el mensajero; lo que se decide, lo decide el CRM.
+
+1. **Cada minuto**, a toda hora (los leads llegan a cualquier hora y la calificación cuesta fracciones de centavo).
+2. **Calificar:** le pide al CRM "califica el siguiente" (`/api/automatizaciones/calificar`, acción `calificar`). Si calificó uno, pide hasta 4 más en la misma vuelta, de a uno. Si no había nada, para ahí: estando quieto, el flujo hace **un solo pedido por minuto**.
+3. **Avisos de prioritario:** pide los pendientes (acción `avisos`). Por cada uno: reserva → manda el correo por el destino seguro (00b) → confirma. Si el correo no sale, el aviso queda reservado sin confirmar y a los 15 minutos aparece como "atascado" (como en 01c, no se reenvía solo: a veces el correo sí salió y solo falló la confirmación).
+4. **Alarmas**, todas en un solo aviso al final, sin nombres de clientes.
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | El PC (n8n) estuvo apagado | Los leads esperan en la base. Al volver, se califican de a 5 por minuto (100 leads en unos 20 minutos); los avisos de prioritario solo salen para los que llegaron en las últimas 24 horas |
+| 2 | El CRM no contesta | No se califica nada esa vuelta. La alarma de "CRM caído" ya la da 01d cada 30 minutos: el 08 no la repite (una sola falla no debe sonar dos veces) |
+| 3 | El CRM contesta con error al calificar (por ejemplo, falta la llave de Anthropic en Vercel) | Alarma la primera vez y luego cada 30 minutos mientras dure |
+| 4 | Claude no responde | El CRM devuelve el lead a la fila con espera (lo decide la base). Si algún lead lleva más de 30 minutos esperando su prioridad, alarma la primera vez y luego cada 30 minutos mientras siga así. Es una sola señal para todo lo que atrasa la calificación |
+| 5 | Se llegó al tope del día (300 llamadas) | Alarma una vez al día: "no se califica más hasta mañana" |
+| 6 | El pedido a la ventanilla tarda o se corta | Espera máximo 60 segundos y **no reintenta**: el reintento es la siguiente vuelta, y la reserva de la base vence sola a los 3 minutos (así nunca se paga dos veces por un reintento de n8n) |
+| 7 | Una vuelta dura más de un minuto y arranca la siguiente | Las dos piden a la vez; la base reparte un lead distinto a cada pedido, y cada aviso tiene su propia reserva |
+| 8 | Falla el correo del aviso | Alarma inmediata. El aviso queda reservado sin confirmar y aparece como atascado |
+| 9 | Un aviso queda atascado (n8n se detuvo, o se envió y falló la confirmación) | Una alarma por aviso, una sola vez, con la ejecución de n8n para revisarla antes de reenviar a mano |
+| 10 | Un aviso le llega a un contacto del set de datos | No puede: el destinatario siempre es alguien del equipo (lo elige la base), y además pasa por el destino seguro (00b), que desvía todo lo que no esté en la lista blanca |
+| 11 | La alarma trae datos personales | Solo cuentas y códigos ("3 leads llevan más de 30 minutos esperando"), nunca nombres ni mensajes |
+| 12 | Se ejecuta el flujo a mano para probar | Funciona igual, pero la memoria de las alarmas ("ya avisé") solo existe con el flujo activo: a mano, una alarma puede sonar de más. Aceptado, como en 01d |
+
+**Ajustes después de la revisión del diseño (2026-10-29, antes de construir).** La revisión encontró 10 puntos; el diseño queda así (cambia lo de arriba donde se contradiga):
+- **El "hasta 5 por vuelta" lo hace el CRM, no n8n.** La ventanilla califica de a uno y se detiene con el primero que no sale bien (Claude caído, sin cupo, nada que calificar) o a los 30 segundos. Si siguiera pidiendo con Claude caído, cada intento fallido gastaría cupo del tope y uno de los 8 intentos de cada lead, y las vueltas se pisarían. En n8n queda un solo pedido, sin bucles (en n8n, un bucle hace que el paso final solo vea la última pasada).
+- **La ventanilla devuelve el código del error de Claude** (nunca el texto). Un rechazo de configuración (código 4xx que no sea 429: sin saldo, llave inválida, modelo que no existe) suena **de inmediato** con su causa, y no espera los 30 minutos. Con un saldo de USD 5, quedarse sin crédito es un caso realista.
+- **Migración 021:** (1) "atrasados" cuenta solo los leads que ya se intentaron calificar: al prender el PC por la mañana, los leads de la noche no son una falla; (2) los leads que terminaron mal en las últimas 24 horas (fallidos, rechazados o vencidos) se avisan una vez cada uno, para que no desaparezcan en silencio; (3) un aviso cuyo correo no salió se **suelta** para reintentarlo en la vuelta siguiente (perder el aviso de un lead caliente es peor que un correo repetido al equipo); (4) confirmar un aviso que esa misma ejecución ya confirmó responde "sí" (un reintento no da falsa alarma).
+- **Una sola alarma por falla:** la alarma de "la calificación falla" suena solo si el pedido de avisos de esa misma vuelta sí funcionó (si fallan los dos, el CRM entero está mal y avisa 01d); con el tope alcanzado no suena además la de atrasados; un aviso que falló y se soltó no vuelve a sonar como atascado.
+- **Detalles de n8n:** los pedidos no marcan error por el código HTTP (se lee el código y la respuesta completa para decidir), no se reintentan, y todos llevan el número de la ejecución. Estando quieto, el 08 hace **dos** pedidos por minuto (calificar y avisos), no uno.
+
+**Lo que quedó construido (2026-10-29):**
+- **Base de datos:** migraciones 021 y 022 (aplicadas), con sus pruebas en `tests/test_calificacion_leads_supabase.py`. La 022 salió de la revisión del código: (1) un rechazo de configuración (sin saldo, llave inválida) **no gasta los intentos** del lead: vuelve a la fila cada 30 minutos hasta que alguien lo arregle (antes, en unas 3 horas todos los leads de la noche quedaban fallidos para siempre); (2) "atrasado" se mide desde el **primer intento**, no desde que llegó el lead.
+- **CRM:** la vuelta de hasta 5 (`calificarVuelta` en `src/lib/automatizaciones/calificacion.ts`, con pruebas) y las acciones nuevas de la ventanilla (`soltar_aviso`, y los que terminaron mal dentro de `avisos`). El texto de autorización de `/cotiza` ahora dice que un servicio de IA externo lee el mensaje, que no recibe los datos del formulario y que del mensaje se tapan teléfonos, correos y documentos (los nombres escritos dentro del mensaje sí llegan: el texto no promete más de lo que hace el código). Versión `2026-10-ia`, que queda guardada con cada autorización.
+- **n8n:** el flujo 08 en `automatizaciones/flujos/08-calificar-leads.json`, subido a n8n y **apagado** hasta publicar el CRM (el CRM publicado todavía no tiene la ventanilla). Ajustes de la revisión del código: la vuelta tiene 20 segundos de presupuesto (no 30), para que la ejecución completa del 08 quepa en el minuto y no se cruce con la siguiente; suena alarma si falla la reserva de un aviso, y si la ventanilla responde algo que 01d no ve (por ejemplo, un 404: la ventanilla no existe en ese despliegue); la alarma de configuración no se vuelve a disparar en las vueltas sin leads; y se quitaron los reintentos de n8n, que con "continuar ante error" nunca corrían (01d y 06 tienen el mismo detalle: queda anotado como pendiente).
+- **Probado en vivo con el CRM local (2026-10-29):** un lead de una panadería que paga 1,8 millones y quiere instalar este mes quedó como **alta** en el primer minuto (costo USD 0,000241), y su aviso salió por el destino seguro y se confirmó, sin alarmas. Con una llave inválida sonó de inmediato "Claude rechaza los pedidos (http_401)…"; ese rechazo no costó ni contó para el tope, y al poner la llave correcta el lead se calificó solo en el segundo intento. Los dos leads de prueba se borraron; las 3 llamadas quedan en el registro de costos.
 
 ---
 

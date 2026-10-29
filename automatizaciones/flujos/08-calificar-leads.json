@@ -1,0 +1,565 @@
+{
+  "name": "08 Calificar leads",
+  "nodes": [
+    {
+      "id": "0b080000-0000-4000-8000-000000000001",
+      "name": "Cada minuto",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000002",
+      "name": "Leer configuración",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "returnAll": true,
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "configuracion"
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000003",
+      "name": "Preparar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// La dirección del CRM, de la tabla configuracion\nconst config = Object.fromEntries($input.all().map((i) => [i.json.clave, i.json.valor]));\nif (!config.crm_url) throw new Error('Falta la fila crm_url en la tabla configuracion');\nreturn [{ json: { crm_url: config.crm_url.replace(/\\/$/, '') } }];"
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000004",
+      "name": "Calificar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        660,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.crm_url }}/api/automatizaciones/calificar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'calificar', ejecucion: $execution.id }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000005",
+      "name": "Pedir avisos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        880,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar').first().json.crm_url }}/api/automatizaciones/calificar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'avisos', ejecucion: $execution.id }) }}",
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000006",
+      "name": "Correos a enviar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Los avisos de \"lead prioritario\" que armó el CRM. Si no hay, sigue un ítem vacío para llegar a las alarmas\nconst r = $('Pedir avisos').first().json;\nconst correos = r.statusCode === 200 ? r.body?.correos : null;\nif (!Array.isArray(correos) || !correos.length) return [{ json: {} }];\nreturn correos.map((c) => ({ json: { ref: c.id, para: c.para, quien: c.quien, asunto: c.asunto, texto: c.texto } }));"
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000007",
+      "name": "¿Hay avisos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b080000-0000-4000-8000-000000000907",
+              "leftValue": "={{ $json.ref }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000008",
+      "name": "Reservar aviso",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1540,
+        -100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar').first().json.crm_url }}/api/automatizaciones/calificar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: 'reservar_aviso', id: $json.ref, ejecucion: $execution.id }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000009",
+      "name": "Solo los reservados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "// Solo se mandan los avisos que esta ejecución logró reservar (una respuesta por aviso, en el mismo orden):\n// si dos ejecuciones se cruzan, cada aviso sale una sola vez\nconst correos = $('Correos a enviar').all().map((i) => i.json);\nconst reservas = $input.all().map((i) => i.json);\nconst listos = correos.filter((c, i) => reservas[i]?.reservado === true);\nreturn listos.length ? listos.map((c) => ({ json: c })) : [{ json: {} }];"
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000010",
+      "name": "¿Hay reservados?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1980,
+        -100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b080000-0000-4000-8000-000000000910",
+              "leftValue": "={{ $json.ref }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000011",
+      "name": "Enviar con destino seguro (00b)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        2200,
+        -200
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "00b Enviar correo seguro",
+          "cachedResultName": "00b Enviar correo seguro"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000012",
+      "name": "Decidir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "// Por cada aviso: si el correo salió se confirma; si no, se suelta para que la vuelta siguiente lo intente\nconst correos = $('Solo los reservados').all().map((i) => i.json);\nconst resultados = $input.all().map((i) => i.json);\n// Si el subflujo 00b falló entero (por ejemplo, faltan filas en destinos_prueba), no salió ninguno\nif (resultados.some((r) => !('ok' in r))) {\n  const motivo = resultados.find((r) => r.error)?.error;\n  return correos.map((c) => ({ json: { id: c.ref, accion: 'soltar_aviso', error: motivo?.message ?? motivo ?? 'falló el envío' } }));\n}\nreturn resultados.map((e) => ({ json: { id: e.ref, accion: e.ok ? 'confirmar_aviso' : 'soltar_aviso', error: e.error } }));"
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000013",
+      "name": "Anotar en el CRM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        2640,
+        -200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "yLomTkEU93grp2wJ",
+          "name": "CRM SolarAndes (automatizaciones)"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar').first().json.crm_url }}/api/automatizaciones/calificar",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ accion: $json.accion, id: $json.id, ejecucion: $execution.id }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000014",
+      "name": "Juntar alarmas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Todas las alarmas de esta vuelta en un solo aviso, sin nombres de clientes (solo cuentas y códigos).\n// Lo que se repite suena la primera vez y luego cada 30 minutos; n8n guarda en la memoria del flujo qué ya\n// avisó (esa memoria solo existe cuando el flujo corre activo, no a mano).\nconst memoria = $getWorkflowStaticData('global');\nconst ahora = Date.now();\nconst MEDIA_HORA = 30 * 60 * 1000;\nconst hoy = $now.toFormat('yyyy-MM-dd');\nconst alarmas = [];\nconst cadaMediaHora = (clave, texto) => {\n  if (!memoria[clave] || ahora - memoria[clave] >= MEDIA_HORA) {\n    memoria[clave] = ahora;\n    alarmas.push(texto);\n  }\n};\n\n// n8n reescribe los mensajes con códigos de red (ECONNREFUSED...): se traducen antes (como en 01d)\nconst traducir = (m) =>\n  /ECONNREFUSED|ECONNRESET/.test(m) ? 'el CRM no contesta: está apagado o sin conexión'\n  : /ETIMEDOUT|ESOCKETTIMEDOUT|timeout/i.test(m) ? 'tardó demasiado en contestar'\n  : /ENOTFOUND|EAI_AGAIN/.test(m) ? 'no se encontró la dirección'\n  : /401|authoriz/i.test(m) ? 'la llave no coincide (AUTOMATIZACIONES_TOKEN en n8n y en el CRM)'\n  : m.slice(0, 150);\nconst funciono = (r) => r?.statusCode === 200 && r.body && typeof r.body === 'object';\nconst motivo = (r) => (r?.statusCode ? `el CRM respondió ${r.statusCode}${r.body?.error ? `: ${r.body.error}` : ''}`\n  : traducir(String(r?.error?.message ?? r?.error ?? 'respuesta inesperada')));\n\nconst cal = $('Calificar').first().json;\nconst av = $('Pedir avisos').first().json;\n\n// 1. La calificación falla. Si los dos pedidos fallaron como falla todo el CRM (no contesta, la llave no\n//    coincide o un error 5xx), la alarma ya la da 01d y aquí no se repite. Cualquier otra respuesta (por\n//    ejemplo, un 404: la ventanilla no existe en ese despliegue) solo la ve el 08\nconst comoTodoElCrm = (r) => !r?.statusCode || r.statusCode === 401 || r.statusCode >= 500;\nif (!funciono(cal)) {\n  if (funciono(av) || !comoTodoElCrm(cal) || !comoTodoElCrm(av)) {\n    cadaMediaHora('alarmaCalificar', `la calificación falla (${motivo(cal)}): los leads quedan en el CRM sin prioridad`);\n  }\n} else {\n  delete memoria.alarmaCalificar;\n  const r = cal.body;\n  if (r.error_de_configuracion) {\n    // 2. Claude rechaza los pedidos y no se arregla esperando\n    cadaMediaHora('alarmaConfiguracion', `Claude rechaza los pedidos (${r.error}): revisa el saldo de la cuenta de Anthropic, la llave ANTHROPIC_API_KEY del CRM y el modelo. No se califica ningún lead`);\n  } else if (r.calificados > 0 || r.fin === 'fallo_claude') {\n    // Claude volvió a aceptar pedidos. En una vuelta sin leads (\"nada\") no se sabe: la memoria se queda\n    delete memoria.alarmaConfiguracion;\n  }\n  if (r.fin === 'sin_cupo') {\n    // 3. El tope del día: una vez al día (y no suena además la de atrasados)\n    if (memoria.alarmaSinCupo !== hoy) {\n      memoria.alarmaSinCupo = hoy;\n      alarmas.push('se llegó al tope de 300 llamadas a la IA de hoy: no se califican más leads hasta mañana (si no hubo muchos leads, revisa si alguien está llenando el formulario)');\n    }\n  } else if (r.atrasadas > 0 && !r.error_de_configuracion) {\n    // 4. Leads ya intentados que llevan más de 30 minutos sin prioridad (Claude caído o lento)\n    cadaMediaHora('alarmaAtrasadas', `${r.atrasadas} lead(s) llevan más de 30 minutos sin poder calificarse${r.error ? ` (último error de Claude: ${r.error})` : ''}; se reintentan solos`);\n  } else if (!r.atrasadas) {\n    delete memoria.alarmaAtrasadas;\n  }\n}\n\nmemoria.atascadosAvisados ??= [];\nmemoria.terminadasAvisadas ??= [];\nconst anotarAtascados = (ids) => {\n  memoria.atascadosAvisados = [...memoria.atascadosAvisados, ...ids].slice(-200);\n};\n\nif (funciono(av)) {\n  delete memoria.alarmaAvisos;\n  // 5. Avisos sin confirmar (n8n se detuvo a la mitad): uno por aviso, una sola vez\n  const atascados = (av.body.atascados ?? []).filter((x) => !memoria.atascadosAvisados.includes(x.calificacion_id));\n  if (atascados.length) {\n    anotarAtascados(atascados.map((x) => x.calificacion_id));\n    const ejecuciones = [...new Set(atascados.map((x) => x.ejecucion))].join(', ');\n    alarmas.push(`${atascados.length} aviso(s) de lead prioritario quedaron sin confirmar (ejecución ${ejecuciones} de 08): revisa esa ejecución antes de reenviar, puede que el correo sí haya salido`);\n  }\n  // 6. Leads que terminaron sin prioridad (fallidos, rechazados o vencidos): una vez cada uno\n  const terminadas = (av.body.terminadas_mal ?? []).filter((x) => !memoria.terminadasAvisadas.includes(x.calificacion_id));\n  if (terminadas.length) {\n    memoria.terminadasAvisadas = [...memoria.terminadasAvisadas, ...terminadas.map((x) => x.calificacion_id)].slice(-500);\n    const cuenta = {};\n    for (const t of terminadas) cuenta[t.estado] = (cuenta[t.estado] ?? 0) + 1;\n    const detalle = Object.entries(cuenta).map(([estado, n]) => `${n} ${estado}`).join(', ');\n    const errores = [...new Set(terminadas.map((t) => t.error).filter(Boolean))].join(', ');\n    alarmas.push(`${terminadas.length} lead(s) se quedaron sin calificar (${detalle}${errores ? `; errores: ${errores}` : ''}): siguen en el CRM, sin prioridad`);\n  }\n} else if (funciono(cal) || !comoTodoElCrm(av)) {\n  cadaMediaHora('alarmaAvisos', `no se pudieron revisar los avisos de lead prioritario (${motivo(av)})`);\n}\n\n// Reservas que fallaron (no un \"no\" normal porque otra ejecución lo reservó: un error). Ese aviso no sale en\n// esta vuelta; si sigue fallando, a las 24 horas deja de estar pendiente sin dejar rastro: por eso suena\nif ($('Reservar aviso').isExecuted) {\n  const fallidas = $('Reservar aviso').all().filter((i) => i.json.error);\n  if (fallidas.length) cadaMediaHora('alarmaReserva', `no se pudieron reservar ${fallidas.length} aviso(s) de lead prioritario (${traducir(String(fallidas[0].json.error?.message ?? fallidas[0].json.error))}); se reintentan en la vuelta siguiente`);\n}\n\n// 7. Correos de aviso que no salieron: se soltaron y se reintentan en la vuelta siguiente\nif ($('Decidir').isExecuted) {\n  const soltados = $('Decidir').all().filter((i) => i.json.accion === 'soltar_aviso');\n  if (!soltados.length) delete memoria.alarmaCorreo;\n  if (soltados.length) cadaMediaHora('alarmaCorreo', `no salieron ${soltados.length} aviso(s) de lead prioritario (${traducir(String(soltados[0].json.error ?? ''))}); se reintentan en la vuelta siguiente`);\n}\n\n// 8. Lo que no se pudo anotar en el CRM. Una respuesta por pedido, en el mismo orden (este paso corre una\n//    sola vez: aquí no sirve emparejar ítem por ítem). Esos avisos aparecerán como atascados: se marcan como\n//    ya avisados para que una sola falla no suene dos veces\nif ($('Anotar en el CRM').isExecuted) {\n  const pedidos = $('Decidir').all();\n  const anotar = $('Anotar en el CRM').all().map((item, i) => ({ r: item.json, pedido: pedidos[i]?.json ?? {} }));\n  const sinConfirmar = anotar.filter(({ r, pedido }) => pedido.accion === 'confirmar_aviso' && (r.error || r.confirmado !== true));\n  const sinSoltar = anotar.filter(({ r, pedido }) => pedido.accion === 'soltar_aviso' && (r.error || r.soltado !== true));\n  anotarAtascados([...sinConfirmar, ...sinSoltar].map(({ pedido }) => pedido.id));\n  if (sinConfirmar.length) alarmas.push(`${sinConfirmar.length} aviso(s) salieron pero el CRM no los anotó: no se repiten solos`);\n  if (sinSoltar.length) alarmas.push(`${sinSoltar.length} aviso(s) que no salieron no se pudieron soltar: no se reintentan solos`);\n}\n\nreturn [{ json: { alarma: alarmas.length ? `08 Calificar leads: ${alarmas.join('; ')}.` : null } }];"
+      },
+      "executeOnce": true
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000015",
+      "name": "¿Hay alarma?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3080,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0b080000-0000-4000-8000-000000000915",
+              "leftValue": "={{ $json.alarma }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "0b080000-0000-4000-8000-000000000016",
+      "name": "Alarma (08)",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3300,
+        0
+      ],
+      "parameters": {
+        "errorMessage": "={{ $json.alarma }}"
+      }
+    }
+  ],
+  "connections": {
+    "Cada minuto": {
+      "main": [
+        [
+          {
+            "node": "Leer configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer configuración": {
+      "main": [
+        [
+          {
+            "node": "Preparar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar": {
+      "main": [
+        [
+          {
+            "node": "Calificar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calificar": {
+      "main": [
+        [
+          {
+            "node": "Pedir avisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedir avisos": {
+      "main": [
+        [
+          {
+            "node": "Correos a enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Correos a enviar": {
+      "main": [
+        [
+          {
+            "node": "¿Hay avisos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay avisos?": {
+      "main": [
+        [
+          {
+            "node": "Reservar aviso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Juntar alarmas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar aviso": {
+      "main": [
+        [
+          {
+            "node": "Solo los reservados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solo los reservados": {
+      "main": [
+        [
+          {
+            "node": "¿Hay reservados?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay reservados?": {
+      "main": [
+        [
+          {
+            "node": "Enviar con destino seguro (00b)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Juntar alarmas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar con destino seguro (00b)": {
+      "main": [
+        [
+          {
+            "node": "Decidir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir": {
+      "main": [
+        [
+          {
+            "node": "Anotar en el CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anotar en el CRM": {
+      "main": [
+        [
+          {
+            "node": "Juntar alarmas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Juntar alarmas": {
+      "main": [
+        [
+          {
+            "node": "¿Hay alarma?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay alarma?": {
+      "main": [
+        [
+          {
+            "node": "Alarma (08)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "errorWorkflow": "00 Alertas de error",
+    "timezone": "America/Bogota",
+    "executionOrder": "v1"
+  }
+}
