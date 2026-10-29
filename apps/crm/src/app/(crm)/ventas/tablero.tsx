@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useOptimistic, useState, useTransition } from "react";
 
+import { EtiquetaPrioridad } from "@/components/etiqueta-prioridad";
 import { formatoPesosCorto } from "@/lib/formato";
+import { etiquetaPrioridad, ordenarPorPrioridad, type FilaPrioridad } from "@/lib/prioridad";
 import { ETAPAS, NOMBRE_ETAPA, NOMBRE_MOTIVO, type Etapa, type MotivoPerdida } from "@/lib/tipos";
 
 import { moverOportunidad } from "./acciones";
@@ -22,7 +24,12 @@ export type TarjetaVenta = {
   // Días sin actividad y nivel: los calcula la base de datos (vista seguimiento_ventas), la misma regla
   // del panel de la gerente y del correo de seguimiento. Solo las ventas abiertas lo tienen
   seguimiento: { dias: number; nivel: NivelSeguimiento } | null;
+  // La prioridad que dio la IA (o la que puso el asesor): la calcula la base, vista prioridades_leads
+  prioridad: Pick<FilaPrioridad, "estado" | "prioridad" | "prioridad_asesor"> | null;
 };
+
+// La prioridad solo ordena las etapas tempranas: un "alta" de hace tres meses no debe quedar arriba siempre
+const ETAPAS_CON_PRIORIDAD: Etapa[] = ["nuevo", "contactado"];
 
 type NivelSeguimiento = "al_dia" | "sin_seguimiento" | "aviso_gerente";
 
@@ -76,7 +83,9 @@ export function TableroVentas({
 
       <div className="flex gap-3 overflow-x-auto pb-4">
         {ETAPAS.map((etapa) => {
-          const enColumna = tarjetas.filter((t) => t.etapa === etapa);
+          const conPrioridad = ETAPAS_CON_PRIORIDAD.includes(etapa);
+          const deLaEtapa = tarjetas.filter((t) => t.etapa === etapa);
+          const enColumna = conPrioridad ? ordenarPorPrioridad(deLaEtapa, (t) => t.prioridad?.prioridad) : deLaEtapa;
           const total = enColumna.reduce((suma, t) => suma + (t.valor_cop ?? 0), 0);
           return (
             <section
@@ -121,6 +130,14 @@ export function TableroVentas({
                     >
                       {t.contacto?.empresa ?? t.contacto?.nombre}
                     </Link>
+                    {conPrioridad && (
+                      <div className="mt-1">
+                        <EtiquetaPrioridad
+                          etiqueta={etiquetaPrioridad(t.prioridad)}
+                          titulo={t.prioridad?.prioridad_asesor ? "La puso el asesor" : "La calculó la regla con la ficha de la IA"}
+                        />
+                      </div>
+                    )}
                     <p className="text-xs text-stone-500">
                       <span className="font-mono">{t.codigo}</span> · {t.contacto?.ciudad}
                       {mostrarAsesor && t.asesor && ` · ${t.asesor.nombre.split(" ")[0]}`}

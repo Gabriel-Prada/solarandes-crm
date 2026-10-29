@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { EtiquetaEtapa } from "@/components/etiqueta-etapa";
+import { EtiquetaPrioridad } from "@/components/etiqueta-prioridad";
 import {
   formatoFecha,
   formatoFechaHora,
@@ -10,6 +11,7 @@ import {
   formatoPesos,
   formatoTelefono,
 } from "@/lib/formato";
+import { etiquetaPrioridad, type FilaPrioridad, type Prioridad } from "@/lib/prioridad";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
 import {
@@ -29,6 +31,7 @@ import { BotonCompletar } from "@/components/boton-completar";
 import { completarActividad } from "./acciones";
 import { AccionesVenta } from "./acciones-venta-formularios";
 import { FormularioActividad } from "./formulario-actividad";
+import { SelectorPrioridad } from "./selector-prioridad";
 
 export async function generateMetadata({ params }: PageProps<"/contactos/[codigo]">): Promise<Metadata> {
   const { codigo } = await params;
@@ -36,6 +39,12 @@ export async function generateMetadata({ params }: PageProps<"/contactos/[codigo
 }
 
 type Paso = { oportunidad_id: string; etapa_nueva: Etapa; fecha: string };
+
+type Calificacion = FilaPrioridad & {
+  prioridad_regla: Prioridad | null;
+  resumen: string | null;
+  consumo_estimado: number | null;
+};
 
 export default async function FichaContacto({ params }: PageProps<"/contactos/[codigo]">) {
   const perfil = await exigirRol("gerente", "asesor");
@@ -52,7 +61,7 @@ export default async function FichaContacto({ params }: PageProps<"/contactos/[c
     .maybeSingle<Contacto & { direccion: string | null; estrato: number | null }>();
   if (!contacto) notFound();
 
-  const [{ data: oportunidades }, { data: actividades }] = await Promise.all([
+  const [{ data: oportunidades }, { data: actividades }, calificaciones] = await Promise.all([
     supabase
       .from("oportunidades")
       .select("id, codigo, nombre, tipo, etapa, potencia_kwp, valor_cop, probabilidad, motivo_perdida, creada_en, actualizada_en, fecha_cierre")
@@ -65,7 +74,15 @@ export default async function FichaContacto({ params }: PageProps<"/contactos/[c
       .eq("contacto_id", contacto.id)
       .order("fecha", { ascending: false })
       .returns<Actividad[]>(),
+    // Lo que dijo la IA de cada mensaje (fase 4). Si falla, la ficha carga igual, sin esta parte
+    supabase
+      .from("prioridades_leads")
+      .select("id, oportunidad_id, estado, prioridad, prioridad_regla, prioridad_asesor, resumen, consumo_estimado, creada_en")
+      .eq("contacto_id", contacto.id)
+      .order("creada_en", { ascending: false })
+      .returns<Calificacion[]>(),
   ]);
+  if (calificaciones.error) console.error("No se pudieron leer las calificaciones", calificaciones.error);
 
   const idsOportunidades = (oportunidades ?? []).map((o) => o.id);
   const [{ data: cotizaciones }, { data: historial }] = await Promise.all([
@@ -138,6 +155,43 @@ export default async function FichaContacto({ params }: PageProps<"/contactos/[c
               {perfil.rol === "gerente" && <Dato nombre="Asesor">{contacto.asesor?.nombre ?? "—"}</Dato>}
             </dl>
           </section>
+
+          {(calificaciones.data ?? []).length > 0 && (
+            <section className="rounded-2xl border border-stone-200 bg-white p-5">
+              <h2 className="font-semibold">Lo que dijo la IA</h2>
+              <p className="mb-3 text-xs text-stone-500">
+                Una IA leyó el mensaje del cliente y llenó una ficha; la prioridad la calcula una regla con esa ficha. El
+                mensaje original está en el historial.
+              </p>
+              <ul className="space-y-4">
+                {(calificaciones.data ?? []).map((c) => (
+                  <li key={c.id} className="text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <EtiquetaPrioridad etiqueta={etiquetaPrioridad(c)} />
+                      {c.prioridad_asesor && <span className="text-xs text-stone-500">(la puso el asesor)</span>}
+                      <span className="text-xs text-stone-400">{formatoFechaHora(c.creada_en)}</span>
+                    </div>
+                    {c.resumen && (
+                      <p className="mt-1 text-stone-800">
+                        <span className="text-xs font-medium text-stone-500">Resumen hecho por IA: </span>
+                        {c.resumen}
+                      </p>
+                    )}
+                    {c.consumo_estimado != null && (
+                      <p className="text-xs text-stone-500">Consumo estimado: {formatoNumero(c.consumo_estimado)} kWh/mes</p>
+                    )}
+                    {(c.estado === "calificada" || c.estado === "sin_mensaje") && (
+                      <SelectorPrioridad
+                        calificacionId={c.id}
+                        prioridadAsesor={c.prioridad_asesor}
+                        prioridadRegla={c.prioridad_regla}
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="space-y-3">
             <h2 className="font-semibold">Ventas</h2>

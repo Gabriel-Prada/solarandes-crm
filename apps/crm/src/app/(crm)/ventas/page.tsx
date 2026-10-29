@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 
+import { ultimaPorVenta, type FilaPrioridad } from "@/lib/prioridad";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
 
 import { TableroVentas, type TarjetaVenta } from "./tablero";
 
-type FilaVenta = Omit<TarjetaVenta, "seguimiento">;
+type FilaVenta = Omit<TarjetaVenta, "seguimiento" | "prioridad">;
 
 export const metadata: Metadata = { title: "Ventas" };
 
@@ -23,10 +24,11 @@ export default async function PaginaVentas() {
   const seleccion =
     "id, codigo, nombre, etapa, valor_cop, potencia_kwp, creada_en, actualizada_en, contacto:contactos(codigo, nombre, empresa, ciudad), asesor:perfiles(nombre)";
 
-  // Tres consultas: todas las abiertas, las cerradas de los últimos 30 días y los días sin actividad
-  // de las abiertas (la regla de seguimiento vive en la base de datos, vista seguimiento_ventas).
+  // Cuatro consultas: todas las abiertas, las cerradas de los últimos 30 días, los días sin actividad
+  // de las abiertas (la regla de seguimiento vive en la base de datos, vista seguimiento_ventas) y la
+  // prioridad que dio la IA (vista prioridades_leads, fase 4).
   // Los permisos de la base de datos ya limitan cada asesor a sus propias ventas.
-  const [abiertas, cerradas, seguimiento] = await Promise.all([
+  const [abiertas, cerradas, seguimiento, prioridades] = await Promise.all([
     supabase
       .from("oportunidades")
       .select(seleccion)
@@ -44,13 +46,22 @@ export default async function PaginaVentas() {
       .from("seguimiento_ventas")
       .select("oportunidad_id, dias, nivel")
       .returns<{ oportunidad_id: string; dias: number; nivel: NonNullable<TarjetaVenta["seguimiento"]>["nivel"] }[]>(),
+    supabase
+      .from("prioridades_leads")
+      .select("id, oportunidad_id, estado, prioridad, prioridad_asesor, creada_en")
+      .not("oportunidad_id", "is", null)
+      .returns<FilaPrioridad[]>(),
   ]);
 
   const error = abiertas.error ?? cerradas.error ?? seguimiento.error;
   const diasDe = new Map((seguimiento.data ?? []).map((s) => [s.oportunidad_id, { dias: s.dias, nivel: s.nivel }]));
+  // Si la consulta de prioridades falla, el tablero carga igual sin ellas: la IA nunca frena al asesor
+  if (prioridades.error) console.error("No se pudieron leer las prioridades", prioridades.error);
+  const prioridadDe = ultimaPorVenta(prioridades.data ?? []);
   const tarjetas: TarjetaVenta[] = [...(abiertas.data ?? []), ...(cerradas.data ?? [])].map((o) => ({
     ...o,
     seguimiento: diasDe.get(o.id) ?? null,
+    prioridad: prioridadDe.get(o.id) ?? null,
   }));
 
   return (

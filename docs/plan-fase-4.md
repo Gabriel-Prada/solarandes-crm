@@ -263,6 +263,21 @@ Tiene la misma forma que el buzón (01d): n8n es el reloj y el mensajero; lo que
 - **n8n:** el flujo 08 en `automatizaciones/flujos/08-calificar-leads.json`, subido a n8n y **apagado** hasta publicar el CRM (el CRM publicado todavía no tiene la ventanilla). Ajustes de la revisión del código: la vuelta tiene 20 segundos de presupuesto (no 30), para que la ejecución completa del 08 quepa en el minuto y no se cruce con la siguiente; suena alarma si falla la reserva de un aviso, y si la ventanilla responde algo que 01d no ve (por ejemplo, un 404: la ventanilla no existe en ese despliegue); la alarma de configuración no se vuelve a disparar en las vueltas sin leads; y se quitaron los reintentos de n8n, que con "continuar ante error" nunca corrían (01d y 06 tienen el mismo detalle: queda anotado como pendiente).
 - **Probado en vivo con el CRM local (2026-10-29):** un lead de una panadería que paga 1,8 millones y quiere instalar este mes quedó como **alta** en el primer minuto (costo USD 0,000241), y su aviso salió por el destino seguro y se confirmó, sin alarmas. Con una llave inválida sonó de inmediato "Claude rechaza los pedidos (http_401)…"; ese rechazo no costó ni contó para el tope, y al poner la llave correcta el lead se calificó solo en el segundo intento. Los dos leads de prueba se borraron; las 3 llamadas quedan en el registro de costos.
 
+### La prioridad en el CRM (diseño, 2026-10-29, antes de construir)
+
+- **Tablero de ventas:** en las columnas Nuevo y Contactado, cada tarjeta muestra su prioridad (Alta, Media, Baja, No es lead, Sin calificar) y las de prioridad alta van arriba. En las demás etapas no se muestra ni ordena: un "alta" de hace tres meses no debe quedar arriba para siempre.
+- **Ficha del contacto:** una sección "Lo que dijo la IA" con cada calificación (prioridad, resumen marcado como hecho por IA, estado) y un selector para que el asesor cambie la prioridad o vuelva a la de la regla. Quién la cambió lo anota la base (`cambiar_prioridad`, migración 020).
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | Los leads viejos (antes de la fase 4) no tienen calificación | Sin etiqueta y en su orden de siempre |
+| 2 | Un cliente que vuelve a escribir tiene una calificación sin venta | Solo aparece en su ficha, no en el tablero |
+| 3 | Una venta con varias calificaciones | En el tablero vale la más reciente |
+| 4 | Un asesor intenta cambiar la prioridad de un contacto ajeno | La base lo rechaza (y la ficha ajena ni siquiera abre); el asesor ve un mensaje claro |
+| 5 | El resumen de la IA trae algo que un desconocido quiso colar | Se muestra como texto, marcado "hecho por IA", con el mensaje original en el historial (ya viene limpio de teléfonos, correos y enlaces) |
+| 6 | La consulta de prioridades falla | El tablero y la ficha cargan igual, sin prioridades: la IA nunca frena el trabajo del asesor |
+| 7 | Alguien manda a mano un valor de prioridad inventado | La acción del servidor solo acepta los cuatro valores (o volver a la regla); la base también los limita |
+
 ---
 
 ## 5. La pieza 2 a grandes rasgos: el extractor de facturas

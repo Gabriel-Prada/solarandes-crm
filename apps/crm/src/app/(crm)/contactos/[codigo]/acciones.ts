@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
+import { PRIORIDADES } from "@/lib/prioridad";
 import type { TipoActividad } from "@/lib/tipos";
 
 export type ValoresActividad = { tipo: string; oportunidad_id: string; descripcion: string; fecha: string };
@@ -97,6 +98,30 @@ export async function completarActividad(actividadId: string): Promise<{ error: 
     .select("id");
   if (error || !data?.length) {
     return { error: "No se pudo marcar como hecha." };
+  }
+  refresh();
+  return { error: null };
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * El asesor (o la gerente) cambia la prioridad que dio la IA, o vuelve a la de la regla ("regla").
+ * Quién y cuándo los anota la base (cambiar_prioridad, migración 020), que también revisa que el contacto
+ * sea suyo: aquí solo se valida que el valor sea uno de los permitidos.
+ */
+export async function cambiarPrioridad(calificacionId: string, valor: string): Promise<{ error: string | null }> {
+  await exigirRol("gerente", "asesor");
+  if (!UUID.test(calificacionId)) return { error: "No se encontró la calificación." };
+  if (valor !== "regla" && !(PRIORIDADES as string[]).includes(valor)) return { error: "Elige una prioridad." };
+
+  const supabase = await crearClienteSupabase();
+  const { error } = await supabase.rpc("cambiar_prioridad", {
+    p_calificacion: calificacionId,
+    p_prioridad: valor === "regla" ? null : valor,
+  });
+  if (error) {
+    return { error: error.code === "42501" ? "No puedes cambiar la prioridad de este contacto." : "No se pudo cambiar la prioridad. Intenta de nuevo." };
   }
   refresh();
   return { error: null };
