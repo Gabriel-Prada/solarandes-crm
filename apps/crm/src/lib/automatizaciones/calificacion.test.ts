@@ -1,7 +1,13 @@
-import type Anthropic from "@anthropic-ai/sdk";
+import Anthropic from "@anthropic-ai/sdk";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
-import { armarAvisoPrioritario, calificarSiguiente, type AvisoPrioritario } from "./calificacion";
+import {
+  armarAvisoPrioritario,
+  calificarSiguiente,
+  calificarVuelta,
+  esErrorDeConfiguracion,
+  type AvisoPrioritario,
+} from "./calificacion";
 
 const FICHA = {
   es_lead: true,
@@ -56,7 +62,7 @@ describe("calificarSiguiente", () => {
       guardar_calificacion: { guardada: true, estado: "calificada", prioridad: "alta" },
     });
     const r = await calificarSiguiente(supabase, claudeFalso().claude);
-    expect(r).toEqual({ estado: "calificado", resultado: "ok", prioridad: "alta", guardada: true, atrasadas: 0 });
+    expect(r).toEqual({ estado: "calificado", resultado: "ok", prioridad: "alta", guardada: true, error: null, atrasadas: 0 });
 
     const tomar = rpc.mock.calls[0] as unknown as [string, Record<string, unknown>];
     const guardar = rpc.mock.calls[1] as unknown as [string, Record<string, unknown>];
@@ -90,6 +96,91 @@ describe("calificarSiguiente", () => {
     await calificarSiguiente(supabase, claude);
     const pedidos = rpc.mock.calls.map((c) => (c as unknown as [string, { p_pedido: string }])[1].p_pedido);
     expect(new Set(pedidos).size).toBe(2);
+  });
+});
+
+describe("calificarVuelta", () => {
+  const tomada = { estado: "tomada", calificacion_id: "c1", llamada_id: "l1", entrada: { mensaje: "Quiero paneles" }, atrasadas: 0 };
+  const guardado = { data: { guardada: true, estado: "calificada", prioridad: "media" }, error: null };
+
+  /** Una base que tiene `n` leads esperando. */
+  function baseConLeads(n: number, otra: Partial<Record<string, unknown>> = {}) {
+    let quedan = n;
+    const rpc = vi.fn(async (funcion: string) => {
+      if (funcion === "tomar_calificacion") {
+        if (otra.tomar) return { data: otra.tomar, error: null };
+        if (quedan-- > 0) return { data: tomada, error: null };
+        return { data: { estado: "nada", atrasadas: 0 }, error: null };
+      }
+      return guardado;
+    });
+    return { supabase: { rpc } as unknown as SupabaseClient, rpc };
+  }
+
+  it("califica de a uno hasta que no haya más", async () => {
+    const { supabase } = baseConLeads(2);
+    expect(await calificarVuelta(supabase, claudeFalso().claude)).toMatchObject({ calificados: 2, fin: "nada" });
+  });
+
+  it("no pasa de 5 por vuelta", async () => {
+    const { supabase } = baseConLeads(9);
+    expect(await calificarVuelta(supabase, claudeFalso().claude)).toMatchObject({ calificados: 5, fin: "limite" });
+  });
+
+  it("se detiene con el primer fallo de Claude, sin gastar más intentos", async () => {
+    const { supabase, rpc } = baseConLeads(4);
+    const claude = { messages: { create: vi.fn(async () => Promise.reject(new Error("caído"))) } } as unknown as Anthropic;
+    const r = await calificarVuelta(supabase, claude);
+    expect(r).toMatchObject({ calificados: 0, fin: "fallo_claude", error: "desconocido", error_de_configuracion: false });
+    expect(rpc.mock.calls.filter((c) => c[0] === "tomar_calificacion")).toHaveLength(1);
+  });
+
+  it("sin cupo para enseguida", async () => {
+    const { supabase } = baseConLeads(0, { tomar: { estado: "sin_cupo", atrasadas: 4 } });
+    expect(await calificarVuelta(supabase, claudeFalso().claude)).toMatchObject({ calificados: 0, fin: "sin_cupo", atrasadas: 4 });
+  });
+
+  it("no empieza otro lead si ya se acabó el tiempo", async () => {
+    const { supabase, rpc } = baseConLeads(5);
+    let reloj = 0;
+    // Cada vez que se mira el reloj pasan 20 s: el segundo lead empieza a los 20 s; el tercero, a los 40 s, ya no
+    const r = await calificarVuelta(supabase, claudeFalso().claude, { ahora: () => (reloj += 20_000), presupuestoMs: 30_000 });
+    expect(r).toMatchObject({ calificados: 2, fin: "limite" });
+    expect(rpc.mock.calls.filter((c) => c[0] === "tomar_calificacion")).toHaveLength(2);
+  });
+
+  it("un rechazo de configuración (sin saldo, llave inválida) se reporta como tal", async () => {
+    const { supabase } = baseConLeads(3);
+    const error = Anthropic.APIError.generate(401, undefined, "llave inválida", new Headers());
+    const claude = { messages: { create: vi.fn(async () => Promise.reject(error)) } } as unknown as Anthropic;
+    expect(await calificarVuelta(supabase, claude)).toMatchObject({
+      calificados: 0,
+      fin: "fallo_claude",
+      error: "http_401",
+      error_de_configuracion: true,
+    });
+  });
+
+  it("si otro pedido ya era el dueño de la reserva, la vuelta se detiene", async () => {
+    const rpc = vi.fn(async (funcion: string) =>
+      funcion === "tomar_calificacion"
+        ? { data: tomada, error: null }
+        : { data: { guardada: false }, error: null },
+    );
+    const r = await calificarVuelta({ rpc } as unknown as SupabaseClient, claudeFalso().claude);
+    expect(r).toMatchObject({ calificados: 0, fin: "fallo_claude", error: null, error_de_configuracion: false });
+  });
+});
+
+describe("esErrorDeConfiguracion", () => {
+  it("un 4xx que no es 429 no se arregla esperando", () => {
+    expect(esErrorDeConfiguracion("http_400")).toBe(true); // por ejemplo, sin saldo
+    expect(esErrorDeConfiguracion("http_401")).toBe(true); // llave inválida
+    expect(esErrorDeConfiguracion("http_404")).toBe(true); // modelo que no existe
+    expect(esErrorDeConfiguracion("http_429")).toBe(false);
+    expect(esErrorDeConfiguracion("http_529")).toBe(false);
+    expect(esErrorDeConfiguracion("tiempo_agotado")).toBe(false);
+    expect(esErrorDeConfiguracion(null)).toBe(false);
   });
 });
 

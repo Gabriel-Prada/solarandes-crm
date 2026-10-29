@@ -1,21 +1,24 @@
-import { ACCION_NO_VALIDA, leerPedido } from "@/lib/automatizaciones/pedido";
-import { armarAvisoPrioritario, calificarSiguiente, type AvisoPrioritario } from "@/lib/automatizaciones/calificacion";
+import { leerPedido } from "@/lib/automatizaciones/pedido";
+import { armarAvisoPrioritario, calificarVuelta, type AvisoPrioritario } from "@/lib/automatizaciones/calificacion";
 import { clienteAnthropic } from "@/lib/ia/cliente";
 import { crearClienteDeServicio } from "@/lib/supabase/servicio";
 
-// Un lead por pedido y Claude con máximo 20 segundos: sobra con 60
+// Hasta 5 leads en 20 segundos, y el último con Claude máximo 20 segundos: cabe en 60
 export const maxDuration = 60;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * La ventanilla de la calificación de leads (flujo 08 de n8n, migración 020). Acciones:
- * - { accion: "calificar", ejecucion }: califica el siguiente lead que esté esperando (uno solo). No
- *   recibe texto: el mensaje lo saca de la base, así una llave filtrada no sirve como "Claude gratis".
- *   Devuelve "nada", "sin_cupo" o el resultado, y cuántos leads llevan más de 30 minutos esperando
- *   (la señal de la alarma).
- * - { accion: "avisos", ejecucion }: los avisos de "lead prioritario" pendientes, como correos escritos.
- * - { accion: "reservar_aviso" | "confirmar_aviso", ejecucion, id }: la reserva del aviso (sale una vez).
+ * - { accion: "calificar", ejecucion }: califica hasta 5 leads que estén esperando, de a uno, y se detiene
+ *   con el primero que no sale bien (calificarVuelta). No recibe texto: el mensaje lo saca de la base, así
+ *   una llave filtrada no sirve como "Claude gratis". Devuelve cuántos calificó, por qué se detuvo, el
+ *   código del error de Claude si lo hubo (y si es de configuración: sin saldo, llave inválida) y cuántos
+ *   leads ya intentados llevan más de 30 minutos esperando (la señal de la alarma).
+ * - { accion: "avisos", ejecucion }: los avisos de "lead prioritario" pendientes, como correos escritos;
+ *   los atascados, y los leads que terminaron mal en las últimas 24 horas (para avisar una vez cada uno).
+ * - { accion: "reservar_aviso" | "confirmar_aviso" | "soltar_aviso", ejecucion, id }: la reserva del aviso
+ *   (sale una vez; si el correo no salió, se suelta para reintentarlo en la vuelta siguiente).
  *
  * La protege AUTOMATIZACIONES_TOKEN; los correos van al equipo y n8n los manda por destino seguro.
  */
@@ -27,7 +30,7 @@ export async function POST(request: Request) {
 
   if (accion === "calificar") {
     try {
-      return Response.json(await calificarSiguiente(supabase, clienteAnthropic()));
+      return Response.json(await calificarVuelta(supabase, clienteAnthropic()));
     } catch (e) {
       console.error("La calificación falló", e);
       return Response.json({ error: "El CRM no pudo calificar el lead. Intenta de nuevo." }, { status: 500 });
@@ -40,23 +43,36 @@ export async function POST(request: Request) {
       console.error("avisos_prioritarios_pendientes falló", error);
       return Response.json({ error: "El CRM no pudo revisar los avisos. Intenta de nuevo." }, { status: 500 });
     }
+    const { data: terminadasMal, error: errorTerminadas } = await supabase.rpc("calificaciones_terminadas_mal");
+    if (errorTerminadas) {
+      console.error("calificaciones_terminadas_mal falló", errorTerminadas);
+      return Response.json({ error: "El CRM no pudo revisar los avisos. Intenta de nuevo." }, { status: 500 });
+    }
     const origen = new URL(request.url).origin;
     const correos = (data.pendientes as AvisoPrioritario[]).map((a) => armarAvisoPrioritario(a, origen));
-    return Response.json({ correos, atascados: data.atascados });
+    return Response.json({ correos, atascados: data.atascados, terminadas_mal: terminadasMal });
   }
 
-  if (accion === "reservar_aviso" || accion === "confirmar_aviso") {
+  const funciones = {
+    reservar_aviso: ["reservar_aviso_prioritario", "reservado"],
+    confirmar_aviso: ["confirmar_aviso_prioritario", "confirmado"],
+    soltar_aviso: ["soltar_aviso_prioritario", "soltado"],
+  } as const;
+  if (accion === "reservar_aviso" || accion === "confirmar_aviso" || accion === "soltar_aviso") {
     if (typeof cuerpo.id !== "string" || !UUID.test(cuerpo.id)) {
       return Response.json({ error: "Falta el aviso." }, { status: 400 });
     }
-    const funcion = accion === "reservar_aviso" ? "reservar_aviso_prioritario" : "confirmar_aviso_prioritario";
+    const [funcion, respuesta] = funciones[accion];
     const { data, error } = await supabase.rpc(funcion, { p_calificacion: cuerpo.id, p_ejecucion: ejecucion });
     if (error) {
       console.error(`${funcion} falló`, error);
       return Response.json({ error: "El CRM no pudo anotar el aviso. Intenta de nuevo." }, { status: 500 });
     }
-    return Response.json({ [accion === "reservar_aviso" ? "reservado" : "confirmado"]: data === true });
+    return Response.json({ [respuesta]: data === true });
   }
 
-  return ACCION_NO_VALIDA();
+  return Response.json(
+    { error: "La acción debe ser calificar, avisos, reservar_aviso, confirmar_aviso o soltar_aviso." },
+    { status: 400 },
+  );
 }

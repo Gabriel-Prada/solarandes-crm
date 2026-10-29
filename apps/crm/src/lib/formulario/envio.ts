@@ -5,7 +5,8 @@
  */
 
 // La versión del texto de autorización que vio la persona (Ley 1581: hay que poder demostrarla)
-export const VERSION_AUTORIZACION = "2026-10";
+// Cambia cuando cambia el texto que acepta la persona (2026-10-ia: el mensaje lo lee un servicio de IA)
+export const VERSION_AUTORIZACION = "2026-10-ia";
 
 // El número del envío lo crea el navegador al enviar (crypto.randomUUID()), nunca el servidor:
 // Next guarda la página como fija y todos los visitantes recibirían el mismo

@@ -86,7 +86,9 @@ export function FormularioCotiza() {
         <input type="checkbox" name="autorizacion" value="si" required className="mt-1" />
         <span>
           Autorizo a SolarAndes S.A.S. (empresa ficticia) a tratar mis datos para contactarme sobre mi cotización,
-          según la Ley 1581 de 2012.
+          según la Ley 1581 de 2012. Mi mensaje lo lee un servicio de inteligencia artificial externo para
+          clasificarlo: no recibe los datos del formulario (nombre, empresa, celular, correo), y del mensaje se
+          tapan los teléfonos, correos y documentos.
         </span>
       </label>
 

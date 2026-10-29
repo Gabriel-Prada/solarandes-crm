@@ -12,11 +12,18 @@ import { VERSION_PROMPT, type EntradaLead } from "@/lib/ia/calificar-lead/prompt
  * 3. La base guarda la ficha y completa la llamada con su costo; si este pedido ya no es el dueño de la
  *    reserva, solo anota la llamada.
  *
- * Un lead por pedido: así el pedido nunca se acerca al tiempo máximo de Vercel. n8n vuelve a preguntar.
+ * Un lead por llamada a esta función; calificarVuelta la repite hasta 5 veces por pedido de n8n.
  */
 export type ResultadoCalificacion =
   | { estado: "nada" | "sin_cupo"; atrasadas: number }
-  | { estado: "calificado"; resultado: string; prioridad: string | null; guardada: boolean; atrasadas: number };
+  | {
+      estado: "calificado";
+      resultado: ResultadoLlamada["resultado"];
+      prioridad: string | null;
+      guardada: boolean;
+      error: string | null; // el código corto de la llamada (http_400, tiempo_agotado…), nunca el texto
+      atrasadas: number;
+    };
 
 export async function calificarSiguiente(supabase: SupabaseClient, claude: Anthropic): Promise<ResultadoCalificacion> {
   // Sin precio no se sabría cuánto se gasta: mejor no llamar (el lead espera y suena la alarma de atrasados)
@@ -57,8 +64,64 @@ export async function calificarSiguiente(supabase: SupabaseClient, claude: Anthr
     resultado: llamada.resultado,
     prioridad: guardado.prioridad ?? null,
     guardada: guardado.guardada === true,
+    error: llamada.error,
     atrasadas,
   };
+}
+
+/**
+ * Un rechazo de configuración: la API contestó que el pedido está mal (sin saldo, llave inválida, modelo que
+ * no existe). No se arregla esperando: n8n lo avisa de inmediato. Un 429 (demasiadas solicitudes) sí se
+ * arregla solo.
+ */
+export function esErrorDeConfiguracion(codigo: string | null): boolean {
+  return codigo !== null && /^http_4\d\d$/.test(codigo) && codigo !== "http_429";
+}
+
+export type ResultadoVuelta = {
+  calificados: number; // cuántos leads se intentaron bien en esta vuelta (incluye respuestas inválidas, que vuelven a la fila)
+  fin: "nada" | "sin_cupo" | "fallo_claude" | "limite";
+  error: string | null; // el código del fallo de Claude que detuvo la vuelta
+  error_de_configuracion: boolean;
+  atrasadas: number;
+};
+
+/**
+ * Una vuelta de n8n: califica de a uno, hasta `maximo`, y se detiene con el primero que no sale bien
+ * (nada que calificar, sin cupo, Claude que no responde) o cuando pasa el tiempo. Si siguiera pidiendo con
+ * Claude caído, cada intento gastaría cupo del tope y uno de los intentos de cada lead. Con 20 s de
+ * presupuesto, el último lead (Claude espera máximo 20 s) termina hacia los 40 s: cabe en los 60 s de
+ * Vercel y deja margen para que la vuelta completa de n8n (avisos y correos) quepa en el minuto, sin que
+ * la vuelta siguiente se le cruce.
+ */
+export async function calificarVuelta(
+  supabase: SupabaseClient,
+  claude: Anthropic,
+  opciones: { maximo?: number; presupuestoMs?: number; ahora?: () => number } = {},
+): Promise<ResultadoVuelta> {
+  const maximo = opciones.maximo ?? 5;
+  const presupuestoMs = opciones.presupuestoMs ?? 20_000;
+  const ahora = opciones.ahora ?? Date.now;
+  const inicio = ahora();
+  let calificados = 0;
+  let atrasadas = 0;
+  for (let i = 0; i < maximo; i++) {
+    if (i > 0 && ahora() - inicio > presupuestoMs) break;
+    const r = await calificarSiguiente(supabase, claude);
+    atrasadas = r.atrasadas;
+    if (r.estado !== "calificado") return { calificados, fin: r.estado, error: null, error_de_configuracion: false, atrasadas };
+    if (r.resultado === "error" || !r.guardada) {
+      return {
+        calificados,
+        fin: "fallo_claude",
+        error: r.error,
+        error_de_configuracion: esErrorDeConfiguracion(r.error),
+        atrasadas,
+      };
+    }
+    calificados += 1;
+  }
+  return { calificados, fin: "limite", error: null, error_de_configuracion: false, atrasadas };
 }
 
 /** Lo que devuelve avisos_prioritarios_pendientes por cada lead. */

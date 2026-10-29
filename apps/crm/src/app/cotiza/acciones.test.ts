@@ -73,7 +73,7 @@ describe("enviarCotizacion", () => {
     await enviarCotizacion(inicial, formulario());
     const [lead, datos] = registrarLead.mock.calls[0];
     expect(lead.clave).toBe(`form:${ID}`);
-    expect(datos).toMatchObject({ clave: `form:${ID}`, canal: "web", autorizacion: { version: "2026-10" } });
+    expect(datos).toMatchObject({ clave: `form:${ID}`, canal: "web", autorizacion: { version: "2026-10-ia" } });
     expect(rpc).toHaveBeenCalledWith("permitir_envio_formulario", { p_huella: expect.stringMatching(/^[0-9a-f]{64}$/) });
   });
 
