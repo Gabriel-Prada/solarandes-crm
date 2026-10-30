@@ -22,7 +22,10 @@ APP = "app-de-prueba-fase-5"
 GERENTE, ASESOR = "U01", "U02"
 
 # Cada función con permiso propio (se salta RLS) que una sesión puede ejecutar, con lo que hace.
-# "frenada": escribe, así que rechaza las conexiones de afuera. Si aparece una nueva, hay que decidir.
+# "frenada": escribe, así que rechaza las conexiones de afuera.
+# "lista blanca": escribe y deja pasar a una app solo si está aprobada y es de la gerente, con tope y
+# registro (migración 024; su comportamiento se prueba en tests/test_acciones_supabase.py).
+# Si aparece una nueva, hay que decidir.
 FUNCIONES_CON_PERMISO_PROPIO = {
     "mi_rol": "solo lee",
     "es_mi_contacto": "solo lee",
@@ -31,6 +34,9 @@ FUNCIONES_CON_PERMISO_PROPIO = {
     "crear_cotizacion": "frenada",
     "cambiar_prioridad": "frenada",
     "aprobar_app": "frenada",
+    "registrar_actividad": "lista blanca",
+    "mover_venta": "lista blanca",
+    "agendar_visita": "lista blanca",
 }
 
 # Vistas que leen con el permiso de su dueño (se saltan RLS). Solo dejan leer.
@@ -202,7 +208,7 @@ def test_toda_funcion_con_permiso_propio_esta_clasificada(con):
         ).fetchall()
     }
     assert encontradas == set(FUNCIONES_CON_PERMISO_PROPIO), (
-        "Clasifica cada función nueva (solo lee o frenada) en FUNCIONES_CON_PERMISO_PROPIO"
+        "Clasifica cada función nueva (solo lee, frenada o lista blanca) en FUNCIONES_CON_PERMISO_PROPIO"
     )
 
 
