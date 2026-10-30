@@ -55,7 +55,8 @@ export default async function PaginaAutorizacion({ searchParams }: PageProps<"/o
           Entrarás como <strong>{perfil.nombre}</strong> ({detalles.user.email}).
         </p>
         <p className="mt-2">
-          Podrá consultar el CRM con tus mismos permisos. No podrá crear, cambiar ni borrar datos del CRM.
+          Podrá consultar el CRM con tus mismos permisos y, a tu nombre, registrar actividades, mover ventas de etapa y
+          agendar visitas. No podrá borrar nada, marcar ventas como ganadas ni reabrir ventas cerradas.
         </p>
       </div>
       <p className="mt-3 text-sm text-stone-600">

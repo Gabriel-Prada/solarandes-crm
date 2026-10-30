@@ -65,10 +65,13 @@ export function elegirAsesor(texto: string, equipo: Miembro[]): Eleccion {
   return { ok: false, error: `«${texto}» coincide con: ${coinciden.map((m) => m.nombre).join(", ")}. ¿Cuál?` };
 }
 
-/** "c153", " C0153 " → "C0153" (los códigos de cliente tienen al menos 4 cifras). null si no es un código. */
-export function normalizarCodigo(texto: string): string | null {
-  const encontrado = /^c(\d{1,6})$/i.exec(texto.trim());
-  return encontrado ? `C${encontrado[1].padStart(4, "0")}` : null;
+/**
+ * "c153", " C0153 " → "C0153" (los códigos tienen al menos 4 cifras). Con prefijo "O", los de las
+ * ventas: "o153" → "O0153". null si no es un código de ese tipo.
+ */
+export function normalizarCodigo(texto: string, prefijo: "C" | "O" = "C"): string | null {
+  const encontrado = new RegExp(`^${prefijo}(\\d{1,6})$`, "i").exec(texto.trim());
+  return encontrado ? `${prefijo}${encontrado[1].padStart(4, "0")}` : null;
 }
 
 const CIUDADES_COMPARABLES: Record<string, Ciudad> = { bogota: "Bogotá", medellin: "Medellín", cali: "Cali" };

@@ -55,6 +55,11 @@ describe("normalizarCodigo", () => {
     expect(normalizarCodigo("C12345")).toBe("C12345");
   });
 
+  it("también normaliza los códigos de venta", () => {
+    expect(normalizarCodigo("o153", "O")).toBe("O0153");
+    expect(normalizarCodigo("C0153", "O")).toBeNull();
+  });
+
   it("rechaza lo que no es un código de cliente", () => {
     expect(normalizarCodigo("O0153")).toBeNull();
     expect(normalizarCodigo("C01;53")).toBeNull();

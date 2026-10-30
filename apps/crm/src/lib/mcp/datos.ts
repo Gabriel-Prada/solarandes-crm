@@ -6,6 +6,7 @@ import type { Panel } from "@/lib/panel";
 import type { FilaPrioridad } from "@/lib/prioridad";
 import { CIUDADES, type Ciudad, type Etapa } from "@/lib/tipos";
 
+import { esResultado, NO_SE_SI_QUEDO, type ResultadoAccion } from "./acciones";
 import {
   LECTURA_MAXIMA,
   masOlvidadas,
@@ -216,6 +217,66 @@ export async function leerCatalogo(supabase: SupabaseClient): Promise<Resultado<
     .returns<Producto[]>();
   if (error) return fallo("leer el catálogo", error);
   return { ok: true, valor: data ?? [] };
+}
+
+// ---------------------------------------------------------------------------
+// Pieza 3: lo que necesitan las acciones. Los códigos (C0153, O0153) se pasan a sus identificadores
+// con la llave de la gerente (RLS); las reglas las aplican las funciones de la base (migración 024).
+// ---------------------------------------------------------------------------
+
+export type ClienteParaAccion = { id: string; codigo: string; nombre: string; empresa: string | null };
+export type VentaParaAccion = { id: string; codigo: string; nombre: string; etapa: Etapa; contacto: ClienteParaAccion };
+
+export async function clientePorCodigo(supabase: SupabaseClient, codigo: string): Promise<Resultado<ClienteParaAccion>> {
+  const { data, error } = await supabase
+    .from("contactos")
+    .select("id, codigo, nombre, empresa")
+    .eq("codigo", codigo)
+    .maybeSingle<ClienteParaAccion>();
+  if (error) return fallo("buscar el cliente", error);
+  if (!data) return { ok: false, mensaje: `No encontré el cliente ${codigo}.` };
+  return { ok: true, valor: data };
+}
+
+const COLUMNAS_VENTA = "id, codigo, nombre, etapa, contacto:contactos!inner(id, codigo, nombre, empresa)";
+
+export async function ventaPorCodigo(supabase: SupabaseClient, codigo: string): Promise<Resultado<VentaParaAccion>> {
+  const { data, error } = await supabase
+    .from("oportunidades")
+    .select(COLUMNAS_VENTA)
+    .eq("codigo", codigo)
+    .maybeSingle<VentaParaAccion>();
+  if (error) return fallo("buscar la venta", error);
+  if (!data) return { ok: false, mensaje: `No encontré la venta ${codigo}.` };
+  return { ok: true, valor: data };
+}
+
+/** Las ventas abiertas de un cliente (para agendar con el código del cliente). */
+export async function ventasAbiertasDe(supabase: SupabaseClient, contactoId: string): Promise<Resultado<VentaParaAccion[]>> {
+  const { data, error } = await supabase
+    .from("oportunidades")
+    .select(COLUMNAS_VENTA)
+    .eq("contacto_id", contactoId)
+    .not("etapa", "in", "(ganado,perdido)")
+    .order("creada_en", { ascending: false })
+    .returns<VentaParaAccion[]>();
+  if (error) return fallo("buscar las ventas del cliente", error);
+  return { ok: true, valor: data ?? [] };
+}
+
+/** Llama a una de las tres acciones de la base. Sus rechazos llegan como resultado, no como error. */
+export async function ejecutarAccion(
+  supabase: SupabaseClient,
+  funcion: "registrar_actividad" | "mover_venta" | "agendar_visita",
+  parametros: Record<string, unknown>,
+): Promise<Resultado<ResultadoAccion>> {
+  const { data, error } = await supabase.rpc(funcion, parametros);
+  if (error || !esResultado(data)) {
+    // Puede que la base sí lo haya guardado y solo se perdió la respuesta: que Claude no repita a ciegas
+    console.error(`MCP: falló ${funcion}`, error?.code);
+    return { ok: false, mensaje: NO_SE_SI_QUEDO };
+  }
+  return { ok: true, valor: data };
 }
 
 export const CONSUMOS_DE_EJEMPLO = [150, 300, 500, 1000, 2000];

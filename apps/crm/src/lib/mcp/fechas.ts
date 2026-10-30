@@ -4,7 +4,7 @@
  * Bogotá está en UTC-5 todo el año (Colombia no cambia la hora).
  */
 
-const DESFASE_MS = -5 * 60 * 60 * 1000;
+export const DESFASE_MS = -5 * 60 * 60 * 1000;
 const UN_DIA_MS = 24 * 60 * 60 * 1000;
 export const MAXIMO_DIAS_RANGO = 31;
 

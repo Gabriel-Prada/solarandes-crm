@@ -6,8 +6,18 @@ import { z } from "zod";
 
 import { normalizarBusqueda, patronContiene } from "@/lib/busqueda";
 import { PRIORIDADES } from "@/lib/prioridad";
-import { ETAPAS, type Etapa } from "@/lib/tipos";
+import { ETAPAS, NOMBRE_ETAPA, NOMBRE_MOTIVO, type Etapa, type MotivoPerdida } from "@/lib/tipos";
 
+import {
+  avisoDeHorario,
+  elegirVentaDelCliente,
+  enPalabras,
+  leerFechaHora,
+  revisarActividad,
+  revisarMovimiento,
+  ventaDeEseCliente,
+  type ResultadoAccion,
+} from "./acciones";
 import { listaDeClientes, MAXIMO_CLIENTES, type FilaCliente } from "./clientes";
 import {
   agendaTecnica,
@@ -26,6 +36,11 @@ import {
 } from "./consultas";
 import {
   calcularPrecio,
+  clientePorCodigo,
+  ejecutarAccion,
+  ventaPorCodigo,
+  ventasAbiertasDe,
+  type VentaParaAccion,
   leerAgenda,
   leerCatalogo,
   leerEquipo,
@@ -122,6 +137,195 @@ export function registrarHerramientas(servidor: McpServer) {
 
   registrarConsultas(servidor);
   registrarResources(servidor);
+  registrarAcciones(servidor);
+}
+
+// ---------------------------------------------------------------------------
+// Pieza 3: las acciones (docs/plan-fase-5.md, sección 5). Las únicas que escriben. Las reglas, el tope,
+// los repetidos y el registro viven en la base (migración 024): aquí solo se pasan los códigos a sus
+// identificadores, la fecha a su momento exacto, y se devuelve el resultado con la fecha en palabras.
+// ---------------------------------------------------------------------------
+
+const ESCRIBE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } as const;
+const TIPOS_DE_ACTIVIDAD = ["llamada", "whatsapp", "correo", "nota", "tarea"] as const;
+const MOTIVOS = Object.keys(NOMBRE_MOTIVO) as [MotivoPerdida, ...MotivoPerdida[]];
+
+/** El resultado de la base para Claude. Un rechazo es un error de la herramienta (Claude lo explica). */
+function resultadoDeAccion(resultado: ResultadoAccion, extra: Record<string, unknown>) {
+  const { estado, mensaje } = resultado;
+  return respuesta(JSON.stringify({ estado, mensaje, ...extra }), estado === "rechazada");
+}
+
+function registrarAcciones(servidor: McpServer) {
+  servidor.registerTool(
+    "registrar_actividad",
+    {
+      title: "Registrar una actividad",
+      description:
+        "Anota en un cliente (y, si se indica, en una de sus ventas) una llamada, WhatsApp, correo, nota o tarea, " +
+        "a nombre de la gerente. Una tarea lleva fecha y hora (próximos 30 días); lo demás queda hecho ahora. " +
+        "Pide el código del cliente (C0153): si no lo sabes, usa buscar_cliente. Para visitas usa agendar_visita.",
+      inputSchema: z.object({
+        cliente: z.string().max(12).describe("Código del cliente, por ejemplo C0153"),
+        venta: z.string().max(12).optional().describe("Código de la venta, por ejemplo O0153 (opcional)"),
+        tipo: z.enum(TIPOS_DE_ACTIVIDAD),
+        descripcion: z.string().max(500).describe("Qué pasó o qué hay que hacer (3 a 500 letras)"),
+        fecha_hora: z.string().max(25).optional().describe("Solo para tareas: AAAA-MM-DD HH:MM en hora de Bogotá"),
+      }),
+      annotations: ESCRIBE,
+    },
+    async ({ cliente, venta, tipo, descripcion, fecha_hora }, ctx) => {
+      const conexion = conexionDelPedido(ctx);
+      if ("content" in conexion) return conexion;
+      const incoherente = revisarActividad(tipo, fecha_hora);
+      if (incoherente) return respuesta(incoherente, true);
+      const codigoCliente = normalizarCodigo(cliente);
+      if (!codigoCliente) return respuesta("El código de un cliente es una C seguida de números, por ejemplo C0153.", true);
+      const codigoVenta = venta ? normalizarCodigo(venta, "O") : null;
+      if (venta && !codigoVenta) return respuesta("El código de una venta es una O seguida de números, por ejemplo O0153.", true);
+      let fecha: string | null = null;
+      if (fecha_hora) {
+        const leida = leerFechaHora(fecha_hora);
+        if (!leida.ok) return respuesta(leida.error, true);
+        fecha = leida.iso;
+      }
+
+      const elCliente = await clientePorCodigo(conexion.supabase, codigoCliente);
+      if (!elCliente.ok) return respuesta(elCliente.mensaje, true);
+      let ventaId: string | null = null;
+      if (codigoVenta) {
+        const laVenta = await ventaPorCodigo(conexion.supabase, codigoVenta);
+        if (!laVenta.ok) return respuesta(laVenta.mensaje, true);
+        ventaId = laVenta.valor.id;
+      }
+
+      const resultado = await ejecutarAccion(conexion.supabase, "registrar_actividad", {
+        p_contacto: elCliente.valor.id,
+        p_oportunidad: ventaId,
+        p_tipo: tipo,
+        p_descripcion: descripcion,
+        p_fecha: tipo === "tarea" ? fecha : null,
+      });
+      if (!resultado.ok) return respuesta(resultado.mensaje, true);
+      return resultadoDeAccion(resultado.valor, {
+        cliente: { codigo: elCliente.valor.codigo, nombre: elCliente.valor.nombre, empresa: elCliente.valor.empresa || undefined },
+        venta: codigoVenta ?? undefined,
+        tipo,
+        // Solo si quedó hecha: en "ya estaba" la fecha guardada puede ser otra
+        ...(tipo === "tarea" && fecha && resultado.valor.estado === "hecho" && { para: enPalabras(fecha), aviso: avisoDeHorario(fecha) }),
+      });
+    },
+  );
+
+  servidor.registerTool(
+    "mover_venta",
+    {
+      title: "Mover una venta de etapa",
+      description:
+        "Cambia la etapa de una venta abierta, a nombre de la gerente (queda en el historial). Para 'perdido' " +
+        "exige el motivo. Desde Claude no se puede marcar una venta como ganada ni reabrir una cerrada: eso se " +
+        "hace en el tablero del CRM. Pide el código de la venta (O0153).",
+      inputSchema: z.object({
+        venta: z.string().max(12).describe("Código de la venta, por ejemplo O0153"),
+        etapa: z.enum(ETAPAS_VALIDAS),
+        motivo: z.enum(MOTIVOS).optional().describe("Solo si la etapa es 'perdido'"),
+      }),
+      annotations: ESCRIBE,
+    },
+    async ({ venta, etapa, motivo }, ctx) => {
+      const conexion = conexionDelPedido(ctx);
+      if ("content" in conexion) return conexion;
+      const incoherente = revisarMovimiento(etapa, motivo);
+      if (incoherente) return respuesta(incoherente, true);
+      const codigo = normalizarCodigo(venta, "O");
+      if (!codigo) return respuesta("El código de una venta es una O seguida de números, por ejemplo O0153.", true);
+      const laVenta = await ventaPorCodigo(conexion.supabase, codigo);
+      if (!laVenta.ok) return respuesta(laVenta.mensaje, true);
+
+      const resultado = await ejecutarAccion(conexion.supabase, "mover_venta", {
+        p_oportunidad: laVenta.valor.id,
+        p_etapa: etapa,
+        p_motivo: etapa === "perdido" ? (motivo ?? null) : null,
+      });
+      if (!resultado.ok) return respuesta(resultado.mensaje, true);
+      // La etapa anterior de verdad la dice la base (leída con la venta bloqueada); si no movió, la leída antes
+      const anterior = (resultado.valor.etapa_anterior as Etapa | undefined) ?? laVenta.valor.etapa;
+      return resultadoDeAccion(resultado.valor, {
+        venta: codigo,
+        cliente: laVenta.valor.contacto.codigo,
+        etapa_anterior: NOMBRE_ETAPA[anterior],
+        etapa_pedida: NOMBRE_ETAPA[etapa],
+        ...(etapa === "perdido" && motivo && { motivo: NOMBRE_MOTIVO[motivo] }),
+      });
+    },
+  );
+
+  servidor.registerTool(
+    "agendar_visita",
+    {
+      title: "Agendar una visita técnica",
+      description:
+        "Agenda la visita técnica de una venta abierta y se la asigna al técnico. Recibe el código de la venta " +
+        "(O0153) o el del cliente (C0153): si el cliente tiene varias ventas abiertas, responde la lista para " +
+        "elegir. La fecha y hora van en hora de Bogotá, en los próximos 30 días; la respuesta dice el día en " +
+        "palabras: confírmalo con la gerente.",
+      inputSchema: z.object({
+        venta: z.string().max(12).optional().describe("Código de la venta, por ejemplo O0153"),
+        cliente: z.string().max(12).optional().describe("Código del cliente, si no sabes la venta"),
+        fecha_hora: z.string().max(25).describe("AAAA-MM-DD HH:MM en hora de Bogotá"),
+        nota: z.string().max(300).optional().describe("Qué revisar en la visita (opcional)"),
+      }),
+      annotations: ESCRIBE,
+    },
+    async ({ venta, cliente, fecha_hora, nota }, ctx) => {
+      const conexion = conexionDelPedido(ctx);
+      if ("content" in conexion) return conexion;
+      const leida = leerFechaHora(fecha_hora);
+      if (!leida.ok) return respuesta(leida.error, true);
+
+      const codigoCliente = cliente ? normalizarCodigo(cliente) : null;
+      if (cliente && !codigoCliente) return respuesta("El código de un cliente es una C seguida de números, por ejemplo C0153.", true);
+
+      let laVenta: VentaParaAccion;
+      if (venta) {
+        const codigo = normalizarCodigo(venta, "O");
+        if (!codigo) return respuesta("El código de una venta es una O seguida de números, por ejemplo O0153.", true);
+        const encontrada = await ventaPorCodigo(conexion.supabase, codigo);
+        if (!encontrada.ok) return respuesta(encontrada.mensaje, true);
+        // Si también llegó el cliente, tiene que ser el de la venta
+        const otroCliente = ventaDeEseCliente(codigo, encontrada.valor.contacto.codigo, codigoCliente ?? undefined);
+        if (otroCliente) return respuesta(otroCliente, true);
+        laVenta = encontrada.valor;
+      } else if (codigoCliente) {
+        const elCliente = await clientePorCodigo(conexion.supabase, codigoCliente);
+        if (!elCliente.ok) return respuesta(elCliente.mensaje, true);
+        const abiertas = await ventasAbiertasDe(conexion.supabase, elCliente.valor.id);
+        if (!abiertas.ok) return respuesta(abiertas.mensaje, true);
+        const elegida = elegirVentaDelCliente(
+          codigoCliente,
+          abiertas.valor.map((v) => ({ ...v, etapaNombre: NOMBRE_ETAPA[v.etapa] })),
+        );
+        if (!elegida.ok) return respuesta(elegida.error, true);
+        laVenta = elegida.venta;
+      } else {
+        return respuesta("Indica el código de la venta (O0153) o el del cliente (C0153).", true);
+      }
+
+      const resultado = await ejecutarAccion(conexion.supabase, "agendar_visita", {
+        p_oportunidad: laVenta.id,
+        p_fecha: leida.iso,
+        p_nota: nota ?? null,
+      });
+      if (!resultado.ok) return respuesta(resultado.mensaje, true);
+      return resultadoDeAccion(resultado.valor, {
+        venta: laVenta.codigo,
+        cliente: { codigo: laVenta.contacto.codigo, nombre: laVenta.contacto.nombre, empresa: laVenta.contacto.empresa || undefined },
+        cuando: enPalabras(leida.iso),
+        ...(resultado.valor.estado === "hecho" && { tecnico: resultado.valor.tecnico }),
+        aviso: avisoDeHorario(leida.iso),
+      });
+    },
+  );
 }
 
 // ---------------------------------------------------------------------------
