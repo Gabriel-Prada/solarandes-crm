@@ -586,6 +586,17 @@ La revisión de las skills, los prompts y la documentación no encontró nada gr
   - el script de prueba avisa que `PIEZA3=1` escribe en la base de verdad.
 - **Pruebas:** 257 de Vitest y 23 de las skills.
 
+### Conectado en Claude y "Listo cuando" verificado (2026-10-30)
+
+Gabriel pidió que Claude hiciera la conexión. Claude agregó el conector personalizado **SolarAndes CRM** (`https://solarandes-crm.vercel.app/api/mcp`) en la cuenta de Claude de Gabriel (plan Pro), desde el navegador. Gabriel inició sesión en Claude y en el CRM (como Laura) y autorizó.
+
+- **Claude detectó solo** "Iniciar sesión ahora" (OAuth) y "Registrar automáticamente" (el registro automático de Supabase), y mostró las herramientas: 8 de solo lectura y 3 de escritura, todas con "Requiere aprobación".
+- **El camino completo funcionó en producción:** Claude se registró en Supabase, Supabase mandó a `/oauth/consent` del CRM publicado, esa página mandó al login y volvió, y la app quedó en `apps_conectadas` como "Claude" con regreso a `claude.ai`, aprobada por Laura Méndez.
+- **"¿Qué asesor tiene más leads sin seguimiento?"**: Claude respondió "Laura Méndez, gerente" y "Andrés Rojas: 49 con 3+ días, 44 con 7+", con la tabla por asesor. Separó las dos cuentas y dijo cuál muestra el panel. El panel del mismo día dio **exactamente** lo mismo: 105 en total, y 44, 39 y 22 por asesor.
+- **"Agéndale una visita a la O0773 el próximo jueves a las 9"**: la confirmación mostró la fecha `2026-11-05 09:00`, bien calculada desde el viernes 30. Quedó en la base como visita del 5 de noviembre a las 9:00 (hora de Bogotá), asignada a Jhon Fredy. La venta pasó a "Visita agendada" con **Laura Méndez** en el historial, y la acción quedó en `acciones_de_apps`.
+- **Limpieza:** se borraron la visita, la fila de historial y la del registro, y la O0773 volvió a "Contactado". El conector queda conectado.
+- **Con esto se cumple el "Listo cuando" de la parte del MCP.** Falta subir las skills a Claude y la conversación de "Explícalo tú" con Gabriel.
+
 ### ¿Cuándo conviene una skill y cuándo un MCP? (pregunta de "Explícalo tú")
 
 - **MCP** cuando Claude necesita **datos vivos o actuar** en un sistema: el CRM cambia cada minuto, y los permisos dependen de quién pregunta.
