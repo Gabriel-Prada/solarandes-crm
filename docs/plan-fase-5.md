@@ -568,6 +568,24 @@ Un paquete con: las instrucciones (qué secciones lleva una propuesta y en qué 
   - la comparación de meses, incluido enero contra diciembre.
 - **Empaquetado:** `scripts/skills/empaquetar.py` deja los `.zip` en `skills/dist/` (no se suben a GitHub) para subirlos a Claude.
 
+### Ajustes de la última revisión (2026-10-30)
+
+La revisión de las skills, los prompts y la documentación no encontró nada grave. Lo corregido:
+- **La propuesta ya no usa cotizaciones rechazadas.** La "vigente" del CRM puede estar `rechazada`; el script solo presenta las `enviada` o `aceptada`.
+- **El consumo sale de la propia cotización.** `ver_ficha` ahora trae `consumo_kwh_mes` dentro de `cotizacion_vigente`: es el consumo con el que se cotizó, que puede ser distinto del que tiene hoy el contacto.
+- **La validación de números no se cae** con un vacío, un negativo, un texto o un `true`.
+- **El informe aclara qué cifras son "de hoy"** (los indicadores de 30 y 90 días) y cuáles son del mes del informe.
+- **Detalles del informe:**
+  - los hallazgos tienen que llegar como lista;
+  - sin cambio dice "se mantuvo igual";
+  - redondea como el panel.
+- **Detalles de los prompts:** el "Resumen del día" le dice a Claude qué fechas pasar para hoy y mañana, y que la variación es del valor, no del número de ventas.
+- **La documentación:**
+  - la página de autorización también puede decir claude.com;
+  - el corte de una app es inmediato en el MCP, pero una llave ya entregada puede seguir **leyendo** hasta una hora;
+  - el script de prueba avisa que `PIEZA3=1` escribe en la base de verdad.
+- **Pruebas:** 257 de Vitest y 23 de las skills.
+
 ### ¿Cuándo conviene una skill y cuándo un MCP? (pregunta de "Explícalo tú")
 
 - **MCP** cuando Claude necesita **datos vivos o actuar** en un sistema: el CRM cambia cada minuto, y los permisos dependen de quién pregunta.

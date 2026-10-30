@@ -23,3 +23,6 @@ Thumbs.db
 
 # Skills empaquetadas para subir a Claude (se regeneran con scripts/skills/empaquetar.py)
 skills/dist/
+
+# Llaves de prueba del script scripts/mcp/probar-oauth.mjs
+scripts/mcp/oauth-*.json
