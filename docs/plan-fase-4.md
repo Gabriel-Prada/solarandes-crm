@@ -2,6 +2,8 @@
 
 *Escrito al empezar la fase (2026-10-25). Se actualiza cuando cambie una decisión.*
 
+> **Fase cerrada el 2026-10-30 por decisión de Gabriel, sin la pieza 2 (extractor de facturas).** La pieza 1, calificación de leads, quedó terminada, publicada y medida (sección 4 y [evals/README.md](evals/README.md)). Su parte del "Listo cuando" se cumple: un lead de `/cotiza` queda con su prioridad en el primer minuto y se avisa si es prioritario; hay un reporte de acierto y costo medido en casos que el prompt nunca vio; y si Claude no responde, el lead igual queda asignado y suena la alarma. **La parte de facturas no se hizo:** el diseño a grandes rasgos de la sección 5 queda como trabajo futuro. Las preguntas de "Explícalo tú" de la fase no se hicieron.
+
 ---
 
 ## 1. La idea en 30 segundos

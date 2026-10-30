@@ -181,6 +181,8 @@ Aquí entra lo del curso de la API de Claude, aplicado a problemas del negocio.
 
 **Listo cuando:** un lead enviado desde `/cotiza` con un mensaje queda con su prioridad en menos de 2 minutos (y si es prioritario, el asesor recibe el aviso); una factura en PDF subida al CRM queda registrada o en la cola de revisión, con el motivo; hay un reporte con acierto y costo por lead y por factura, medido en casos que el prompt nunca vio; y si Claude no responde, el lead igual queda asignado y suena la alarma.
 
+> **Cerrada el 2026-10-30 sin el extractor de facturas** (decisión de Gabriel): se cumplió la parte de leads; las facturas quedan como trabajo futuro. Ver `docs/plan-fase-4.md`.
+
 **Explícalo tú**
 - ¿Cómo sabes que la calificación de leads funciona bien? ¿Cuál es su porcentaje de acierto?
 - ¿Cuánto cuesta procesar 1.000 facturas? ¿Qué pasa con una factura que la IA lee mal?
