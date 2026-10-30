@@ -52,6 +52,7 @@ import {
 } from "./datos";
 import { hoyEnBogota, MAXIMO_DIAS_RANGO, rangoEnBogota } from "./fechas";
 import { clienteConLlave } from "./llave";
+import { promptLeadsEnRiesgo, promptResumenDelDia } from "./prompts";
 
 /**
  * Las herramientas del MCP de SolarAndes (docs/plan-fase-5.md). Todas hablan con la base usando la
@@ -138,6 +139,34 @@ export function registrarHerramientas(servidor: McpServer) {
   registrarConsultas(servidor);
   registrarResources(servidor);
   registrarAcciones(servidor);
+  registrarPrompts(servidor);
+}
+
+// ---------------------------------------------------------------------------
+// Pieza 4: los prompts, recetas que la gerente elige del menú de Claude (src/lib/mcp/prompts.ts)
+// ---------------------------------------------------------------------------
+
+const mensaje = (texto: string) => ({ messages: [{ role: "user" as const, content: { type: "text" as const, text: texto } }] });
+
+function registrarPrompts(servidor: McpServer) {
+  servidor.registerPrompt(
+    "resumen_del_dia",
+    {
+      title: "Resumen del día",
+      description: "Visitas de hoy, leads prioritarios, ventas olvidadas y cómo va el mes, con 3 acciones sugeridas.",
+    },
+    () => mensaje(promptResumenDelDia(hoyEnBogota())),
+  );
+
+  servidor.registerPrompt(
+    "leads_en_riesgo",
+    {
+      title: "Leads en riesgo",
+      description: "Las ventas que se están enfriando, de todo el equipo o de un asesor, con el siguiente paso sugerido.",
+      argsSchema: z.object({ asesor: z.string().max(60).optional().describe("Nombre del asesor (opcional)") }),
+    },
+    ({ asesor }) => mensaje(promptLeadsEnRiesgo(hoyEnBogota(), asesor?.trim() || undefined)),
+  );
 }
 
 // ---------------------------------------------------------------------------
