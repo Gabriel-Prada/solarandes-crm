@@ -5,16 +5,17 @@
     "numero": "COT-2026-0005",
     "version": 1,
     "fecha": "2026-01-04",
+    "estado": "aceptada",
+    "consumo_kwh_mes": 307,
     "num_paneles": 6,
     "potencia_kwp": 3.3,
     "descuento_pct": 0,
     "valor_total_cop": 14850000
   },
-  "consumo_kwh_mes": 307,
   "asesor": "Valentina Ospina",
   "textos": {
     "introduccion": "Gracias por su interés en la energía solar. Con base en su consumo, preparamos un sistema a la medida de su hogar en Medellín.",
-    "por_que": "Su hogar consume cerca de 307 kWh al mes. Un sistema de 3,3 kWp aprovecha el sol de Medellín para cubrir buena parte de ese consumo.",
+    "por_que": "Su hogar consume cerca de 307 kWh al mes. El sistema se dimensionó para ese consumo, con la radiación solar de Medellín como referencia. Su asesor le confirmará el detalle de la producción esperada.",
     "siguientes_pasos": "Agendamos una visita técnica para revisar el techo y el tablero eléctrico. Con su visto bueno, firmamos la cotización y programamos la instalación."
   }
 }

@@ -39,22 +39,46 @@ def numero(valor) -> str:
     return f"{valor:g}".replace(".", ",")
 
 
+ESTADOS_PRESENTABLES = ("enviada", "aceptada")
+
+
+def es_numero(valor) -> bool:
+    """Un número de verdad: True/False también son números en Python, pero aquí no valen."""
+    return isinstance(valor, int | float) and not isinstance(valor, bool)
+
+
+def es_entero(valor) -> bool:
+    return isinstance(valor, int) and not isinstance(valor, bool)
+
+
 def validar(datos: dict) -> list[str]:
     """Lo que impide armar la propuesta. Vacía si todo está bien."""
     errores = []
     cotizacion = datos.get("cotizacion")
     if not isinstance(cotizacion, dict):
         return ["La venta no tiene cotización vigente: hay que cotizar primero en el CRM."]
+    # Una cotización rechazada (o reemplazada) no se le vuelve a presentar al cliente
+    if cotizacion.get("estado") not in ESTADOS_PRESENTABLES:
+        estado = cotizacion.get("estado") or "sin estado"
+        return [
+            f"La cotización está «{estado}»: solo se presentan las enviadas o aceptadas. Cotiza de nuevo en el CRM."
+        ]
     for campo in ("numero", "fecha", "num_paneles", "potencia_kwp", "valor_total_cop"):
         if cotizacion.get(campo) in (None, ""):
             errores.append(f"Falta {campo} en la cotización.")
     if not errores:
-        if not (isinstance(cotizacion["num_paneles"], int) and cotizacion["num_paneles"] > 0):
+        if not (es_entero(cotizacion["num_paneles"]) and cotizacion["num_paneles"] > 0):
             errores.append("El número de paneles debe ser un entero mayor que cero.")
-        if not (isinstance(cotizacion["valor_total_cop"], int) and cotizacion["valor_total_cop"] > 0):
+        if not (es_numero(cotizacion["potencia_kwp"]) and cotizacion["potencia_kwp"] > 0):
+            errores.append("La potencia debe ser un número mayor que cero.")
+        if not (es_entero(cotizacion["valor_total_cop"]) and cotizacion["valor_total_cop"] > 0):
             errores.append("El valor total debe ser un entero en pesos mayor que cero.")
-        if not (0 <= cotizacion.get("descuento_pct", 0) <= 30):
-            errores.append("El descuento debe estar entre 0 % y 30 %, como en el CRM.")
+        descuento = cotizacion.get("descuento_pct", 0)
+        if not (es_numero(descuento) and 0 <= descuento <= 30):
+            errores.append("El descuento debe ser un número entre 0 % y 30 %, como en el CRM.")
+        consumo = cotizacion.get("consumo_kwh_mes")
+        if consumo is not None and not (es_entero(consumo) and consumo > 0):
+            errores.append("El consumo de la cotización debe ser un entero mayor que cero.")
     cliente = datos.get("cliente") or {}
     if not cliente.get("nombre") or not cliente.get("ciudad"):
         errores.append("Faltan el nombre o la ciudad del cliente.")
@@ -117,8 +141,9 @@ def armar(datos: dict, salida: Path) -> None:
         ["Paneles solares de 550 W", numero(cot["num_paneles"])],
         ["Potencia instalada", f"{numero(cot['potencia_kwp'])} kWp"],
     ]
-    if datos.get("consumo_kwh_mes"):
-        filas.append(["Consumo mensual de referencia", f"{numero(datos['consumo_kwh_mes'])} kWh"])
+    # El consumo con el que se calculó la cotización (el del contacto pudo cambiar después)
+    if cot.get("consumo_kwh_mes"):
+        filas.append(["Consumo mensual de referencia", f"{numero(cot['consumo_kwh_mes'])} kWh"])
     if cot.get("descuento_pct"):
         filas.append(["Descuento", f"{numero(cot['descuento_pct'])} %"])
     filas.append(["Valor total (llave en mano)", pesos(cot["valor_total_cop"])])

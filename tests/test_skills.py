@@ -74,6 +74,33 @@ def test_un_texto_con_etiquetas_se_muestra_como_texto_y_no_se_interpreta(tmp_pat
     assert "<b>Hola</b> & bienvenida" in texto_del_pdf(salida)
 
 
+@pytest.mark.parametrize("estado", ["rechazada", "reemplazada", None])
+def test_no_se_presenta_una_cotizacion_rechazada_ni_reemplazada(estado):
+    datos = ejemplo("propuesta-comercial-solarandes")
+    datos["cotizacion"]["estado"] = estado
+    [error] = propuesta.validar(datos)
+    assert "solo se presentan las enviadas o aceptadas" in error
+
+
+@pytest.mark.parametrize(
+    ("campo", "valor"),
+    [("descuento_pct", None), ("potencia_kwp", -3.3), ("potencia_kwp", "3,3"), ("num_paneles", True)],
+)
+def test_la_propuesta_rechaza_numeros_mal_escritos_sin_caerse(campo, valor):
+    datos = ejemplo("propuesta-comercial-solarandes")
+    datos["cotizacion"][campo] = valor
+    assert propuesta.validar(datos)
+
+
+def test_el_consumo_sale_de_la_cotizacion(tmp_path):
+    datos = ejemplo("propuesta-comercial-solarandes")
+    datos["consumo_kwh_mes"] = 999  # un consumo del contacto que cambió después: no se usa
+    salida = tmp_path / "propuesta.pdf"
+    propuesta.armar(datos, salida)
+    texto = texto_del_pdf(salida)
+    assert "307 kWh" in texto and "999" not in texto
+
+
 def test_los_textos_largos_se_rechazan():
     datos = ejemplo("propuesta-comercial-solarandes")
     datos["textos"]["por_que"] = "x" * 901
@@ -107,6 +134,20 @@ def test_la_comparacion_de_meses():
     assert informe.mes_anterior("2026-01") == "2025-12"
     with pytest.raises(ValueError, match="no trae ventas de 2025-01"):
         informe.comparar_meses(por_mes, "2025-01")
+
+
+def test_sin_cambio_dice_que_se_mantuvo_y_redondea_como_el_panel():
+    igual = [{"mes": "2026-08", "valor": 200, "ventas": 2}, {"mes": "2026-09", "valor": 200, "ventas": 3}]
+    assert informe.comparar_meses(igual, "2026-09")["variacion_valor_pct"] == 0
+    # 2,5 % → 3 (como Math.round), no 2 (como round de Python, que redondea al par)
+    medio = [{"mes": "2026-08", "valor": 200, "ventas": 2}, {"mes": "2026-09", "valor": 205, "ventas": 3}]
+    assert informe.comparar_meses(medio, "2026-09")["variacion_valor_pct"] == 3
+
+
+def test_los_hallazgos_van_como_lista():
+    datos = ejemplo("informe-gerencial-solarandes")
+    datos["textos"]["hallazgos"] = "Un solo texto"
+    assert any("lista de frases" in e for e in informe.validar(datos))
 
 
 def test_el_informe_se_niega_si_el_panel_viene_incompleto():

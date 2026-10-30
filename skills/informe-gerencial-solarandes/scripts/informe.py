@@ -8,6 +8,7 @@ comparación del mes con el anterior (con esas mismas cifras), dibuja los gráfi
 
 import io
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -50,7 +51,8 @@ def comparar_meses(por_mes: list[dict], mes: str) -> dict:
     actual, anterior = por_clave[mes], por_clave.get(mes_anterior(mes))
     variacion = None
     if anterior and anterior["valor"]:
-        variacion = round((actual["valor"] - anterior["valor"]) / anterior["valor"] * 100)
+        # Redondeo como Math.round del panel (los .5 hacia arriba); round() de Python redondea al par
+        variacion = math.floor((actual["valor"] - anterior["valor"]) / anterior["valor"] * 100 + 0.5)
     return {"actual": actual, "anterior": anterior, "variacion_valor_pct": variacion}
 
 
@@ -65,6 +67,9 @@ def validar(datos: dict) -> list[str]:
     if "por_asesor" not in (datos.get("seguimiento") or {}):
         errores.append("Falta el seguimiento por asesor (ventas_sin_seguimiento).")
     textos = datos.get("textos") or {}
+    for clave in ("hallazgos", "recomendaciones"):
+        if clave in textos and not isinstance(textos[clave], list):
+            errores.append(f"«{clave}» va como una lista de frases, no como un solo texto.")
     for clave, valor in textos.items():
         lista = valor if isinstance(valor, list) else [valor]
         if any(not isinstance(t, str) or len(t) > MAXIMO_TEXTO for t in lista):
@@ -111,11 +116,12 @@ def armar(datos: dict, salida: Path) -> None:
     frase_mes = f"En {nombre_mes(mes)} se ganaron {actual['ventas']} ventas por {pesos_millones(actual['valor'])}"
     if anterior:
         frase_mes += f" (en {nombre_mes(anterior['mes'])}: {anterior['ventas']} por {pesos_millones(anterior['valor'])}"
-        frase_mes += (
-            f"; el valor {'subió' if variacion >= 0 else 'bajó'} {abs(variacion)} %)."
-            if variacion is not None
-            else ")."
-        )
+        if variacion is None:
+            frase_mes += ")."
+        elif variacion == 0:
+            frase_mes += "; el valor se mantuvo igual)."
+        else:
+            frase_mes += f"; el valor {'subió' if variacion > 0 else 'bajó'} {abs(variacion)} %)."
     else:
         frase_mes += "."
 
@@ -179,6 +185,8 @@ def armar(datos: dict, salida: Path) -> None:
         Spacer(1, 5 * mm),
         parrafo(frase_mes),
         Spacer(1, 4 * mm),
+        # Estas cifras son las del día en que se tomó el informe, no las del mes del informe
+        parrafo(f"Hoy ({seguimiento.get('hoy', '')}): últimos 30 y 90 días y ventas abiertas", seccion),
         indicadores,
         Spacer(1, 5 * mm),
     ]
