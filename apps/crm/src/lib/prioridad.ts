@@ -47,8 +47,8 @@ export function etiquetaPrioridad(fila: Pick<FilaPrioridad, "estado" | "priorida
 }
 
 /** En el tablero vale la calificación más reciente de cada venta. */
-export function ultimaPorVenta(filas: FilaPrioridad[]): Map<string, FilaPrioridad> {
-  const porVenta = new Map<string, FilaPrioridad>();
+export function ultimaPorVenta<T extends FilaPrioridad>(filas: T[]): Map<string, T> {
+  const porVenta = new Map<string, T>();
   for (const fila of filas) {
     if (!fila.oportunidad_id) continue; // un cliente que volvió a escribir: solo en su ficha
     const actual = porVenta.get(fila.oportunidad_id);

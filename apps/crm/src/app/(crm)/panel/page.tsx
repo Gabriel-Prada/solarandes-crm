@@ -2,49 +2,12 @@ import type { Metadata } from "next";
 
 import { Barras, Columnas, VerTabla } from "@/components/graficas";
 import { formatoNumero, formatoPesos, formatoPesosCorto } from "@/lib/formato";
+import { entraronAlEmbudo, porcentaje, variacion as calcularVariacion, type Panel } from "@/lib/panel";
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
-import {
-  NOMBRE_CANAL,
-  NOMBRE_ETAPA,
-  NOMBRE_MOTIVO,
-  type CanalOrigen,
-  type Etapa,
-  type MotivoPerdida,
-} from "@/lib/tipos";
+import { NOMBRE_CANAL, NOMBRE_ETAPA, NOMBRE_MOTIVO } from "@/lib/tipos";
 
 export const metadata: Metadata = { title: "Panel" };
-
-// Lo que devuelve la función panel_gerente() de la base de datos (migración 003)
-type Panel = {
-  kpis: {
-    ganadas_30: number;
-    valor_30: number;
-    valor_30_previo: number;
-    ganadas_90: number;
-    cerradas_90: number;
-    abiertas: number;
-    pipeline: number;
-    pipeline_ponderado: number;
-    sin_seguimiento: number;
-  };
-  por_mes: { mes: string; ventas: number; valor: number }[];
-  embudo: { etapa: Etapa; ventas: number }[];
-  perdidas_por_etapa: { etapa: Etapa; ventas: number }[];
-  motivos: { motivo: MotivoPerdida; ventas: number }[];
-  canales: { canal: CanalOrigen; leads: number; ganadas: number; cerradas: number; valor: number }[];
-  asesores: {
-    nombre: string;
-    ciudad: string;
-    abiertas: number;
-    ganadas: number;
-    cerradas: number;
-    valor: number;
-    sin_seguimiento: number;
-  }[];
-};
-
-const porcentaje = (parte: number, total: number) => (total ? Math.round((parte / total) * 100) : 0);
 
 function nombreMes(mes: string, largo = false): string {
   const [anio, numero] = mes.split("-").map(Number);
@@ -69,10 +32,8 @@ export default async function PaginaPanel() {
   }
 
   const { kpis } = panel;
-  const variacion = kpis.valor_30_previo
-    ? Math.round(((kpis.valor_30 - kpis.valor_30_previo) / kpis.valor_30_previo) * 100)
-    : null;
-  const entraron = panel.embudo.find((e) => e.etapa === "nuevo")?.ventas ?? 0;
+  const variacion = calcularVariacion(kpis.valor_30, kpis.valor_30_previo);
+  const entraron = entraronAlEmbudo(panel);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
