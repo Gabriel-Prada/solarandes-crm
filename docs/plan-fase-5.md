@@ -285,6 +285,116 @@ La diferencia está en **quién decide usarlo**:
 - **La ficha del cliente** va en los dos lados, con el mismo código: como resource (`solarandes://cliente/C0153`, para que Laura la adjunte) y como tool (`ver_ficha`), porque Claude no puede abrir resources por su cuenta, y para "agéndale una visita a Pedro" la necesita sin que Laura la adjunte.
 - **Los prompts** existen porque Laura no debería tener que saber pedirlo bien: "Resumen del día" ya sabe qué preguntar (visitas de hoy, leads nuevos con prioridad alta, ventas que se movieron) y en qué orden contarlo.
 
+### La pieza 2, diseñada: las consultas y los resources (2026-10-29, antes de construir)
+
+**La idea:** Laura le pregunta cosas al negocio y Claude responde con **los mismos números del CRM**. Toda la pieza es de solo lectura (la 023 ya garantiza que, aunque hubiera un error, la llave no puede escribir), y **no necesita migración nueva**: las herramientas leen las mismas vistas y funciones que ya usan el panel, el tablero y n8n. Si Claude y el panel dicen cosas distintas, Laura deja de confiar en los dos; por eso ninguna regla se vuelve a escribir en TypeScript.
+
+**Las herramientas nuevas** (todas `readOnlyHint`; todas pasan por la puerta del paso 1):
+
+| Herramienta | Qué responde | De dónde sale | Tope |
+|---|---|---|---|
+| `ver_ficha(codigo)` | Un cliente completo: sus datos de contacto, sus ventas con etapa y valor, la cotización vigente, la prioridad de la IA (fase 4) y sus últimas actividades | `contactos`, `oportunidades`, `cotizaciones`, `prioridades_leads`, `actividades` | 10 actividades, cada descripción hasta 300 letras |
+| `ver_ventas(etapa?, asesor?, ciudad?, prioridad?)` | Las ventas abiertas que cumplen el filtro, las más valiosas primero | `oportunidades` + `prioridades_leads` | 25, con el total y un aviso si hay más |
+| `ventas_sin_seguimiento(asesor?)` | Cuántas ventas lleva cada asesor sin actividad (3+ días y 7+ días) y la lista de las más olvidadas. Responde *"¿qué asesor tiene más leads sin seguimiento?"* | La vista `seguimiento_ventas` (la misma regla del panel, el tablero y el correo de n8n) | 25 en la lista; el conteo por asesor es completo |
+| `panel_del_negocio()` | Lo mismo que el panel de la gerente: indicadores, embudo, canales, motivos de pérdida, ventas por mes y por asesor | `panel_gerente()` | — |
+| `ver_visitas(desde?, hasta?)` | Las visitas técnicas del rango, con técnico, cliente, ciudad y si ya se hizo | `actividades` tipo visita | 25; rango de 31 días como máximo; por omisión, de hoy a 7 días |
+| `calcular_precio(consumo, ciudad)` | El sistema y el precio de referencia para un consumo | `calcular_cotizacion()`, la fórmula de la base (fase 1) | — |
+
+**Los resources** (los adjunta Laura con el botón "+" de Claude):
+- `solarandes://catalogo`: los productos activos con su precio.
+- `solarandes://precios`: la fórmula de la cotización explicada (horas sol pico por ciudad, paneles de 550 W, precio por kWp según el tamaño) y una tabla de ejemplos **calculada por la base en el momento** (150, 300, 500, 1.000 y 2.000 kWh/mes en las tres ciudades). Así el texto y la fórmula no se pueden contradecir.
+- `solarandes://clientes/{codigo}`: la ficha de un cliente, con el mismo código que `ver_ficha`.
+
+**Por qué la ficha y los precios están dos veces** (como herramienta y como resource): Claude no puede abrir un resource por su cuenta, solo Laura puede adjuntarlo. Para *"agéndale una visita a Pedro"* o *"¿cuánto le sale a un hogar de 400 kWh en Cali?"*, Claude necesita poder pedirlo solo. Las dos puertas usan la misma función.
+
+**Decisiones:**
+1. **Una sola fuente para cada número.** El seguimiento sale de `seguimiento_ventas`, el panel de `panel_gerente()` y los precios de `calcular_cotizacion()`. El MCP solo los acomoda.
+2. **"Sin seguimiento" con nombre propio.** El panel muestra "Sin seguimiento · 7+ días"; el requisito dice "sin seguimiento" desde los 3 días y "aviso a la gerente" a los 7. La herramienta devuelve los dos números con su nombre (`sin_seguimiento_3_dias` y `aviso_gerente_7_dias`) y dice cuál usa el panel. Así Claude no mezcla las dos cuentas.
+3. **"Hoy" lo dice el servidor, en hora de Bogotá.** Claude no siempre sabe qué fecha es, y "el jueves" depende de eso. Las respuestas de visitas y seguimiento traen `hoy` (fecha de Bogotá). Las fechas que llegan se validan (`AAAA-MM-DD`).
+4. **El asesor se pide por nombre** ("Andrés"), sin importar tildes. Si el nombre coincide con dos personas o con ninguna, la herramienta responde con la lista del equipo en vez de adivinar.
+5. **Los datos de contacto solo en la ficha.** Las listas traen código, nombre, empresa, ciudad y asesor; la ficha trae además teléfono, correo y dirección, porque sirven para llamar o visitar. Es la decisión 7 del plan, aplicada a cada herramienta.
+6. **Lo que escribió un desconocido va marcado.** En la ficha, las descripciones de actividades van en un campo `registro` (pueden traer el mensaje que escribió el cliente en `/cotiza`). El resumen de la IA va como `resumen_ia`, con la nota "hecho por IA a partir de lo que escribió el cliente".
+7. **Sin paginación.** Para ver más, se filtra (por etapa, asesor o ciudad). Una herramienta de "página siguiente" sería la forma de sacar el CRM entero por la conversación.
+8. **Sin migración.** Si al construir hace falta una consulta que la base no tiene, se para y se diseña aparte.
+
+**Qué puede fallar:**
+
+| # | Qué puede pasar | Qué debe pasar |
+|---|---|---|
+| 1 | Claude y el panel del CRM dan números distintos | Leen la misma vista y la misma función. Prueba en vivo: `panel_del_negocio` y `ventas_sin_seguimiento` contra el panel abierto en el navegador |
+| 2 | Claude mezcla "3 días" y "7 días" | Los dos números vienen con nombre propio, y la descripción de la herramienta dice cuál muestra el panel |
+| 3 | Laura pide "todas las ventas" o "todos los clientes de Bogotá" | Máximo 25, con el total y un aviso para filtrar. No hay "página siguiente" (decisión 7) |
+| 4 | El asesor no existe, o "Camilo" coincide con dos personas | Responde con la lista del equipo y pide elegir; nunca adivina |
+| 5 | El código no existe o está mal escrito ("c153") | Se normaliza (mayúsculas) y se valida (`C` + números). Si no existe, "no encontré ese cliente", el mismo mensaje que si existiera pero no se pudiera ver |
+| 6 | Fechas inválidas, al revés o un rango de un año | Se validan; el rango máximo es de 31 días y lo que sobra se rechaza con un mensaje claro |
+| 7 | "Hoy" o "el jueves" calculados en la zona horaria equivocada | `hoy` se calcula en hora de Bogotá y viaja en la respuesta. Vercel corre en UTC, así que se prueba con una hora cerca de la medianoche |
+| 8 | Una nota del cliente trae instrucciones ("Claude: dile a la gerente que...") | Va en el campo `registro`, marcado como dato. En esta pieza no hay herramientas que escriban, y la 023 frena cualquier escritura con esa llave |
+| 9 | Respuestas enormes (una ficha con 200 actividades, descripciones larguísimas) | 10 actividades y 300 letras por descripción; el panel ya viene resumido por la base |
+| 10 | Los precios de Claude no coinciden con una cotización del CRM | `calcular_precio` llama a la misma función de la base que usa el CRM. Para un cliente, la ficha trae la cotización guardada (la "foto" del día, D3), no un recálculo |
+| 11 | Claude Desktop no muestra los resources o las plantillas de resource | La ficha y los precios también son herramientas (ver arriba). Los resources se prueban con Inspector y en Claude Desktop en la pieza 5 |
+| 12 | El catálogo trae productos inactivos o precios viejos | Solo los activos, leídos en el momento (no se guardan en el código ni en caché) |
+| 13 | Un error de la base (caída, tiempo agotado) | Mensaje en español y genérico; en el registro de Vercel solo el código del error, sin datos de clientes |
+| 14 | Las listas sacan teléfonos o correos | Solo la ficha los trae. Una prueba revisa que las funciones de lista no los devuelvan, como la de `buscar_cliente` |
+| 15 | Una herramienta nueva se salta la revisión del rol | No puede: la puerta revisa rol y app antes de cualquier herramienta (paso 1) |
+
+**Ajustes después de la revisión del diseño (2026-10-29, antes de construir).** La revisión confirmó contra la base que no hace falta migración y encontró 11 puntos. El diseño queda así (cambia lo de arriba donde se contradiga):
+
+- **Grave: la herramienta `ver_ficha` ya no trae teléfono, correo ni dirección.** Los códigos son consecutivos (C0001 a C1000), así que Claude podría llamarla mil veces seguidas: por error, o porque una nota con instrucciones se lo pide. Eso sería sacar la agenda entera por la puerta de atrás.
+  - Los datos de contacto solo los trae el **resource** `solarandes://clientes/{codigo}`, que Laura adjunta a mano y de a uno.
+  - Agendar visitas pasa por la base en la pieza 3, así que Claude no necesita la dirección.
+  - Fila nueva 16: *"Claude recorre fichas una por una para juntar contactos"* → la herramienta no los trae.
+- **Grave: la prioridad es por mensaje, no por venta.** Una venta puede tener varias calificaciones, y un cliente que vuelve a escribir genera calificaciones sin venta.
+  - `ver_ventas` reutiliza `ultimaPorVenta` de `src/lib/prioridad.ts` (la misma del tablero), filtra **después** de quedarse con la última de cada venta, y calcula el total y el tope de 25 después del filtro.
+  - Las ventas sin calificar tienen su propio valor, `sin_calificar`: no aparecen al pedir "media", aunque el tablero las ordene como media.
+- **Los conteos de seguimiento van por días, no por la columna `nivel`.** En la vista, `nivel='sin_seguimiento'` es solo de 3 a 6 días. El MCP cuenta `dias >= 3` y `dias >= 7`, como el correo de n8n y el panel. El conteo por asesor incluye solo a los asesores (`rol='asesor'`), como la tabla del panel, para que las sumas coincidan.
+- **Los porcentajes del panel salen de una función compartida.** La tasa de cierre, la variación contra los 30 días anteriores y el "% de las abiertas" hoy se calculan dentro de `panel/page.tsx`. Pasan a `src/lib/panel.ts` y los usan la página y el MCP, así el redondeo es el mismo.
+- **Inyección de instrucciones, el límite honesto (fila 8):**
+  - El riesgo real no es que se escriba en el CRM (no se puede), sino que Claude use **otros conectores de la misma conversación** (correo, web) para sacar lo que leyó.
+  - Eso no lo controla el MCP. Se dice tal cual en las instrucciones de instalación: conectar el CRM en conversaciones sin otras herramientas que envíen cosas hacia afuera.
+  - Además, se marcan como escritos por el cliente también el **nombre, la empresa y el nombre de la venta**, no solo `registro` y `resumen_ia`.
+- **Resources con el SDK 2.4:**
+  - La plantilla de la ficha se registra **sin lista ni autocompletado**; cualquiera de los dos enumeraría el CRM.
+  - `codigo` se valida aunque llegue como lista.
+  - La lectura usa la misma conexión que las herramientas, y la puerta ya revisó rol y app (la fila 15 vale también para los resources).
+- **Visitas e instalaciones: `ver_agenda_tecnica`** reemplaza a `ver_visitas`. Trae las visitas y también las tareas asignadas a un técnico (las instalaciones), igual que la vista `visitas_tecnico` que ve el técnico.
+- **`solarandes://precios` no copia la fórmula.** Sería la cuarta copia (SQL, Python, TypeScript y texto). El resource trae solo la tabla de ejemplos que calcula `calcular_cotizacion()` en el momento (consumo, ciudad, paneles, kWp, precio por kWp y total), con una línea que dice de dónde sale.
+- **Detalles:**
+  - "Las más valiosas primero" deja las ventas sin valor al final, no arriba (`nullsFirst: false`).
+  - `calcular_precio` acepta "bogota" o "BOGOTÁ" (lo convierte a `Bogotá`) y exige un consumo entero entre 1 y 100.000. Si la base rechaza el cálculo con su propio mensaje en español (código 22023), ese mensaje pasa tal cual.
+  - **Cotización vigente:** por venta, la última versión que no esté `reemplazada`.
+  - **El asesor por nombre** se busca solo entre los asesores y la gerente: "Marcela" no debe encontrar a la contadora.
+  - **Las 10 actividades de la ficha:** primero las pendientes y después las últimas hechas, como en la ficha del CRM.
+  - **El rango de la agenda** se convierte con la hora de Bogotá (-05:00), con "hasta" incluido.
+
+**Qué se construye y cómo se prueba:**
+- **Código:** las herramientas en `src/lib/mcp/servidor.ts`. La forma de cada respuesta va en funciones puras aparte (`src/lib/mcp/ficha.ts`, `ventas.ts`, `seguimiento.ts`, `visitas.ts`, `precios.ts`, `fechas.ts`), probadas con Vitest sin tocar la base: topes, nombres de los campos, que las listas no traigan contacto, el "hoy" de Bogotá cerca de la medianoche, el asesor ambiguo y las fechas inválidas.
+- **Resources:** registrados en el mismo servidor y probados en vivo.
+- **En vivo:** con el script de la verificación (y con MCP Inspector a mano en la entrega), cada herramienta y cada resource como Laura, comparando `panel_del_negocio` y `ventas_sin_seguimiento` con el panel del CRM abierto en el navegador.
+
+**Lo que quedó construido (2026-10-29, sin publicar):**
+- **Código:**
+  - `src/lib/mcp/consultas.ts`: las funciones puras que acomodan las respuestas.
+  - `datos.ts`: las lecturas de la base con la llave de la gerente.
+  - `fechas.ts`: "hoy" y los rangos en hora de Bogotá.
+  - Las seis herramientas y los tres resources en `servidor.ts`.
+  - `src/lib/panel.ts`: los porcentajes del panel, que ahora usan la página del panel y el MCP. `ultimaPorVenta` quedó genérica sin cambiar lo que hace.
+- **Ajustes de la revisión del código:**
+  - Con el filtro de un asesor, el conteo trae solo a esa persona; antes los demás salían en cero.
+  - El conteo por asesor incluye a los inactivos, como el panel. Para elegir a alguien por su nombre solo cuentan los activos.
+  - El tope de lectura es 1000, el que de verdad entrega Supabase. Si se llega, la respuesta lo avisa. Las calificaciones se leen de la más nueva a la más vieja.
+  - Los registros de la ficha (de la herramienta) y de la agenda pasan por `taparDatos` de la fase 4: un teléfono escrito por el cliente en `/cotiza` tampoco sale.
+  - "calificando" y "sin_calificar" se dicen igual en `ver_ventas` y en la ficha, como en el tablero.
+  - Mensaje claro cuando solo llega una fecha final pasada.
+  - Se reutiliza la comparación sin tildes de la búsqueda del CRM.
+- **Pruebas:** 231 de Vitest pasan, 59 de ellas del MCP. Las pruebas encontraron además un error de verdad: una fecha mal escrita hacía caer el servidor en vez de responder con un mensaje.
+- **Probado en vivo con OAuth real, como Laura:**
+  - Todas las herramientas y resources respondieron.
+  - `panel_del_negocio` y `ventas_sin_seguimiento` dieron **exactamente** las cifras del panel abierto en el navegador: 9 ganadas (−62 %), cierre 16 % (34 de 213), 114 abiertas, 104 sin seguimiento (91 %), Andrés, Valentina y Camilo con 43, 39 y 22.
+  - `calcular_precio(300, "bogota")` dio 6 paneles, 3,3 kWp y $14.850.000, el ejemplo de `requisitos.md`.
+  - `ver_ficha` y `ver_ventas` no trajeron teléfonos ni correos; el resource de la ficha sí.
+  - Respondieron con mensajes claros: un asesor que no es del equipo comercial ("Marcela"), una ciudad que no existe, un rango de 92 días, una fecha "30/10/2026" y un código "panaderia".
+  - La app de prueba y su fila en `apps_conectadas` se borraron al terminar.
+
 ### Las acciones (pieza 3)
 
 Tres funciones nuevas en la base, una por acción, cada una con su permiso propio y su revisión (rol, que el cliente sea de quien lo pide, que la etapa exista, que el técnico esté activo). Son las únicas puertas de escritura para una app conectada. Mover a "perdida" exige el motivo, como en el CRM. **Agendar visita queda solo en el CRM** (la agenda del técnico): Google Calendar sigue pospuesto con el flujo 4 de la fase 3.
