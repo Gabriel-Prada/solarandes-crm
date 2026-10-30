@@ -234,6 +234,7 @@ export type DatosFicha = {
     oportunidad_id: string;
     version: number;
     fecha: string;
+    consumo_kwh_mes: number;
     potencia_kwp: number;
     num_paneles: number;
     descuento_pct: number;
@@ -311,6 +312,7 @@ export function ficha(datos: DatosFicha, { conContacto }: { conContacto: boolean
           numero: cotizacion.numero,
           version: cotizacion.version,
           fecha: horaDeBogota(cotizacion.fecha).slice(0, 10),
+          consumo_kwh_mes: cotizacion.consumo_kwh_mes, // el de la cotización, no el del contacto (pudo cambiar después)
           num_paneles: cotizacion.num_paneles,
           potencia_kwp: cotizacion.potencia_kwp,
           descuento_pct: cotizacion.descuento_pct,

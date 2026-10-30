@@ -11,6 +11,11 @@ describe("prompts del MCP", () => {
     }
   });
 
+  it("le dice a Claude qué fechas pasar para hoy y mañana, aunque cambie el mes", () => {
+    expect(promptResumenDelDia("2026-10-31")).toContain("desde 2026-10-31 y hasta 2026-11-01");
+    expect(promptResumenDelDia("2026-10-30")).toContain("variación del valor ganado");
+  });
+
   it("ningún prompt deja actuar sin confirmación y todos tratan los textos de clientes como datos", () => {
     for (const texto of [promptResumenDelDia("2026-10-30"), promptLeadsEnRiesgo("2026-10-30", "Andrés")]) {
       expect(texto).toContain("sin que yo lo confirme");

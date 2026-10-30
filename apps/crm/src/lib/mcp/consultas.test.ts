@@ -209,8 +209,8 @@ const datosFicha = (): DatosFicha => ({
     { id: "v1", codigo: "O0001", nombre: "Sistema", etapa: "cotizado", valor_cop: 40_000_000, potencia_kwp: 10, probabilidad: 50, motivo_perdida: null },
   ],
   cotizaciones: [
-    { numero: "COT-2026-0001", oportunidad_id: "v1", version: 1, fecha: "2026-10-01T15:00:00Z", potencia_kwp: 9, num_paneles: 17, descuento_pct: 0, valor_total: 38_000_000, estado: "reemplazada" },
-    { numero: "COT-2026-0002", oportunidad_id: "v1", version: 2, fecha: "2026-10-10T15:00:00Z", potencia_kwp: 10, num_paneles: 19, descuento_pct: 5, valor_total: 40_000_000, estado: "enviada" },
+    { numero: "COT-2026-0001", oportunidad_id: "v1", version: 1, fecha: "2026-10-01T15:00:00Z", consumo_kwh_mes: 1100, potencia_kwp: 9, num_paneles: 17, descuento_pct: 0, valor_total: 38_000_000, estado: "reemplazada" },
+    { numero: "COT-2026-0002", oportunidad_id: "v1", version: 2, fecha: "2026-10-10T15:00:00Z", consumo_kwh_mes: 1200, potencia_kwp: 10, num_paneles: 19, descuento_pct: 5, valor_total: 40_000_000, estado: "enviada" },
   ],
   prioridades: [
     { ...calificacion("v1", "alta", "2026-10-02"), resumen: "Panadería que quiere instalar ya" },
@@ -256,7 +256,7 @@ describe("ficha", () => {
 
   it("la cotización vigente es la última versión no reemplazada", () => {
     const [v] = ficha(datosFicha(), { conContacto: false }).ventas;
-    expect(v.cotizacion_vigente).toMatchObject({ numero: "COT-2026-0002", version: 2, valor_total_cop: 40_000_000 });
+    expect(v.cotizacion_vigente).toMatchObject({ numero: "COT-2026-0002", version: 2, valor_total_cop: 40_000_000, consumo_kwh_mes: 1200 });
     expect(v.prioridad).toBe("alta");
   });
 

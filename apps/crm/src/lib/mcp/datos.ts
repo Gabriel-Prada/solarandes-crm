@@ -84,7 +84,7 @@ export async function leerFicha(supabase: SupabaseClient, codigo: string): Promi
   if (idsVentas.length > 0) {
     const leidas = await supabase
       .from("cotizaciones")
-      .select("numero, oportunidad_id, version, fecha, potencia_kwp, num_paneles, descuento_pct, valor_total, estado")
+      .select("numero, oportunidad_id, version, fecha, consumo_kwh_mes, potencia_kwp, num_paneles, descuento_pct, valor_total, estado")
       .in("oportunidad_id", idsVentas)
       .returns<DatosFicha["cotizaciones"]>();
     if (leidas.error) return fallo("leer las cotizaciones de la ficha", leidas.error);
