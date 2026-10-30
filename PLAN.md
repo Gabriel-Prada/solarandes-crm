@@ -211,6 +211,8 @@ Aquí usas lo último que aprendiste.
 - ¿Qué impide que alguien borre clientes por medio del MCP?
 - ¿Cuándo conviene una skill y cuándo un servidor MCP?
 
+> **Cerrada el 2026-10-30** (decisión de Gabriel, sin las preguntas de "Explícalo tú"). El MCP está conectado en Claude y verificado: las cifras coinciden con el panel, agendar una visita funciona, nadie borra y las dos skills funcionan. Se probó con un cliente MCP propio y con Claude de verdad, en vez de MCP Inspector. Ver `docs/plan-fase-5.md` y `docs/guia-fase-5.md`.
+
 ---
 
 ### Fase 6: Chatbot de atención (2 semanas)

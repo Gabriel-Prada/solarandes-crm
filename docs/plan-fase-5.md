@@ -2,6 +2,12 @@
 
 *Escrito al empezar la fase (2026-10-29). Se actualiza cuando cambie una decisión.*
 
+> **Fase cerrada el 2026-10-30 por decisión de Gabriel, sin las preguntas de "Explícalo tú".** "Listo cuando":
+> - ✅ Laura en Claude: el seguimiento da lo mismo que el panel y agendar una visita deja la visita a su nombre.
+> - ✅ Un asesor no puede conectarse, y nadie borra ni toca clientes por esta puerta, ni con la llave directa.
+> - ✅ Las skills: el informe se probó en Claude; la propuesta, con su script y sus pruebas.
+> - ⚠️ Se probó con un cliente MCP propio y con Claude de verdad, en vez de MCP Inspector. Las instrucciones para otra persona están en `mcp-instalacion.md`.
+
 *La fase 4 queda abierta: la calificación de leads está terminada y publicada, y el extractor de facturas (pieza 2) queda pendiente por decisión de Gabriel (2026-10-29).*
 
 ---
