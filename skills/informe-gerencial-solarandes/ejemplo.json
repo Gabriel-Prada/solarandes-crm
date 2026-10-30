@@ -1,0 +1,70 @@
+{
+  "mes": "2026-09",
+  "panel": {
+    "hoy": "2026-10-30",
+    "indicadores": {
+      "ganadas_30_dias": 9,
+      "valor_ganado_30_dias_cop": 125805000,
+      "variacion_vs_30_dias_anteriores_pct": -62,
+      "tasa_de_cierre_90_dias_pct": 16,
+      "ganadas_90_dias": 34,
+      "cerradas_90_dias": 213,
+      "ventas_abiertas": 114,
+      "en_proceso_cop": 5236461000,
+      "en_proceso_ponderado_cop": 1618092700,
+      "sin_seguimiento_7_dias": 104,
+      "sin_seguimiento_pct_de_las_abiertas": 91
+    },
+    "embudo": [
+      { "etapa": "Nuevo", "ventas": 1011, "pct_de_las_que_entraron": 100 },
+      { "etapa": "Contactado", "ventas": 828, "pct_de_las_que_entraron": 82 },
+      { "etapa": "Visita agendada", "ventas": 470, "pct_de_las_que_entraron": 46 },
+      { "etapa": "Cotizado", "ventas": 374, "pct_de_las_que_entraron": 37 },
+      { "etapa": "Negociación", "ventas": 212, "pct_de_las_que_entraron": 21 },
+      { "etapa": "Ganado", "ventas": 123, "pct_de_las_que_entraron": 12 }
+    ],
+    "motivos_de_perdida": [
+      { "motivo": "no_respondio", "ventas": 265 },
+      { "motivo": "precio", "ventas": 170 },
+      { "motivo": "aplazo", "ventas": 138 },
+      { "motivo": "sin_financiacion", "ventas": 91 },
+      { "motivo": "competencia", "ventas": 74 },
+      { "motivo": "techo_no_apto", "ventas": 36 }
+    ],
+    "ventas_por_mes": [
+      { "mes": "2025-11", "valor": 128513000, "ventas": 2 },
+      { "mes": "2025-12", "valor": 383090000, "ventas": 10 },
+      { "mes": "2026-01", "valor": 356101000, "ventas": 10 },
+      { "mes": "2026-02", "valor": 229103000, "ventas": 4 },
+      { "mes": "2026-03", "valor": 320926000, "ventas": 13 },
+      { "mes": "2026-04", "valor": 379628000, "ventas": 8 },
+      { "mes": "2026-05", "valor": 427943000, "ventas": 17 },
+      { "mes": "2026-06", "valor": 643702000, "ventas": 14 },
+      { "mes": "2026-07", "valor": 361328000, "ventas": 11 },
+      { "mes": "2026-08", "valor": 598096000, "ventas": 17 },
+      { "mes": "2026-09", "valor": 329738000, "ventas": 8 },
+      { "mes": "2026-10", "valor": 125805000, "ventas": 9 }
+    ],
+    "canales": [],
+    "asesores": []
+  },
+  "seguimiento": {
+    "hoy": "2026-10-30",
+    "por_asesor": [
+      { "asesor": "Andrés Rojas", "sin_seguimiento_3_dias": 49, "aviso_gerente_7_dias": 43 },
+      { "asesor": "Valentina Ospina", "sin_seguimiento_3_dias": 41, "aviso_gerente_7_dias": 39 },
+      { "asesor": "Camilo Torres", "sin_seguimiento_3_dias": 24, "aviso_gerente_7_dias": 22 }
+    ]
+  },
+  "textos": {
+    "resumen": "Septiembre cerró con 8 ventas ganadas por $329,7 M, por debajo de agosto. La tasa de cierre de los últimos 90 días es 16 % y 104 ventas abiertas llevan 7 días o más sin actividad.",
+    "hallazgos": [
+      "El 91 % de las ventas abiertas necesita seguimiento: es el mayor riesgo del mes.",
+      "«Dejó de responder» es el primer motivo de pérdida (265 ventas en el histórico)."
+    ],
+    "recomendaciones": [
+      "Cada asesor revisa esta semana sus 10 ventas más olvidadas.",
+      "Probar un recordatorio a los 3 días para los leads que no responden."
+    ]
+  }
+}

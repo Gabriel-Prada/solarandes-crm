@@ -20,3 +20,6 @@ Thumbs.db
 
 # Configuración personal de Claude Code (la del proyecto sí se sube)
 .claude/settings.local.json
+
+# Skills empaquetadas para subir a Claude (se regeneran con scripts/skills/empaquetar.py)
+skills/dist/

@@ -1,0 +1,20 @@
+{
+  "cliente": { "codigo": "C0153", "nombre": "Alirio Mesa", "empresa": null, "ciudad": "Medellín" },
+  "venta": { "codigo": "O0153", "nombre": "Sistema 3.3 kWp - Alirio Mesa" },
+  "cotizacion": {
+    "numero": "COT-2026-0005",
+    "version": 1,
+    "fecha": "2026-01-04",
+    "num_paneles": 6,
+    "potencia_kwp": 3.3,
+    "descuento_pct": 0,
+    "valor_total_cop": 14850000
+  },
+  "consumo_kwh_mes": 307,
+  "asesor": "Valentina Ospina",
+  "textos": {
+    "introduccion": "Gracias por su interés en la energía solar. Con base en su consumo, preparamos un sistema a la medida de su hogar en Medellín.",
+    "por_que": "Su hogar consume cerca de 307 kWh al mes. Un sistema de 3,3 kWp aprovecha el sol de Medellín para cubrir buena parte de ese consumo.",
+    "siguientes_pasos": "Agendamos una visita técnica para revisar el techo y el tablero eléctrico. Con su visto bueno, firmamos la cotización y programamos la instalación."
+  }
+}
