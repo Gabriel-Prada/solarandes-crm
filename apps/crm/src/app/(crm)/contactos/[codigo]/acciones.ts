@@ -4,8 +4,8 @@ import { refresh } from "next/cache";
 
 import { exigirRol } from "@/lib/sesion";
 import { crearClienteSupabase } from "@/lib/supabase/servidor";
+import { esResultado } from "@/lib/acciones-de-la-base";
 import { PRIORIDADES } from "@/lib/prioridad";
-import type { TipoActividad } from "@/lib/tipos";
 
 export type ValoresActividad = { tipo: string; oportunidad_id: string; descripcion: string; fecha: string };
 
@@ -17,11 +17,9 @@ export type EstadoFormulario = {
   valores: ValoresActividad | null;
 };
 
-const TIPOS_PERMITIDOS: TipoActividad[] = ["llamada", "whatsapp", "correo", "nota", "tarea"];
-
 export async function registrarActividad(previo: EstadoFormulario, formulario: FormData): Promise<EstadoFormulario> {
   // Se vuelve a verificar quién es: una acción del servidor se puede llamar sin pasar por la página
-  const perfil = await exigirRol("gerente", "asesor");
+  await exigirRol("gerente", "asesor");
 
   const contactoId = String(formulario.get("contacto_id") ?? "");
   const valores: ValoresActividad = {
@@ -37,50 +35,26 @@ export async function registrarActividad(previo: EstadoFormulario, formulario: F
     valores,
   });
 
-  const tipo = valores.tipo as TipoActividad;
-  if (!TIPOS_PERMITIDOS.includes(tipo)) {
-    return conError("Elige un tipo de actividad.");
-  }
-  if (valores.descripcion.length < 3 || valores.descripcion.length > 500) {
-    return conError("Escribe una descripción de entre 3 y 500 caracteres.");
-  }
+  // El campo de fecha del navegador no trae zona horaria: se interpreta como hora de Colombia.
+  // Una fecha vacía o inválida va como null y la base responde "Elige la fecha y hora de la tarea".
+  const fecha = new Date(`${valores.fecha}:00-05:00`);
+  const fechaTarea = valores.tipo === "tarea" && valores.fecha && !Number.isNaN(fecha.getTime()) ? fecha.toISOString() : null;
 
-  let fecha = new Date();
-  if (tipo === "tarea") {
-    // El campo de fecha del navegador no trae zona horaria: se interpreta como hora de Colombia
-    fecha = new Date(`${valores.fecha}:00-05:00`);
-    if (!valores.fecha || Number.isNaN(fecha.getTime())) {
-      return conError("Elige la fecha y hora de la tarea.");
-    }
-  }
-
+  // Las reglas (tipos, descripción, que la venta sea del contacto y de quien anota, permisos) viven en la
+  // base, en la misma función que usa Claude por el MCP (migración 024): una sola regla para los dos
   const supabase = await crearClienteSupabase();
-  const oportunidadId = valores.oportunidad_id || null;
-
-  if (oportunidadId) {
-    const { data: oportunidad } = await supabase
-      .from("oportunidades")
-      .select("id")
-      .eq("id", oportunidadId)
-      .eq("contacto_id", contactoId)
-      .maybeSingle();
-    if (!oportunidad) {
-      return conError("Esa venta no pertenece a este contacto.");
-    }
-  }
-
-  // Los permisos (RLS) impiden registrar actividades en contactos de otro asesor
-  const { error } = await supabase.from("actividades").insert({
-    contacto_id: contactoId,
-    oportunidad_id: oportunidadId,
-    usuario_id: perfil.id,
-    tipo,
-    descripcion: valores.descripcion,
-    fecha: fecha.toISOString(),
-    completada: tipo !== "tarea", // una tarea queda pendiente; lo demás ya ocurrió
+  const { data, error } = await supabase.rpc("registrar_actividad", {
+    p_contacto: contactoId,
+    p_oportunidad: valores.oportunidad_id || null,
+    p_tipo: valores.tipo,
+    p_descripcion: valores.descripcion,
+    p_fecha: fechaTarea,
   });
-  if (error) {
+  if (error || !esResultado(data)) {
     return conError("No se pudo guardar la actividad. Intenta de nuevo.");
+  }
+  if (data.estado === "rechazada") {
+    return conError(data.mensaje);
   }
 
   refresh();
