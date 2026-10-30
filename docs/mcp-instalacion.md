@@ -59,7 +59,7 @@ Las skills son paquetes de "saber hacer": le enseñan a Claude a armar la propue
    - `propuesta-comercial-solarandes.zip`
    - `informe-gerencial-solarandes.zip`
 2. En Claude: **Configuración → Capacidades** (*Settings → Capabilities*). Activa la **ejecución de código** (*Code execution*).
-3. En la sección **Skills**, haz clic en **Subir skill** (*Upload skill*) y sube cada `.zip`.
+3. En **Personalizar → Skills → Agregar → Subir Skill**, haz **clic en el recuadro** y elige los dos archivos `.skill` (o los `.zip`). No abras los paquetes antes ni arrastres su contenido: la página solo recibiría el `SKILL.md`, sin el script. Desde el navegador integrado de la app, arrastrar los `.zip` no funcionó; elegirlos con clic, sí.
 4. Pruébalas:
    - *"Hazme la propuesta comercial de la venta O0153"*
    - *"Arma el informe gerencial de septiembre"*

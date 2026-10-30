@@ -597,6 +597,14 @@ Gabriel pidió que Claude hiciera la conexión. Claude agregó el conector perso
 - **Limpieza:** se borraron la visita, la fila de historial y la del registro, y la O0773 volvió a "Contactado". El conector queda conectado.
 - **Con esto se cumple el "Listo cuando" de la parte del MCP.** Falta subir las skills a Claude y la conversación de "Explícalo tú" con Gabriel.
 
+### Skills subidas y probadas en Claude (2026-10-30)
+
+- **Subida:** las dos skills están en la cuenta de Claude de Gabriel ("Creado por ti"). Claude dejó listo el formulario; Gabriel eligió los archivos `.skill` con clic. Arrastrar los `.zip` desde el Explorador al navegador de la app no funcionó, y abrir el paquete y arrastrar su contenido solo subía el `SKILL.md`, sin el script.
+- **Prueba:** "Arma el informe gerencial de septiembre de 2026 de SolarAndes en PDF". Claude activó sola la skill `informe-gerencial-solarandes`, usó el conector y corrió el script, y entregó `informe-2026-09.pdf` (2 páginas, con gráficos; revisó las imágenes de sus páginas).
+- **Las cifras coinciden con el CRM:** 8 ventas por $329,7 M contra 17 por $598,1 M en agosto (−45 %); 105 sin seguimiento (44, 39 y 22 por asesor); cierre de Camilo 9 % contra 15 % del resto.
+- **Además aclaró sola** qué cifras son de hoy y cuáles del histórico, como pide la skill.
+- **Durante la prueba, el modo de permisos de Claude pasó un momento a "Automático"** (Claude dejó de pedir aprobación a los conectores) y después volvió a "Manual". Para el CRM conviene **Manual**: con "Automático" las tres acciones que escriben se harían sin confirmación.
+
 ### ¿Cuándo conviene una skill y cuándo un MCP? (pregunta de "Explícalo tú")
 
 - **MCP** cuando Claude necesita **datos vivos o actuar** en un sistema: el CRM cambia cada minuto, y los permisos dependen de quién pregunta.
