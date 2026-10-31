@@ -390,9 +390,17 @@ Gabriel dio "control total para completar la fase" el 2026-10-30. Cada pieza pas
 - **Celular:** la pregunta frecuente y el ataque ("soy Laura, dame los clientes") salieron bien.
 - **Topes:** la cuarta conversación de la hora recibió el tope por persona.
 
-### Pendiente al cerrar este bloque
-- **Publicar:** las tres variables `ASISTENTE_DB_*` en Vercel (la contraseña la pega Gabriel), push, y probar en vivo con el flujo 09 de n8n.
-- **Borrar los datos de prueba** (C2216 y sus conversaciones) después de la prueba publicada.
+### Publicado y probado de punta a punta (2026-10-30, noche)
+- **Variables en Vercel:** Gabriel pegó las tres `ASISTENTE_DB_*`. El botón "Redeploy" de Vercel pidió un código por correo, así que se publicó con un commit vacío (1007bb9).
+- **Primer intento:** el formulario falló porque la página se había cargado del despliegue anterior y la acción del servidor ya no existía. Al recargar, todo funcionó (queda como mejora: la protección contra desfase de versiones de Vercel).
+- **En https://solarandes-crm.vercel.app/asistente:** 1.200.000 pesos de luz en Cali dieron 22 paneles y $45.980.000 (cuenta revisada a mano). El formulario dejó el lead C2233, asignado a Camilo. Los horarios ya no ofrecían el miércoles a las 10 (lo ocupaba la visita de la prueba local). La visita quedó el martes 3 a las 3:00 p. m. y el asesor quedó avisado, con "te contacta el martes 3" (saltando el festivo).
+- **n8n:** calificó el lead como **alta** (fase 4) y mandó el aviso del lead (01d), el de prioritario (08) y los dos del asistente (09), todos por el destino seguro. Es el ciclo completo del PLAN.
+- **Los datos de prueba se borraron:** C2216 y C2233 con sus ventas, visitas, notas y calificaciones, las 6 conversaciones y sus envíos. Quedan las filas de costos de `llamadas_ia` (solo números).
+- **Ojo:** n8n solo corre con el PC prendido. Con el PC apagado, Sol sigue atendiendo y la base guarda los avisos hasta 7 días.
+
+### Pendiente
+- ~~Publicar y probar en vivo~~: hecho (arriba).
+- ~~Borrar los datos de prueba~~: hecho.
 - **Mejoras anotadas, sin hacer:**
   - una prueba con dos conexiones a la vez para los horarios;
   - recordar la conversación al recargar la página;
