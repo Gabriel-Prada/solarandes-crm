@@ -2,6 +2,8 @@
 
 *Escrito al empezar la fase (2026-10-30). Se actualiza cuando cambie una decisión.*
 
+> **Fase cerrada el 2026-10-31 por decisión de Gabriel, sin las preguntas de "Explícalo tú".** "Listo cuando": ✅ en `/asistente` publicado, preguntas, precio igual al del CRM, datos y visita (lead asignado, calificado por la fase 4, visita en la agenda del técnico, avisos por n8n); ✅ pedir un asesor deja el resumen en la ficha y una tarea; ✅ los ataques no sacan datos (18 de 18 en el examen); ✅ reporte de acierto y costo (prueba 39 de 40, 0 graves, USD 0,0016 por conversación completa); ✅ con Claude caído o el tope alcanzado, Sol lo dice y ofrece `/cotiza`. Las respuestas de las dos preguntas están en `guia-fase-6.md`, sección 5.
+>
 > **Plan aprobado por Gabriel el 2026-10-30, tal como está:** **A** Haiku 5.5 con esfuerzo bajo; **B** tope diario de gasto del asistente de USD 0,30, sin corrida de referencia con Opus ni Sonnet; **D** (nombre "Sol", trato de "usted") y **E** (la información ficticia de la empresa) las decide Claude. Pendiente de Gabriel: revisar el límite mensual en la consola de Anthropic. Siguiente paso: la verificación rápida del usuario propio del asistente (sección 4), en local.
 
 ---
