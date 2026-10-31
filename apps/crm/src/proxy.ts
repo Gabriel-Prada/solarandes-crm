@@ -66,8 +66,9 @@ export const config = {
   // automatizaciones (n8n no inicia sesión; la protege su propia llave, route.ts) y el formulario
   // público /cotiza ("cotiza$|cotiza/": exacto, para no abrir sin querer rutas como /cotizaciones).
   // Tampoco el servidor MCP ni la dirección donde Claude pregunta a quién pedirle la llave: Claude no
-  // tiene cookies, trae su propia llave en cada pedido (api/mcp/route.ts)
+  // tiene cookies, trae su propia llave en cada pedido (api/mcp/route.ts). Ni el asistente público (fase 6):
+  // la página /asistente y sus ventanillas api/asistente/ (las protegen sus topes en la base)
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|cotiza$|cotiza/|api/mcp$|api/mcp/|\\.well-known/oauth-protected-resource$|\\.well-known/oauth-protected-resource/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/automatizaciones/|cotiza$|cotiza/|asistente$|asistente/|api/asistente/|api/mcp$|api/mcp/|\\.well-known/oauth-protected-resource$|\\.well-known/oauth-protected-resource/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/oauth/:ruta*", headers: sinMarco },
       { source: "/login", headers: sinMarco },
+      // El asistente público tampoco: otro sitio no puede incrustarlo para gastar su crédito
+      { source: "/asistente", headers: sinMarco },
     ];
   },
   turbopack: {

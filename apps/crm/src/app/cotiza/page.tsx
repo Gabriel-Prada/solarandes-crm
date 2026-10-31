@@ -26,7 +26,12 @@ export default function PaginaCotiza() {
         <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
           <FormularioCotiza />
         </div>
-        <p className="mt-4 text-center text-xs text-stone-500">
+        <p className="mt-4 text-center text-sm">
+          <a href="/asistente" className="font-medium text-amber-700 hover:underline">
+            ¿Tienes preguntas? Habla con Sol, nuestro asistente
+          </a>
+        </p>
+        <p className="mt-2 text-center text-xs text-stone-500">
           ¿El formulario no funciona? Escríbenos a contacto@solarandes.test (correo ficticio).
         </p>
       </div>
